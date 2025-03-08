@@ -1,18 +1,20 @@
 ﻿using BlogLibrairy;
 using System.Text.Json;
 
+
 namespace website.Services
 {
     public class BlogService
     {
+
         HttpClient httpClient;
         public BlogService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
         }
-        public async Task<List<SimpleBlog>> GetProducts()
+        public async Task<List<Blog>> GetPosts()
         {
-            List<SimpleBlog>? posts = null;
+            List<Blog>? posts = null;
             var response = await httpClient.GetAsync("/SimpleBlog");
             if (response.IsSuccessStatusCode)
             {
@@ -21,10 +23,10 @@ namespace website.Services
                     PropertyNameCaseInsensitive = true
                 };
 
-                posts = await response.Content.ReadFromJsonAsync(SimpleBlogSerializerContext.Default.ListSimpleBlog);
+                posts = await response.Content.ReadFromJsonAsync(BlogLibrairyJsonContext.Default.ListBlog);
             }
 
-            return posts ?? new List<SimpleBlog>();
+            return posts ?? new List<Blog>();
         }
 
     }

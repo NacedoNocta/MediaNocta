@@ -1,37 +1,63 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">website</a>
+﻿<div class="bg-dark-subtle" role="navigation">
+    <div class="p-3">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-2 d-none d-lg-block border border-dark">
+                    <img src="@Assets["img/MN.png"]" alt="C'est moi !" style="height: 10rem" class="img-fluid card border-secondary">
+                </div>
+                <div class="col-lg-6 col-md-6 d-flex flex-column text-center justify-content-center" style="height:10rem">
+                    <div class="d-flex flex-column justify-content-end" style="min-height:7rem">
+                        <h1 class="m-0">MEDIA NOCTA</h1>
+                        <h5 class="text-secondary mt-0">by Nacedo NOCTA</h5>
+                    </div>
+                    <div class="d-none d-lg-flex flex-column justify-content-end" style="min-height:3rem">
+                        <h6 class="text-body-tertiary m-0">Ambiance text that i can't be bothered to write now</h6>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 text-end d-none d-md-block">
+                    <form action="" class="d-flex">
+                        <input class="form-control" placeholder="Search article or project..." />
+                        <button class="btn btn-primary btn-sm">Search</button>
+                    </form>
+                    <div class="mt-2"><strong>Discover : Rand </strong></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="border-bottom border-top" id="subNavContainer">
+        <nav class="navbar navbar-expand-md bg-body-tertiary border border-1 border-primary">
+            <div class="container-fluid">
+                <button class="navbar-toggler mx-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars me-2"></i>
+                    Menu
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav w-100 justify-content-evenly pt-3">
+                        <li class="nav-item pt-0">
+                            <NavLink href="/" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.All">Homepage</NavLink>
+                        </li>
+                        <li class="nav-item pt-0">
+                            <NavLink href="/blog" class="mx-4 btn btn-outline-warning px-4 py-3" role="button" ActiveClass="bg-warning text-dark" Match="NavLinkMatch.Prefix">Blog and Articles</NavLink>
+                        </li>
+                        <li class="nav-item pt-0">
+                            <NavLink href="/tech" class="mx-4 btn btn-outline-info px-4 py-3" role="button" ActiveClass="bg-info" Match="NavLinkMatch.Prefix">Tech Projects</NavLink>
+                        </li>
+                        <li class="nav-item pt-0">
+                            <NavLink href="/art" class="mx-4 btn btn-outline-success px-4 py-3" role="button" ActiveClass="bg-success" Match="NavLinkMatch.Prefix">Art projects</NavLink>
+                        </li>
+                        <li class="nav-item pt-0">
+                            <NavLink href="/learn" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.Prefix">Learn & Act</NavLink>
+                        </li>
+                        <li class="nav-item pt-0">
+                            <NavLink href="/about-me" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.Prefix">About me</NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink href="/learn" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.Prefix">Login</NavLink>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </div>
 </div>
-
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="kingdom">
-                <span class="bi bi-houses-nav-menu" aria-hidden="true"></span> Kingdom
-            </NavLink>
-        </div>
-
-    </nav>
-</div>
-

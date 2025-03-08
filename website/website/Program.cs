@@ -1,4 +1,3 @@
-using website.Client.Pages;
 using website.Components;
 using website.Services;
 
@@ -11,10 +10,14 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddHttpClient<BlogService>(c => {
-
-    var url = builder.Configuration["BlogEndpoint"] ?? throw new InvalidOperationException();
-
+builder.Services.AddHttpClient<BlogService>(c =>
+{
+    var url = builder.Configuration["BlogEndpoint"] ?? throw new InvalidOperationException("BlogEndpoint is not set");
+    c.BaseAddress = new(url);
+});
+builder.Services.AddHttpClient<ActivityService>(c =>
+{
+    var url = builder.Configuration["ActivityEndpoint"] ?? throw new InvalidOperationException("ActivityEndpoint is not set");
     c.BaseAddress = new(url);
 });
 
