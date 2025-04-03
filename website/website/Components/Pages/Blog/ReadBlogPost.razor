@@ -1,0 +1,55 @@
+﻿@page "/blog/{blogid}/"
+@using BlogLibrairy
+
+<div class="row justify-content-center my-5 mx-3">
+    <a class="text-decoration-none" href="">
+        &lAarr; Return to articles
+    </a>
+    <div class="col col-9 mt-4">
+        <h1>
+
+            postCategory : 
+            @post.Title
+        </h1>
+        <p>
+            By <a href="">@post.Author.Name</a>, @post.CreatedAt.ToString()
+        </p>
+
+
+        <hr class="my-4">
+
+        <p>
+            @post.Content
+        </p>
+
+
+        <hr class="my-4">
+        Additionnal links : <br>
+        <a href="">Link</a>
+    </div>
+    <div class="vr p-0"></div>
+    <div class="col-3">
+
+        <div class="card border-info my-4">
+            <a href=""><div class="card-header">About the author...</div></a>
+            <div class="card-body">
+                <div class="clearfix">
+                    <div class="bg-light float-end ms-3" style="width: 12rem; height: 12rem"></div>
+                    <a href=""><h4 class="card-title">@post.Author.Name</h4></a>
+                    <hr>
+                    <p>@post.Author.Biography</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string blogid { get; set; }
+
+    private Blog post => new("Title", "Summary", "Content", 
+                                new Author("AuthName", biography: "osefosef", imageUrl:"https://placehold.co/500x500"), 
+                                imageUrl: "https://placehold.co/400x600");
+}

@@ -1,0 +1,116 @@
+﻿@rendermode InteractiveAuto
+
+<div class="m-3">
+    <ul class="pagination pagination-lg justify-content-center">
+
+        <!-- Previous Page -->
+        <li class="page-item @(pageNumber == 1 ? "disabled" : "")">
+            <button class="page-link" @onclick="() => goTo(1) ">«</button>
+        </li>
+        <li class="page-item @(pageNumber == 1 ? "disabled" : "")">
+            <button class="page-link" @onclick="previousPage">‹</button>
+        </li>
+
+        <!-- Show first page and ellipsis if needed -->
+        @if (pageNumber > 3)
+        {
+            <li class="page-item">
+                <button class="page-link" @onclick="() => goTo(1)">1</button>
+            </li>
+        }
+
+        @if (pageNumber > 4)
+        {
+
+            <li class="page-item disabled">
+                <button class="page-link">...</button>
+            </li>
+        }
+
+        <!-- Previous pages before current -->
+        @for (uint i = Math.Max(1, pageNumber - 2); i < pageNumber; i++)
+        {
+            <li class="page-item">
+                <button class="page-link" @onclick="() => goTo(i)">@i</button>
+            </li>
+        }
+
+        <!-- Current page -->
+        <li class="page-item active">
+            <button class="page-link">@pageNumber</button>
+        </li>
+
+        <!-- Next pages after current -->
+        @for (uint i = pageNumber + 1; i <= Math.Min(getMaxPage(), pageNumber + 2); i++)
+        {
+            <li class="page-item">
+                <button class="page-link" @onclick="() => goTo(i)">@i</button>
+            </li>
+        }
+
+        <!-- Show last page and ellipsis if needed -->
+        @if (pageNumber + 3 < getMaxPage())
+        {
+            <li class="page-item disabled">
+                <button class="page-link">...</button>
+            </li>
+        }
+        @if (pageNumber + 2 < getMaxPage())
+        {
+            <li class="page-item">
+                <button class="page-link" @onclick="() => goTo(getMaxPage())">@getMaxPage()</button>
+            </li>
+        }
+
+
+        <!-- Next Page -->
+        <li class="page-item @(pageNumber == getMaxPage() ? "disabled" : "")">
+            <button class="page-link" @onclick="nextPage">›</button>
+        </li>
+        <li class="page-item @(pageNumber == getMaxPage() ? "disabled" : "")">
+            <button class="page-link" @onclick="() => goTo(getMaxPage())">»</button>
+        </li>
+
+    </ul>
+</div>
+
+@code {
+    [Parameter]
+    public uint pageNumber { get; set; }
+
+    [Parameter]
+    public uint countTotal { get; set; }
+
+    private uint getMaxPage()
+    {
+        uint maxpage = countTotal / 10;
+        if (countTotal % 10 == 0)
+        {
+            return maxpage;
+        }
+        return maxpage + 1;
+    }
+
+    private void nextPage()
+    {
+        if (pageNumber < getMaxPage())
+        {
+            pageNumber++;
+        }
+    }
+
+    private void previousPage()
+    {
+        if (pageNumber > 1)
+        {
+            pageNumber--;
+        }
+    }
+    private void goTo(uint num)
+    {
+        if (0 < num && num <= getMaxPage())
+        {
+            pageNumber = num;
+        }
+    }
+}

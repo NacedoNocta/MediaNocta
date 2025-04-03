@@ -27,7 +27,8 @@ public class SimpleBlogController : ControllerBase
             "Summary " + index.ToString(),
             "Content " + index.ToString(),
             author,
-            null)
+            null,
+            imageUrl: "https://placehold.co/600x600")
         )
         .ToArray();
     }

@@ -1,4 +1,5 @@
-﻿<div class="bg-dark-subtle" role="navigation">
+﻿@using SharedLibrairy
+<div class="bg-dark-subtle" role="navigation">
     <div class="p-3">
         <div class="container">
             <div class="row align-items-center">
@@ -11,7 +12,7 @@
                         <h5 class="text-secondary mt-0">by Nacedo NOCTA</h5>
                     </div>
                     <div class="d-none d-lg-flex flex-column justify-content-end" style="min-height:3rem">
-                        <h6 class="text-body-tertiary m-0">Ambiance text that i can't be bothered to write now</h6>
+                        <h6 class="text-body-tertiary m-0">The Moon is the symbol of Secrets, of Intuition, and of the travel toward Truth.</h6>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 text-end d-none d-md-block">
@@ -38,13 +39,13 @@
                             <NavLink href="/" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.All">Homepage</NavLink>
                         </li>
                         <li class="nav-item pt-0">
-                            <NavLink href="/blog" class="mx-4 btn btn-outline-warning px-4 py-3" role="button" ActiveClass="bg-warning text-dark" Match="NavLinkMatch.Prefix">Blog and Articles</NavLink>
+                            <NavLink href="/blog" class="@($"mx-4 btn btn-outline-{TextKeys.blogThemeColor} px-4 py-3")" role="button" ActiveClass=@($"bg-{TextKeys.blogThemeColor}") Match="NavLinkMatch.Prefix">Blog and Articles</NavLink>
                         </li>
                         <li class="nav-item pt-0">
-                            <NavLink href="/tech" class="mx-4 btn btn-outline-info px-4 py-3" role="button" ActiveClass="bg-info" Match="NavLinkMatch.Prefix">Tech Projects</NavLink>
+                            <NavLink href="/tech" class="@($"mx-4 btn btn-outline-{TextKeys.techThemeColor} px-4 py-3")" role="button" ActiveClass=@($"bg-{TextKeys.techThemeColor}") Match="NavLinkMatch.Prefix">Tech Projects</NavLink>
                         </li>
                         <li class="nav-item pt-0">
-                            <NavLink href="/art" class="mx-4 btn btn-outline-success px-4 py-3" role="button" ActiveClass="bg-success" Match="NavLinkMatch.Prefix">Art projects</NavLink>
+                            <NavLink href="/art" class="@($"mx-4 btn btn-outline-{TextKeys.artThemeColor} px-4 py-3")" role="button" ActiveClass=@($"bg-{TextKeys.artThemeColor}")>Art projects</NavLink>
                         </li>
                         <li class="nav-item pt-0">
                             <NavLink href="/learn" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.Prefix">Learn & Act</NavLink>
@@ -61,3 +62,11 @@
         </nav>
     </div>
 </div>
+
+    <div class="my-3 mx-5 alert alert-warning alert-warning text-dark">
+        <h4 class="alert-heading">Work In Progress !</h4>
+        <p class="mb-0">The Media Nocta website is currently being rebuilt entirely from its last, outdated visuals and technologies, in favor of this one. Content is being transfered over time.
+            <br />
+            Please be patient !
+        </p>
+    </div>

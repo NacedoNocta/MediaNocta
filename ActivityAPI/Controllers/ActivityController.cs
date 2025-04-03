@@ -22,7 +22,9 @@ public class ActivityController : ControllerBase
             "Summary " + index.ToString(),
             "Content " + index.ToString(),
             author,
-            null)
+            null,
+            imageUrl: "https://placehold.co/600x400"
+            )
         )
         .ToArray();
         recent = [.. recent, new Art("Post 6", "Summary 6", "Content 6")];
@@ -40,9 +42,10 @@ public class ActivityController : ControllerBase
             "Summary " + index.ToString(),
             "Content " + index.ToString(),
             author,
-            null)
+            null,
+            imageUrl: "https://placehold.co/600x400"
         )
-        .ToArray();
+        ).ToArray();
     }
 
     [HttpGet(Name = "random")]

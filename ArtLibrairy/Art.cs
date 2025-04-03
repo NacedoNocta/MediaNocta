@@ -8,7 +8,7 @@ public sealed class Art : IActivity
 {
 
     [JsonIgnore]
-    public override string ThemeColor => "success";
+    public override string ThemeColor => TextKeys.artThemeColor;
 
     [JsonPropertyName("activityType")]
     public override string ActivityType => TextKeys.artTypeKey;

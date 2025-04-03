@@ -1,0 +1,24 @@
+﻿@using BlogLibrairy
+@using SharedLibrairy
+
+<div class="card card-horizontal border-1 border-@TextKeys.blogThemeColor mb-3 d-flex flex-row" style="height: 18rem;">
+    <img src="@post.ImageUrl" class="card-img border border-1 border-@TextKeys.blogThemeColor" alt="Card image" style="width: auto; object-fit: cover; aspect-ratio: 1 / 1; height: 100%;">
+    <div class="d-flex flex-column flex-grow-1">
+        <NavLink href=@($"/blog/{post.Id}/")><h3 class="card-header">@post.Title</h3></NavLink>
+        <div class="card-body mb-0 pb-0">
+            <h6 class="card-subtitle text-muted">By @post.Author.Name, in postCategory</h6>
+            <p class="card-text" style="height: 8rem; overflow: hidden;">
+                @post.Summary
+                </p>
+        </div>
+        <div class="card-body my-0 py-0">
+            <a href="#" class="card-link">Another link</a>
+        </div>
+        <div class="card-footer text-muted">Written on @post.CreatedAt.ToString()</div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Blog post { get; set; }
+}

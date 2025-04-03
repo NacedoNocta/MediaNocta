@@ -11,7 +11,7 @@ public sealed class Blog : IActivity
     public List<Tag> Tags { get; set; } = new();
 
     [JsonIgnore]
-    public override string ThemeColor => "warning";
+    public override string ThemeColor => TextKeys.blogThemeColor;
 
     [JsonPropertyName("author")]
     public Author Author { get; set; }

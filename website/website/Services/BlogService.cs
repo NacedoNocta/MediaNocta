@@ -12,10 +12,10 @@ namespace website.Services
         {
             this.httpClient = httpClient;
         }
-        public async Task<List<Blog>> GetPosts()
+        public async Task<List<Blog>> GetPostList(uint page)
         {
             List<Blog>? posts = null;
-            var response = await httpClient.GetAsync("/SimpleBlog");
+            var response = await httpClient.GetAsync("/SimpleBlogs");
             if (response.IsSuccessStatusCode)
             {
                 var options = new JsonSerializerOptions
@@ -27,6 +27,23 @@ namespace website.Services
             }
 
             return posts ?? new List<Blog>();
+        }
+
+        public async Task<uint> GetPostCount()
+        {
+            List<Blog>? posts = null;
+            var response = await httpClient.GetAsync("/SimpleBlogs");
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                posts = await response.Content.ReadFromJsonAsync(BlogLibrairyJsonContext.Default.ListBlog);
+            }
+
+            return 122;
         }
 
     }
