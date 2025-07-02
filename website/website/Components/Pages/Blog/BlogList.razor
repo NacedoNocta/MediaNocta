@@ -1,69 +1,183 @@
-﻿@page "/blog"
+@page "/blog"
+@using BlogLibrairy
+@using Humanizer
+@using website.Services
 @inject BlogService BlogService
+@inject ILogger<BlogList> Logger
+@inject NavigationManager Navigation
 @using SharedLibrairy
 @using website.Components.Components
-@using website.Services
-@using BlogLibrairy
-@rendermode InteractiveAuto
+@rendermode InteractiveServer
 
-    <div class="row justify-content-round">
+<PageTitle>Blog Posts</PageTitle>
 
-        <div class="col col-9">
-
-            @if (posts is null)
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            
+            @if (isLoading)
             {
-                <p>Loading...</p>
+                <div class="d-flex justify-content-center my-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
+            else if (hasError)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">Error Loading Posts</h4>
+                    <p>We encountered an issue while loading the blog posts. Please try again later.</p>
+                    <button class="btn btn-outline-danger" @onclick="@(() => LoadPostsAsync())">
+                        <i class="bi bi-arrow-clockwise"></i> Retry
+                    </button>
+                </div>
+            }
+            else if (!blogs.Any())
+            {
+                <div class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">No Posts Found</h4>
+                    <p>There are currently no blog posts to display.</p>
+                </div>
             }
             else
             {
-                foreach (var post in posts)
-                {
-                    <PostListItem post=post></PostListItem>
-                }
-
-            }
-
-        </div>
-
-        <div class="card border-@TextKeys.blogThemeColor col col-3 pt-3">
-            <div class="row">
-                <h3 class="mt-3">Search ?</h3>
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Name, Author, Tag, Summary..." aria-label="Search an article" aria-describedby="button-search">
-                <button class="btn btn-@TextKeys.blogThemeColor" type="button" id="button-search">Search</button>
+                <!-- Blog Posts List -->
+                <div class="row">
+                    @foreach (var blog in blogs)
+                    {
+                        <BlogListItem blog="@blog" />
+                    }
                 </div>
-            <hr class="my-4 border border-1 border-@TextKeys.blogThemeColor">
 
-                <h3 class="px-3">Categories</h3>
-                <ul class="list-group m-1">
-                    <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
-                        CatName
-                    <span class="badge bg-@TextKeys.blogThemeColor rounded-pill">99</span>
-                    </li>
-                </ul>
-            <hr class="mt-3 border border-1 border-@TextKeys.blogThemeColor">
-                <h3 class="px-3">Tags</h3>
-                <ul class="list-group m-1">
-                    <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
-                        TagName
-                    <span class="badge bg-@TextKeys.blogThemeColor rounded-pill">99</span>
-                    </li>
-                </ul>
-            </div>
+                <!-- Pagination Controls -->
+                @if (totalPages > 1)
+                {
+                    <nav aria-label="Blog pagination" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <!-- Previous Page -->
+                            <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                                <button class="page-link" @onclick="@(() => GoToPageAsync(currentPage - 1))" disabled="@(currentPage <= 1)">
+                                    <i class="bi bi-chevron-left"></i> Previous
+                                </button>
+                            </li>
+
+                            <!-- First Page -->
+                            @if (currentPage > 3)
+                            {
+                                <li class="page-item">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(1))">1</button>
+                                </li>
+                                @if (currentPage > 4)
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                }
+                            }
+
+                            <!-- Page Numbers -->
+                            @{
+                                var startPage = Math.Max(1, (int)currentPage - 2);
+                                var endPage = Math.Min((int)totalPages, (int)currentPage + 2);
+                            }
+                            @for (int page = startPage; page <= endPage; page++)
+                            {
+                                var pageNumber = (uint)page;
+                                <li class="page-item @(pageNumber == currentPage ? "active" : "")">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(pageNumber))">
+                                        @(page)
+                                    </button>
+                                </li>
+                            }
+
+                            <!-- Last Page -->
+                            @if (currentPage < totalPages - 2)
+                            {
+                                @if (currentPage < totalPages - 3)
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                }
+                                <li class="page-item">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(totalPages))">@totalPages</button>
+                                </li>
+                            }
+
+                            <!-- Next Page -->
+                            <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                                <button class="page-link" @onclick="@(() => GoToPageAsync(currentPage + 1))" disabled="@(currentPage >= totalPages)">
+                                    Next <i class="bi bi-chevron-right"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <!-- Page Info -->
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            Page @currentPage of @totalPages (@totalPosts total posts)
+                        </small>
+                    </div>
+                }
+            }
         </div>
     </div>
-
+</div>
 
 @code {
-    private List<Blog>? posts;
-    private uint pageNumber = 5;
-    private uint postCountTotal = 1;
+    private List<Blog> blogs = new();
+    private uint currentPage = 1;
+    private uint pageSize = 9; // 3x3 grid layout
+    private uint totalPosts = 0;
+    private uint totalPages = 0;
+    private bool isLoading = true;
+    private bool hasError = false;
 
     protected override async Task OnInitializedAsync()
     {
-        posts = await BlogService.GetPostList(pageNumber);
-        postCountTotal = await BlogService.GetPostCount();
+        await LoadPostsAsync();
     }
 
+    private async Task LoadPostsAsync()
+    {
+        try
+        {
+            isLoading = true;
+            hasError = false;
+            StateHasChanged();
 
+            // Get total count first
+            totalPosts = await BlogService.GetPostCountAsync();
+            totalPages = totalPosts > 0 ? (uint)Math.Ceiling((double)totalPosts / pageSize) : 0;
+
+            // Get posts for current page
+            blogs = await BlogService.GetPostListAsync(currentPage, pageSize);
+
+            Logger.LogInformation("Loaded {PostCount} posts for page {Page}", blogs.Count, currentPage);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading blog posts");
+            hasError = true;
+            blogs = new List<Blog>();
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task GoToPageAsync(uint page)
+    {
+        if (page < 1 || page > totalPages || page == currentPage)
+            return;
+
+        currentPage = page;
+        await LoadPostsAsync();
+        Navigation.NavigateTo($"{Navigation.Uri.Split('#')[0]}#contentTop", forceLoad:false);
+    }
+    
 }

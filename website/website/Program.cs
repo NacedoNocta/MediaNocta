@@ -10,16 +10,21 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
+// Single Gateway endpoint for all API services
+var gatewayUrl = builder.Configuration["GatewayEndpoint"] ?? throw new InvalidOperationException("GatewayEndpoint is not set");
+
+// Configure service-specific clients with proper API paths
 builder.Services.AddHttpClient<BlogService>(c =>
 {
-    var url = builder.Configuration["BlogEndpoint"] ?? throw new InvalidOperationException("BlogEndpoint is not set");
-    c.BaseAddress = new(url);
+    c.BaseAddress = new Uri($"{gatewayUrl}/api/blog/");
 });
+
 builder.Services.AddHttpClient<ActivityService>(c =>
 {
-    var url = builder.Configuration["ActivityEndpoint"] ?? throw new InvalidOperationException("ActivityEndpoint is not set");
-    c.BaseAddress = new(url);
+    c.BaseAddress = new Uri($"{gatewayUrl}/api/activity/");
 });
+
+builder.Services.AddScoped<IBlogDataService, BlogDataService>();
 
 var app = builder.Build();
 

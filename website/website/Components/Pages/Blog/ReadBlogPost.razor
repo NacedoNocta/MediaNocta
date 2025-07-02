@@ -1,47 +1,80 @@
 ﻿@page "/blog/{blogid}/"
 @using BlogLibrairy
+@using Humanizer
+@using website.Services
+@inject BlogService BlogService
+@inject ILogger<ReadBlogPost> Logger
 
-<div class="row justify-content-center my-5 mx-3">
-    <a class="text-decoration-none" href="">
-        &lAarr; Return to articles
-    </a>
-    <div class="col col-9 mt-4">
-        <h1>
-
-            postCategory : 
-            @post.Title
-        </h1>
-        <p>
-            By <a href="">@post.Author.Name</a>, @post.CreatedAt.ToString()
-        </p>
-
-
-        <hr class="my-4">
-
-        <p>
-            @post.Content
-        </p>
-
-
-        <hr class="my-4">
-        Additionnal links : <br>
-        <a href="">Link</a>
-    </div>
-    <div class="vr p-0"></div>
-    <div class="col-3">
-
-        <div class="card border-info my-4">
-            <a href=""><div class="card-header">About the author...</div></a>
-            <div class="card-body">
-                <div class="clearfix">
-                    <div class="bg-light float-end ms-3" style="width: 12rem; height: 12rem"></div>
-                    <a href=""><h4 class="card-title">@post.Author.Name</h4></a>
-                    <hr>
-                    <p>@post.Author.Biography</p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <a class="text-decoration-none mb-4 d-inline-block" href="/blog">
+                &lAarr; Return to articles
+            </a>
+            
+            @if (isLoading)
+            {
+                <div class="d-flex justify-content-center my-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
                 </div>
-            </div>
-        </div>
+            }
+            else if (hasError || post == null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">Blog Post Not Found</h4>
+                    <p>We couldn't find the blog post you're looking for. It may have been removed or the link is incorrect.</p>
+                    <a href="/blog" class="btn btn-outline-danger">Return to Blog List</a>
+                </div>
+            }
+            else
+            {
+                <article>
+                    <header class="mb-4">
+                        <h1 class="display-5 fw-bold">@post.Title</h1>
+                        <p class="text-muted">
+                            By <a href="" class="text-decoration-none">@post.Author.Name</a>, @post.CreatedAt.ToString("g")
+                        </p>
+                    </header>
 
+                    <hr class="my-4">
+
+                    <div class="content">
+                        <p>@post.Content</p>
+                    </div>
+
+                    <hr class="my-4">
+                    
+                    <div class="additional-links mb-4">
+                        <strong>Additional links:</strong><br>
+                        <a href="" class="text-decoration-none">Link</a>
+                    </div>
+                </article>
+
+                <!-- About the Author Section - Moved to bottom -->
+                <section class="author-section mt-5">
+                    <div class="card border-info">
+                        <div class="card-header bg-info text-white">
+                            <h4 class="mb-0">About the Author</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-center mb-3 mb-md-0">
+                                    <div class="bg-light rounded" style="width: 150px; height: 150px; margin: 0 auto;"></div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h5 class="card-title">
+                                        <a href="" class="text-decoration-none">@post.Author.Name</a>
+                                    </h5>
+                                    <p class="card-text">@post.Author.Biography</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            }
+        </div>
     </div>
 </div>
 
@@ -49,7 +82,43 @@
     [Parameter]
     public string blogid { get; set; }
 
-    private Blog post => new("Title", "Summary", "Content", 
-                                new Author("AuthName", biography: "osefosef", imageUrl:"https://placehold.co/500x500"), 
-                                imageUrl: "https://placehold.co/400x600");
+    private Blog? post = null;
+    private bool isLoading = true;
+    private bool hasError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBlogPostAsync();
+    }
+
+    private async Task LoadBlogPostAsync()
+    {
+        try
+        {
+            isLoading = true;
+            hasError = false;
+            StateHasChanged();
+
+            if (Guid.TryParse(blogid, out var blogGuid))
+            {
+                post = await BlogService.GetPostByIdAsync(blogGuid);
+                Logger.LogInformation("Loaded blog post with ID {BlogId}", blogGuid);
+            }
+            else
+            {
+                Logger.LogWarning("Invalid blog ID format: {BlogId}", blogid);
+                hasError = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading blog post with ID {BlogId}", blogid);
+            hasError = true;
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
 }

@@ -3,7 +3,11 @@ using System.Text.Json.Serialization;
 
 namespace SharedLibrairy
 {
-    public abstract class IActivity
+    /// <summary>
+    /// An activity, a broad element used to define all blogs posts, tech content, art content, etc. in a generic,
+    /// undifferentiated form. 
+    /// </summary>
+    public abstract class Activity
     {
         [JsonPropertyName("id")]
         public Guid Id { get; init; } = Guid.NewGuid();
@@ -41,7 +45,7 @@ namespace SharedLibrairy
         [JsonIgnore]
         public abstract string ThemeColor { get; }
 
-        protected IActivity(string title, string summary, string content, string? imageUrl = null, List<string>? links = null)
+        protected Activity(string title, string summary, string content, string? imageUrl = null, List<string>? links = null)
         {
             Title = title;
             Summary = summary;
@@ -54,7 +58,7 @@ namespace SharedLibrairy
         }
 
         public string ToJson()
-            => JsonSerializer.Serialize(this, SharedLibrairyJsonContext.Default.IActivity);
+            => JsonSerializer.Serialize(this, SharedLibrairyJsonContext.Default.Activity);
     }
 }
 

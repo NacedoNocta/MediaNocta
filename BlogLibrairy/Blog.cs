@@ -1,10 +1,11 @@
-﻿using SharedLibrairy;
+﻿using BlogLibrairy.Interfaces;
+using SharedLibrairy;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace BlogLibrairy;
 
-public sealed class Blog : IActivity
+public sealed class Blog : Activity, IBlog
 {
 
     [JsonPropertyName("tags")]

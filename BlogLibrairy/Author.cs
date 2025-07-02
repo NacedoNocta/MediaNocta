@@ -1,9 +1,10 @@
-﻿using System.Text.Json;
+﻿using BlogLibrairy.Interfaces;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace BlogLibrairy
 {
-    public sealed class Author
+    public sealed class Author : IAuthor
     {
         [JsonPropertyName("id")]
         public Guid Id { get; init; } = Guid.NewGuid();

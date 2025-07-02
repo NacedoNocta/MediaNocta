@@ -1,50 +1,101 @@
 ﻿using BlogLibrairy;
+using Microsoft.Extensions.Logging;
+using System.Net.Http.Json;
 using System.Text.Json;
 
 
 namespace website.Services
 {
-    public class BlogService
+    public interface IBlogService
     {
+        Task<List<Blog>> GetPostListAsync(uint page, uint pageSize = 10);
+        Task<uint> GetPostCountAsync();
+        Task<Blog?> GetPostByIdAsync(Guid id);
+    }
 
-        HttpClient httpClient;
-        public BlogService(HttpClient httpClient)
+    public class BlogService : IBlogService
+    {
+        private readonly HttpClient _httpClient;
+        private readonly ILogger<BlogService> _logger;
+        private const string ApiEndpoint = "SimpleBlogs";
+
+        public BlogService(HttpClient httpClient, ILogger<BlogService> logger)
         {
-            this.httpClient = httpClient;
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-        public async Task<List<Blog>> GetPostList(uint page)
+
+        public async Task<List<Blog>> GetPostListAsync(uint page, uint pageSize = 10)
         {
-            List<Blog>? posts = null;
-            var response = await httpClient.GetAsync("/SimpleBlogs");
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
+                _logger.LogInformation("Fetching blog posts for page {Page} with page size {PageSize}", page, pageSize);
 
-                posts = await response.Content.ReadFromJsonAsync(BlogLibrairyJsonContext.Default.ListBlog);
+                var response = await _httpClient.GetAsync($"{ApiEndpoint}?page={page}&pageSize={pageSize}");
+                response.EnsureSuccessStatusCode();
+
+                var posts = await response.Content.ReadFromJsonAsync(BlogLibrairyJsonContext.Default.ListBlog);
+                return posts ?? new List<Blog>();
             }
-
-            return posts ?? new List<Blog>();
-        }
-
-        public async Task<uint> GetPostCount()
-        {
-            List<Blog>? posts = null;
-            var response = await httpClient.GetAsync("/SimpleBlogs");
-            if (response.IsSuccessStatusCode)
+            catch (HttpRequestException ex)
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
-
-                posts = await response.Content.ReadFromJsonAsync(BlogLibrairyJsonContext.Default.ListBlog);
+                _logger.LogError(ex, "Failed to retrieve blog posts for page {Page}", page);
+                return new List<Blog>();
             }
-
-            return 122;
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "Failed to deserialize blog posts response");
+                return new List<Blog>();
+            }
         }
 
+        public async Task<uint> GetPostCountAsync()
+        {
+            try
+            {
+                _logger.LogInformation("Fetching total blog post count");
+
+                var response = await _httpClient.GetAsync($"{ApiEndpoint}/count");
+                
+                response.EnsureSuccessStatusCode();
+
+                var count = await response.Content.ReadFromJsonAsync<uint>();
+                return count;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Failed to retrieve blog post count");
+                return 0;
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "Failed to deserialize blog post count response");
+                return 0;
+            }
+        }
+
+        public async Task<Blog?> GetPostByIdAsync(Guid id)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching blog post with ID {Id}", id);
+
+                var response = await _httpClient.GetAsync($"{ApiEndpoint}/{id}");
+                response.EnsureSuccessStatusCode();
+
+                var post = await response.Content.ReadFromJsonAsync(BlogLibrairyJsonContext.Default.Blog);
+                return post;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Failed to retrieve blog post with ID {Id}", id);
+                return null;
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "Failed to deserialize blog post response");
+                return null;
+            }
+        }
     }
 }

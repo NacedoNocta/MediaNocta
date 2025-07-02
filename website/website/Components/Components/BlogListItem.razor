@@ -1,0 +1,35 @@
+@using BlogLibrairy.Interfaces
+@using Humanizer
+@using SharedLibrairy
+@inject NavigationManager Navigation
+
+<div class="col-12 col-md-6 col-lg-4 mb-3">
+    <div class="card border-@TextKeys.blogThemeColor h-100" style="cursor: pointer;" @onclick="@(() => NavigateToBlog(blog.Id))">
+        <img src="@blog.ImageUrl" class="card-img border border-1 border-@TextKeys.blogThemeColor" alt="Card image" style="width: auto; object-fit: cover; aspect-ratio: 2 / 1; height: 100%;">
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title ">@blog.Title</h5>
+            <h6 class="card-subtitle text-muted">By @blog.Author.Name, in postCategory</h6>
+            <p class="card-text mt-3 flex-grow-1 text-primary-emphasis">
+                @if (blog.Content?.Length > 150)
+                {
+                    @blog.Content.Truncate(150)
+                }
+                else
+                {
+                    @blog.Content
+                }
+            </p>
+            <div class="card-footer text-muted mt-auto ps-0 pb-0">@blog.CreatedAt.Humanize().Transform(To.SentenceCase)</div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public IBlog blog { get; set; }
+    
+    private void NavigateToBlog(Guid blogId)
+    {
+        Navigation.NavigateTo($"/blog/{blogId}/");
+    }
+}

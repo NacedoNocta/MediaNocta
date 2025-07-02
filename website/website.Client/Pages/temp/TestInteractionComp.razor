@@ -1,0 +1,20 @@
+<div class="@_alertCss m-2">
+    @_alertText
+</div>
+
+@code {
+    private bool _rendered;
+    private string _alertCss => _rendered ? "alert alert-success" : "alert alert-danger";
+    private string _alertText => _rendered ? "Interactively Rendered" : "Statically Rendered";
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _rendered = true;
+            // We Shouldn't really do this but we need to display the result of the component mutation
+            // OnAfterRender should only normally be used for JSInterop code
+            this.StateHasChanged();
+        }
+    }
+}

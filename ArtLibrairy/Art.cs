@@ -1,10 +1,12 @@
 ﻿using SharedLibrairy;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ArtLibrairy.Interfaces;
+using SharedLibrairy.Interfaces;
 
 namespace ArtLibrairy;
 
-public sealed class Art : IActivity
+public sealed class Art : Activity, IArt
 {
 
     [JsonIgnore]

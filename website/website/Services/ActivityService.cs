@@ -1,4 +1,5 @@
 ﻿using SharedLibrairy;
+using SharedLibrairy.Interfaces;
 using website.Utils;
 
 namespace website.Services
@@ -13,7 +14,7 @@ namespace website.Services
         public async Task<List<IActivity>> GetRecent()
         {
             List<IActivity>? recent = null;
-            var response = await httpClient.GetAsync("/recent");
+            var response = await httpClient.GetAsync("recent");
             if (response.IsSuccessStatusCode)
             {
                 recent = await ActivityJsonReader.ReadActivitiesAsync(response.Content);
@@ -24,7 +25,7 @@ namespace website.Services
         public async Task<List<IActivity>> GetPinned()
         {
             List<IActivity>? pinned = null;
-            var response = await httpClient.GetAsync("/pinned");
+            var response = await httpClient.GetAsync("pinned");
             if (response.IsSuccessStatusCode)
             {
                 pinned = await ActivityJsonReader.ReadActivitiesAsync(response.Content);
