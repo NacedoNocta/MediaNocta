@@ -1,4 +1,6 @@
-namespace BlogLibrairy.Interfaces;
+using BlogLibrairy.Interfaces;
+
+namespace BlogApi.Interfaces;
 
 public interface IAuthorRepository
 {

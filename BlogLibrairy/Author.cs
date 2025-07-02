@@ -25,6 +25,11 @@ namespace BlogLibrairy
             ImageUrl = imageUrl;
         }
 
+        public Author()
+        {
+            Name = string.Empty;
+        }
+
         public static Author? FromJson(string json)
             => JsonSerializer.Deserialize(json, BlogLibrairyJsonContext.Default.Author);
 

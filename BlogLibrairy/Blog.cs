@@ -30,6 +30,11 @@ public sealed class Blog : Activity, IBlog
         }
     }
 
+    public Blog() : base("", "", "")
+    {
+        Author = new Author("");
+    }
+
     public static Blog? FromJson(string json)
         => JsonSerializer.Deserialize(json, BlogLibrairyJsonContext.Default.Blog);
 

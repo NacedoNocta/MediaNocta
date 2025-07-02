@@ -57,6 +57,13 @@ namespace SharedLibrairy
             }
         }
 
+        protected Activity()
+        {
+            Title = string.Empty;
+            Summary = string.Empty;
+            Content = string.Empty;
+        }
+
         public string ToJson()
             => JsonSerializer.Serialize(this, SharedLibrairyJsonContext.Default.Activity);
     }

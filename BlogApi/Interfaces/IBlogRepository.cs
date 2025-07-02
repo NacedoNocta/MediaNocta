@@ -1,6 +1,6 @@
-using SharedLibrairy;
+using BlogLibrairy.Interfaces;
 
-namespace BlogLibrairy.Interfaces;
+namespace BlogApi.Interfaces;
 
 public interface IBlogRepository
 {

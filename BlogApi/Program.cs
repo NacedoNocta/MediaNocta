@@ -2,15 +2,24 @@ using BlogApi.Interfaces;
 using BlogApi.Services;
 using BlogLibrairy.Interfaces;
 using BlogAPI.Repositories;
+using DatabaseManager;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
+// Add Entity Framework
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseNpgsql(connectionString);
+});
+
 // Add services to the container.
-builder.Services.AddScoped<IBlogRepository, InMemoryBlogRepository>();
-builder.Services.AddScoped<IAuthorRepository, InMemoryAuthorRepository>();
-builder.Services.AddScoped<ITagRepository, InMemoryTagRepository>();
+builder.Services.AddScoped<IBlogRepository, EfBlogRepository>();
+builder.Services.AddScoped<IAuthorRepository, EfAuthorRepository>();
+builder.Services.AddScoped<ITagRepository, EfTagRepository>();
 builder.Services.AddScoped<IBlogService, BlogService>();
 
 builder.Services.AddControllers();
