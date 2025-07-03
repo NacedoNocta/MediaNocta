@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BlogLibrairy;
+namespace BlogLibrary;
 
 [JsonSourceGenerationOptions(WriteIndented = true, PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(Author))]
@@ -8,4 +8,4 @@ namespace BlogLibrairy;
 [JsonSerializable(typeof(Blog))]
 [JsonSerializable(typeof(Tag))]
 [JsonSerializable(typeof(List<Blog>))]
-public partial class BlogLibrairyJsonContext : JsonSerializerContext;
+public partial class BlogLibraryJsonContext : JsonSerializerContext;

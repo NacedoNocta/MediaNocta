@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BlogLibrairy\BlogLibrairy.csproj" />
+    <ProjectReference Include="..\BlogLibrary\BlogLibrary.csproj" />
     <ProjectReference Include="..\DatabaseManager\DatabaseManager.csproj" />
     <ProjectReference Include="..\medianocta.ServiceDefaults\medianocta.ServiceDefaults.csproj" />
   </ItemGroup>

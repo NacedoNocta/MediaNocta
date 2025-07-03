@@ -1,10 +1,10 @@
-﻿using BlogLibrairy;
+﻿using BlogLibrary;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 using System.Text.Json;
 
 
-namespace website.Services
+namespace Website.Services
 {
     public interface IBlogService
     {
@@ -34,7 +34,7 @@ namespace website.Services
                 var response = await _httpClient.GetAsync($"{ApiEndpoint}?page={page}&pageSize={pageSize}");
                 response.EnsureSuccessStatusCode();
 
-                var posts = await response.Content.ReadFromJsonAsync(BlogLibrairyJsonContext.Default.ListBlog);
+                var posts = await response.Content.ReadFromJsonAsync(BlogLibraryJsonContext.Default.ListBlog);
                 return posts ?? new List<Blog>();
             }
             catch (HttpRequestException ex)
@@ -83,7 +83,7 @@ namespace website.Services
                 var response = await _httpClient.GetAsync($"{ApiEndpoint}/{id}");
                 response.EnsureSuccessStatusCode();
 
-                var post = await response.Content.ReadFromJsonAsync(BlogLibrairyJsonContext.Default.Blog);
+                var post = await response.Content.ReadFromJsonAsync(BlogLibraryJsonContext.Default.Blog);
                 return post;
             }
             catch (HttpRequestException ex)

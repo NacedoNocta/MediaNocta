@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace YARPConfigLibrairy
+namespace YarpConfigLibrary
 {
     [Table("yarp_routes")]
     [Index(nameof(route_id), IsUnique = true)]

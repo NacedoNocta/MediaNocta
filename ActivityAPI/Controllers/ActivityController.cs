@@ -1,7 +1,7 @@
-﻿using ArtLibrairy;
-using BlogLibrairy;
+﻿using ArtLibrary;
+using BlogLibrary;
 using Microsoft.AspNetCore.Mvc;
-using SharedLibrairy;
+using SharedLibrary;
 
 namespace ActivityAPI.Controllers;
 

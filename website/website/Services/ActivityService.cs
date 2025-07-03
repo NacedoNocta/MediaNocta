@@ -1,8 +1,8 @@
-﻿using SharedLibrairy;
-using SharedLibrairy.Interfaces;
-using website.Utils;
+﻿using SharedLibrary;
+using SharedLibrary.Interfaces;
+using Website.Utils;
 
-namespace website.Services
+namespace Website.Services
 {
     public class ActivityService
     {

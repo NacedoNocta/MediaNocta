@@ -1,6 +1,6 @@
 using BlogApi.Interfaces;
 using BlogApi.Services;
-using BlogLibrairy.Interfaces;
+using BlogLibrary.Interfaces;
 using BlogAPI.Repositories;
 using DatabaseManager;
 using Microsoft.EntityFrameworkCore;

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace SharedLibrairy
+namespace SharedLibrary
 {
     /// <summary>
     /// An activity, a broad element used to define all blogs posts, tech content, art content, etc. in a generic,
@@ -65,7 +65,7 @@ namespace SharedLibrairy
         }
 
         public string ToJson()
-            => JsonSerializer.Serialize(this, SharedLibrairyJsonContext.Default.Activity);
+            => JsonSerializer.Serialize(this, SharedLibraryJsonContext.Default.Activity);
     }
 }
 

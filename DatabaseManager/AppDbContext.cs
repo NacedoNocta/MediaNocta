@@ -1,4 +1,4 @@
-﻿using BlogLibrairy;
+﻿using BlogLibrary;
 using DatabaseManager.Configurations;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,12 +1,12 @@
-﻿using SharedLibrairy;
+﻿using SharedLibrary;
 using System.Text.Json;
-using ArtLibrairy;
-using ArtLibrairy.Interfaces;
-using BlogLibrairy;
-using BlogLibrairy.Interfaces;
-using SharedLibrairy.Interfaces;
+using ArtLibrary;
+using ArtLibrary.Interfaces;
+using BlogLibrary;
+using BlogLibrary.Interfaces;
+using SharedLibrary.Interfaces;
 
-namespace website.Utils
+namespace Website.Utils
 {
     public static class ActivityJsonReader
     {

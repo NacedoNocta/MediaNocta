@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace website.Services;
+namespace Website.Services;
 
 public interface IPaginatedDataService<TItem>
 {
@@ -10,7 +10,7 @@ public interface IPaginatedDataService<TItem>
 }
 
 // Example implementation for your Blog entities
-public interface IBlogDataService : IPaginatedDataService<BlogLibrairy.Blog>
+public interface IBlogDataService : IPaginatedDataService<BlogLibrary.Blog>
 {
     // Add any blog-specific methods here
 }
@@ -25,7 +25,7 @@ public class BlogDataService : IBlogDataService
         // Initialize dependencies
     }
 
-    public async Task<List<BlogLibrairy.Blog>> LoadItemsAsync(uint page, uint pageSize)
+    public async Task<List<BlogLibrary.Blog>> LoadItemsAsync(uint page, uint pageSize)
     {
         // Your data loading logic here
         // Example:
@@ -34,7 +34,7 @@ public class BlogDataService : IBlogDataService
         
         // Placeholder implementation
         await Task.Delay(100); // Simulate async work
-        return new List<BlogLibrairy.Blog>();
+        return new List<BlogLibrary.Blog>();
     }
 
     public async Task<uint> GetTotalItemsAsync()

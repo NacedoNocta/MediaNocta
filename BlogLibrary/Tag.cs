@@ -1,10 +1,10 @@
-﻿using BlogLibrairy.Interfaces;
+﻿using BlogLibrary.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace BlogLibrairy
+namespace BlogLibrary
 {
 
     [Table("Tags")]
@@ -26,9 +26,9 @@ namespace BlogLibrairy
         }
 
         public static Tag? FromJson(string json)
-            => JsonSerializer.Deserialize(json, BlogLibrairyJsonContext.Default.Tag);
+            => JsonSerializer.Deserialize(json, BlogLibraryJsonContext.Default.Tag);
 
         public string ToJson()
-            => JsonSerializer.Serialize(this, BlogLibrairyJsonContext.Default.Tag);
+            => JsonSerializer.Serialize(this, BlogLibraryJsonContext.Default.Tag);
     }
 }

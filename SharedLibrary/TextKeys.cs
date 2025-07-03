@@ -1,4 +1,4 @@
-﻿namespace SharedLibrairy
+﻿namespace SharedLibrary
 {
     public static class TextKeys
     {

@@ -1,9 +1,9 @@
-﻿using BlogLibrairy.Interfaces;
-using SharedLibrairy;
+﻿using BlogLibrary.Interfaces;
+using SharedLibrary;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace BlogLibrairy;
+namespace BlogLibrary;
 
 public sealed class Blog : Activity, IBlog
 {
@@ -36,8 +36,8 @@ public sealed class Blog : Activity, IBlog
     }
 
     public static Blog? FromJson(string json)
-        => JsonSerializer.Deserialize(json, BlogLibrairyJsonContext.Default.Blog);
+        => JsonSerializer.Deserialize(json, BlogLibraryJsonContext.Default.Blog);
 
     public new string ToJson()
-        => JsonSerializer.Serialize(this, BlogLibrairyJsonContext.Default.Blog);
+        => JsonSerializer.Serialize(this, BlogLibraryJsonContext.Default.Blog);
 }

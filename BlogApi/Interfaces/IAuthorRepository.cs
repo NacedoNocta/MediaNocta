@@ -1,4 +1,4 @@
-using BlogLibrairy.Interfaces;
+using BlogLibrary.Interfaces;
 
 namespace BlogApi.Interfaces;
 

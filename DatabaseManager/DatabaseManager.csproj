@@ -26,9 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ArtLibrairy\ArtLibrairy.csproj" />
-    <ProjectReference Include="..\BlogLibrairy\BlogLibrairy.csproj" />
+    <ProjectReference Include="..\ArtLibrary\ArtLibrary.csproj" />
+    <ProjectReference Include="..\BlogLibrary\BlogLibrary.csproj" />
     <ProjectReference Include="..\medianocta.ServiceDefaults\medianocta.ServiceDefaults.csproj" />
-    <ProjectReference Include="..\SharedLibrairy\SharedLibrairy.csproj" />
+    <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj" />
   </ItemGroup>
 </Project>

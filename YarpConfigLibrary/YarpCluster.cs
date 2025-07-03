@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace YARPConfigLibrairy
+namespace YarpConfigLibrary
 {
     [Table("yarp_clusters")]
     [Index(nameof(cluster_id), IsUnique = true)]

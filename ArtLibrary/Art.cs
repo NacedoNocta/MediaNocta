@@ -1,10 +1,10 @@
-﻿using SharedLibrairy;
+﻿using SharedLibrary;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using ArtLibrairy.Interfaces;
-using SharedLibrairy.Interfaces;
+using ArtLibrary.Interfaces;
+using SharedLibrary.Interfaces;
 
-namespace ArtLibrairy;
+namespace ArtLibrary;
 
 public sealed class Art : Activity, IArt
 {
@@ -22,8 +22,8 @@ public sealed class Art : Activity, IArt
     }
 
     public static Art? FromJson(string json)
-        => JsonSerializer.Deserialize(json, ArtLibrairyJsonContext.Default.Art);
+        => JsonSerializer.Deserialize(json, ArtLibraryJsonContext.Default.Art);
 
     public new string ToJson()
-        => JsonSerializer.Serialize(this, ArtLibrairyJsonContext.Default.Art);
+        => JsonSerializer.Serialize(this, ArtLibraryJsonContext.Default.Art);
 }

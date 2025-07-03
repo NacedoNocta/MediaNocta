@@ -28,7 +28,7 @@ var apiGatewayProject = builder.AddProject<Projects.APIGateway>("gateway")
     .WithExternalHttpEndpoints();
 
 // Main Website
-var website = builder.AddProject<Projects.website>("website")
+var website = builder.AddProject<Projects.Website>("website")
     .WithReference(apiGatewayProject)
     .WaitFor(apiGatewayProject)
     .WithExternalHttpEndpoints();

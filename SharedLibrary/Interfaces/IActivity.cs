@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace SharedLibrairy.Interfaces
+namespace SharedLibrary.Interfaces
 {
     public interface IActivity
     {

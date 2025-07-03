@@ -1,6 +1,6 @@
-using SharedLibrairy.Interfaces;
+using SharedLibrary.Interfaces;
 
-namespace BlogLibrairy.Interfaces;
+namespace BlogLibrary.Interfaces;
 
 public interface IBlog : IActivity
 {

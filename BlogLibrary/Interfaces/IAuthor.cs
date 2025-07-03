@@ -1,4 +1,4 @@
-namespace BlogLibrairy.Interfaces;
+namespace BlogLibrary.Interfaces;
 
 public interface IAuthor
 {

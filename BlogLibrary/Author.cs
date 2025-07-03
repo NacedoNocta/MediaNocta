@@ -1,8 +1,8 @@
-﻿using BlogLibrairy.Interfaces;
+﻿using BlogLibrary.Interfaces;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace BlogLibrairy
+namespace BlogLibrary
 {
     public sealed class Author : IAuthor
     {
@@ -31,9 +31,9 @@ namespace BlogLibrairy
         }
 
         public static Author? FromJson(string json)
-            => JsonSerializer.Deserialize(json, BlogLibrairyJsonContext.Default.Author);
+            => JsonSerializer.Deserialize(json, BlogLibraryJsonContext.Default.Author);
 
         public string ToJson()
-            => JsonSerializer.Serialize(this, BlogLibrairyJsonContext.Default.Author);
+            => JsonSerializer.Serialize(this, BlogLibraryJsonContext.Default.Author);
     }
 }
