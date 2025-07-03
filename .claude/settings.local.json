@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(docker run:*)"
+      "Bash(docker run:*)",
+      "Bash(dotnet build:*)",
+      "Bash(find:*)",
+      "Bash(rg:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

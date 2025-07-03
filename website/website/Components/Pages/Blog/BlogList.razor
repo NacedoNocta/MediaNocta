@@ -1,15 +1,12 @@
 @page "/blog"
 @using BlogLibrairy
-@using Humanizer
 @using website.Services
 @inject BlogService BlogService
 @inject ILogger<BlogList> Logger
 @inject NavigationManager Navigation
-@using SharedLibrairy
-@using website.Components.Components
+@using website.Components.Components.Blog
 @rendermode InteractiveServer
 
-<PageTitle>Blog Posts</PageTitle>
 
 <div class="container-fluid">
     <div class="row">

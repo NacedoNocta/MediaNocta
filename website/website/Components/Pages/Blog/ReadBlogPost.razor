@@ -1,13 +1,14 @@
 ﻿@page "/blog/{blogid}/"
 @using BlogLibrairy
-@using Humanizer
 @using website.Services
 @inject BlogService BlogService
 @inject ILogger<ReadBlogPost> Logger
 
-<div class="container">
+@layout Layout.NoNavBarLayout
+
+<div class="container-fluid">
     <div class="row justify-content-center">
-        <div class="col-12">
+        <div class="row col-12 justify-content-center">
             <a class="text-decoration-none mb-4 d-inline-block" href="/blog">
                 &lAarr; Return to articles
             </a>
@@ -30,8 +31,8 @@
             }
             else
             {
-                <article>
-                    <header class="mb-4">
+                <article class="col-10">
+                    <header class="mb-4 text-center">
                         <h1 class="display-5 fw-bold">@post.Title</h1>
                         <p class="text-muted">
                             By <a href="" class="text-decoration-none">@post.Author.Name</a>, @post.CreatedAt.ToString("g")

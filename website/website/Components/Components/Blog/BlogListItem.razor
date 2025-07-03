@@ -10,14 +10,7 @@
             <h5 class="card-title ">@blog.Title</h5>
             <h6 class="card-subtitle text-muted">By @blog.Author.Name, in postCategory</h6>
             <p class="card-text mt-3 flex-grow-1 text-primary-emphasis">
-                @if (blog.Content?.Length > 150)
-                {
-                    @blog.Content.Truncate(150)
-                }
-                else
-                {
-                    @blog.Content
-                }
+                    @blog.Summary.Truncate(150)
             </p>
             <div class="card-footer text-muted mt-auto ps-0 pb-0">@blog.CreatedAt.Humanize().Transform(To.SentenceCase)</div>
         </div>
