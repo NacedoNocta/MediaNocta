@@ -1,4 +1,5 @@
-﻿version: '3.8'
+﻿# For manually installing the DB
+version: '3.8'
 
 services:
   postgres:

@@ -1,13 +1,23 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
+// PostgreSQL Database
+var postgres = builder.AddPostgres("postgres")
+    .WithDataVolume()
+    .WithPgAdmin();
+
+var postgresDb = postgres.AddDatabase("medianocta");
+
 // Database Manager
-var databaseManager = builder.AddProject<Projects.DatabaseManager>("databasemanager");
+var databaseManager = builder.AddProject<Projects.DatabaseManager>("databasemanager")
+    .WithReference(postgresDb);
 
 // Blog Api
-var blogApiProject = builder.AddProject<Projects.BlogApi>("blogapi");
+var blogApiProject = builder.AddProject<Projects.BlogApi>("blogapi")
+    .WithReference(postgresDb);
 
 // Activity Api
-var activityApiProject = builder.AddProject<Projects.ActivityAPI>("activityapi");
+var activityApiProject = builder.AddProject<Projects.ActivityAPI>("activityapi")
+    .WithReference(postgresDb);
 
 // API Gateway
 var apiGatewayProject = builder.AddProject<Projects.APIGateway>("gateway")
