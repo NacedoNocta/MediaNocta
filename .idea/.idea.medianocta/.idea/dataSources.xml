@@ -9,5 +9,12 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/medianocta?password=admin&amp;user=admin</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="medianocta" uuid="d49b74bf-35d9-4e25-a0e5-209c5ea7f602">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:54091/medianocta?password=.y1Gr_9u9Txg1k2Xg%21%7Eg_.&amp;user=postgres</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

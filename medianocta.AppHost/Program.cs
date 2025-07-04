@@ -7,6 +7,10 @@ var postgres = builder.AddPostgres("postgres")
 
 var postgresDb = postgres.AddDatabase("medianocta");
 
+// Keycloak Identity Provider
+var keycloak = builder.AddKeycloak("keycloak", port: 8080)
+    .WithDataVolume();
+
 // Database Manager
 var databaseManager = builder.AddProject<Projects.DatabaseManager>("databasemanager")
     .WithReference(postgresDb);
@@ -23,8 +27,10 @@ var activityApiProject = builder.AddProject<Projects.ActivityAPI>("activityapi")
 var apiGatewayProject = builder.AddProject<Projects.APIGateway>("gateway")
     .WithReference(activityApiProject)
     .WithReference(blogApiProject)
+    .WithReference(keycloak)
     .WaitFor(activityApiProject)
     .WaitFor(blogApiProject)
+    .WaitFor(keycloak)
     .WithExternalHttpEndpoints();
 
 // Main Website
