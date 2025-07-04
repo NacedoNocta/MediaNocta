@@ -71,7 +71,7 @@ Blazor project with both server-side and client-side components.
 This serves as the user-facing website for the Media Nocta platform.
 It should mainly serve the following sections : 
 * A general purpose personal blog 
-* A virtual "art gallery"
+* A "fragments" section for experimental creative content
 * A section that hosts others projects, such as games
 
 * A learning section 
@@ -113,7 +113,7 @@ that provides endpoints for retrieving blog posts with author information and im
 **Description:** A microservice dedicated to handling broader activity-related 
 operations. 
 
-An "activity" is a broad term that refer to blog posts, art news, tech news, etc.
+An "activity" is a broad term that refer to blog posts, fragments, tech news, etc.
 It is mainly used in "general" areas of the website "ie : main page". 
 Read-only operations if possible.
 
@@ -127,12 +127,13 @@ microservices in the Media Nocta ecosystem.
 Regroups functionnality that should be common to all APIs, such as caching 
 or authentification,if and when appropriate.
 
-### **ArtLibrairy**
+### **FragmentsLibrairy**
 
 **Type:** Class Library
 
-**Description:** A shared library likely containing 
-art-related domain models and functionality for art/creative content features.
+**Description:** A shared library containing 
+fragment-related domain models and functionality for experimental creative content features. 
+Fragments are short-form creative or technical content pieces that serve as a digital sketchbook.
 
 ### **DatabaseManager**
 
