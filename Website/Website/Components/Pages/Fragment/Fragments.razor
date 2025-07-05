@@ -15,6 +15,19 @@
                 <p class="lead">Discover thoughts, ideas, code snippets, and creative fragments.</p>
             </div>
 
+            <!-- Search and Filter Section -->
+            <div class="row p-3 mb-4 bg-primary-subtle border border-1 border-@(SharedLibrary.TextKeys.fragmentThemeColor) rounded">
+                <div class="col-lg-8 align-content-center">
+                    <FragmentSearch OnSearchResults="HandleSearchResults" OnClearSearch="HandleClearSearch" />
+                </div>
+                <div class="col-lg-4">
+                    <FragmentTypeFilter OnFilterResults="HandleFilterResults" 
+                                       OnShowAll="HandleShowAll" 
+                                       AllFragmentsCount="@totalFragmentsCount" 
+                                       @ref="typeFilterRef" />
+                </div>
+            </div>
+
             @if (isLoading)
             {
                 <div class="d-flex justify-content-center my-5">
@@ -54,8 +67,8 @@
                     }
                 </div>
 
-                <!-- Simple Pagination (Prototype) -->
-                @if (totalPages > 1)
+                <!-- Simple Pagination (Prototype) - Hidden in search/filter mode -->
+                @if (totalPages > 1 && !isSearchMode && !isFilterMode)
                 {
                     <nav aria-label="Fragment pagination" class="mt-4">
                         <ul class="pagination justify-content-center">
@@ -100,6 +113,10 @@
     private bool isLoading = true;
     private bool hasError = false;
     private Guid? expandedFragmentId = null;
+    private bool isSearchMode = false;
+    private bool isFilterMode = false;
+    private int totalFragmentsCount = 0;
+    private FragmentTypeFilter? typeFilterRef;
 
     protected override async Task OnInitializedAsync()
     {
@@ -119,6 +136,7 @@
 
             // Simple pagination calculation for prototype
             totalPages = fragments.Count < pageSize ? currentPage : currentPage + 1;
+            totalFragmentsCount = fragments.Count; // Approximation for now
 
             Logger.LogInformation("Loaded {FragmentCount} fragments for page {Page}", fragments.Count, currentPage);
         }
@@ -181,5 +199,48 @@
         expandedFragmentId = null;
         StateHasChanged();
         await Task.CompletedTask;
+    }
+
+    private async Task HandleSearchResults(List<Fragment> searchResults)
+    {
+        isSearchMode = true;
+        isFilterMode = false;
+        fragments = searchResults;
+        expandedFragmentId = null;
+        currentPage = 1;
+        totalPages = 1; // Search results don't have pagination
+        typeFilterRef?.ResetFilter();
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    private async Task HandleClearSearch()
+    {
+        isSearchMode = false;
+        isFilterMode = false;
+        expandedFragmentId = null;
+        currentPage = 1;
+        await LoadFragmentsAsync();
+    }
+
+    private async Task HandleFilterResults(List<Fragment> filterResults)
+    {
+        isFilterMode = true;
+        isSearchMode = false;
+        fragments = filterResults;
+        expandedFragmentId = null;
+        currentPage = 1;
+        totalPages = 1; // Filter results don't have pagination
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    private async Task HandleShowAll()
+    {
+        isFilterMode = false;
+        isSearchMode = false;
+        expandedFragmentId = null;
+        currentPage = 1;
+        await LoadFragmentsAsync();
     }
 }

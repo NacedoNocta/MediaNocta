@@ -9,23 +9,28 @@ var postgresDb = postgres.AddDatabase("medianocta");
 
 // Keycloak Identity Provider
 var keycloak = builder.AddKeycloak("keycloak", port: 8080)
-    .WithDataVolume();
+    .WithDataVolume()
+    .WaitFor(postgresDb);
 
 // Database Manager
 var databaseManager = builder.AddProject<Projects.DatabaseManager>("databasemanager")
-    .WithReference(postgresDb);
+    .WithReference(postgresDb)
+    .WaitFor(postgresDb);
 
 // Blog Api
 var blogApiProject = builder.AddProject<Projects.BlogApi>("blogapi")
-    .WithReference(postgresDb);
+    .WithReference(postgresDb)
+    .WaitFor(postgresDb);
 
 // Activity Api
 var activityApiProject = builder.AddProject<Projects.ActivityAPI>("activityapi")
-    .WithReference(postgresDb);
+    .WithReference(postgresDb)
+    .WaitFor(postgresDb);
 
 // Fragment Api
 var fragmentApiProject = builder.AddProject<Projects.FragmentAPI>("fragmentapi")
-    .WithReference(postgresDb);
+    .WithReference(postgresDb)
+    .WaitFor(postgresDb);
 
 // API Gateway
 var apiGatewayProject = builder.AddProject<Projects.APIGateway>("gateway")

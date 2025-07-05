@@ -11,6 +11,9 @@ namespace Website.Services
         Task<Fragment?> GetFragmentAsync(Guid id);
         Task<bool> AddVibeAsync(Guid fragmentId);
         Task<List<FragmentType>> GetFragmentTypesAsync();
+        Task<List<Fragment>> SearchFragmentsAsync(string query, string? typeTag = null);
+        Task<bool> RemoveVibeAsync(Guid fragmentId);
+        Task<List<Fragment>> GetFragmentsByTypeAsync(string typeTag);
     }
 
     public class FragmentService : IFragmentService
@@ -110,6 +113,76 @@ namespace Website.Services
             {
                 _logger.LogError(ex, "Failed to deserialize fragment types response");
                 return new List<FragmentType>();
+            }
+        }
+
+        public async Task<List<Fragment>> SearchFragmentsAsync(string query, string? typeTag = null)
+        {
+            try
+            {
+                _logger.LogInformation("Searching fragments with query '{Query}' and type '{TypeTag}'", query, typeTag);
+
+                var url = $"{ApiEndpoint}/search?query={Uri.EscapeDataString(query)}";
+                if (!string.IsNullOrEmpty(typeTag))
+                {
+                    url += $"&typeTag={Uri.EscapeDataString(typeTag)}";
+                }
+
+                var response = await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                var fragments = await response.Content.ReadFromJsonAsync(FragmentLibraryJsonContext.Default.IEnumerableFragment);
+                return fragments?.ToList() ?? new List<Fragment>();
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Failed to search fragments");
+                return new List<Fragment>();
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "Failed to deserialize fragments search response");
+                return new List<Fragment>();
+            }
+        }
+
+        public async Task<bool> RemoveVibeAsync(Guid fragmentId)
+        {
+            try
+            {
+                _logger.LogInformation("Removing vibe from fragment {FragmentId}", fragmentId);
+
+                var response = await _httpClient.PostAsync($"{ApiEndpoint}/{fragmentId}/unvibe", null);
+                return response.IsSuccessStatusCode;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Failed to remove vibe from fragment {FragmentId}", fragmentId);
+                return false;
+            }
+        }
+
+        public async Task<List<Fragment>> GetFragmentsByTypeAsync(string typeTag)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching fragments by type '{TypeTag}'", typeTag);
+
+                var response = await _httpClient.GetAsync($"{ApiEndpoint}/by-type/{Uri.EscapeDataString(typeTag)}");
+                response.EnsureSuccessStatusCode();
+
+                var fragments = await response.Content.ReadFromJsonAsync(FragmentLibraryJsonContext.Default.IEnumerableFragment);
+                return fragments?.ToList() ?? new List<Fragment>();
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Failed to retrieve fragments by type {TypeTag}", typeTag);
+                return new List<Fragment>();
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "Failed to deserialize fragments by type response");
+                return new List<Fragment>();
             }
         }
     }

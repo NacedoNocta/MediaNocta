@@ -24,6 +24,15 @@ namespace FragmentLibrary
         [JsonPropertyName("is_deleted")]
         public bool IsDeleted { get; set; } = false;
 
+        [JsonPropertyName("meta")]
+        public Dictionary<string, string>? Meta { get; set; }
+
+        [JsonPropertyName("tags")]
+        public List<string>? Tags { get; set; }
+
+        [JsonPropertyName("last_vibe_date")]
+        public DateTime? LastVibeDate { get; set; }
+
         public override string ActivityType => TextKeys.fragmentTypeKey;
 
         public override string ThemeColor => TextKeys.fragmentThemeColor;

@@ -10,5 +10,8 @@ namespace FragmentLibrary.Interfaces
         public int VibeCount { get; set; }
         public bool IsPublic { get; set; }
         public bool IsDeleted { get; set; }
+        public Dictionary<string, string>? Meta { get; set; }
+        public List<string>? Tags { get; set; }
+        public DateTime? LastVibeDate { get; set; }
     }
 }

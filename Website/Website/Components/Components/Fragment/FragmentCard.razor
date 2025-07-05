@@ -2,6 +2,8 @@
 @using FragmentLibrary.Interfaces
 @using Humanizer
 @using SharedLibrary
+@using Markdig
+@using Microsoft.AspNetCore.Components.Web
 
 <div class="col-12 col-lg-6 mb-3">
     <div class="card border-@GetTypeColor() bg-@GetTypeColor()-subtle h-100 @(IsExpanded ? "shadow-lg" : "")">
@@ -38,7 +40,9 @@
                 {
                     <div class="mb-3 flex-grow-1">
                         <h6 class="text-muted mb-2">Content</h6>
-                        <div class="card-text border rounded p-3 bg-light" style="white-space: pre-wrap; max-height: 400px; overflow-y: auto;">@fragment.Content</div>
+                        <div class="card-text border rounded p-3 bg-@GetTypeColor() markdown-content" style="max-height: 400px; overflow-y: auto;">
+                            @((MarkupString)RenderMarkdown(fragment.Content))
+                        </div>
                     </div>
                 }
                 
@@ -140,5 +144,17 @@
             "fiction" => "dark",     // Dark
             _ => TextKeys.fragmentThemeColor
         };
+    }
+
+    private string RenderMarkdown(string markdown)
+    {
+        if (string.IsNullOrEmpty(markdown))
+            return string.Empty;
+
+        var pipeline = new MarkdownPipelineBuilder()
+            .UseAdvancedExtensions()
+            .Build();
+
+        return Markdown.ToHtml(markdown, pipeline);
     }
 }
