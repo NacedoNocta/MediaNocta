@@ -10,6 +10,7 @@
 	<ItemGroup>
 		<PackageReference Include="Aspire.Keycloak.Authentication" Version="9.3.1-preview.1.25305.6" />
 		<ProjectReference Include="..\..\BlogLibrary\BlogLibrary.csproj" />
+		<ProjectReference Include="..\..\FragmentLibrary\FragmentLibrary.csproj" />
 		<ProjectReference Include="..\..\medianocta.ServiceDefaults\medianocta.ServiceDefaults.csproj" />
 		<ProjectReference Include="..\..\SharedLibrary\SharedLibrary.csproj" />
 		<ProjectReference Include="..\Website.Client\Website.Client.csproj" />

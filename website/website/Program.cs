@@ -32,6 +32,11 @@ builder.Services.AddHttpClient<ActivityService>(c =>
     c.BaseAddress = new Uri($"{gatewayUrl}/api/activity/");
 });
 
+builder.Services.AddHttpClient<FragmentService>(c =>
+{
+    c.BaseAddress = new Uri($"{gatewayUrl}/");
+});
+
 // Add a named HttpClient for authorized requests to the gateway
 builder.Services.AddHttpClient("AuthorizedGateway", c =>
 {
