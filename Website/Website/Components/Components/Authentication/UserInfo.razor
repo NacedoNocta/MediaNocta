@@ -1,0 +1,40 @@
+@using System.Security.Claims
+@using Website.Authentication.Interfaces
+@inject IAuthenticationService AuthService
+@rendermode InteractiveServer
+
+@if (isAuthenticated && user != null)
+{
+    <div class="user-info">
+        <div class="card">
+            <div class="card-header">
+                <h5>User Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Name:</strong> @(user.Identity?.Name ?? "N/A")</p>
+                <p><strong>Email:</strong> @(user.FindFirst("email")?.Value ?? "N/A")</p>
+                <p><strong>Roles:</strong> @string.Join(", ", user.FindAll("roles").Select(c => c.Value))</p>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool isAuthenticated = false;
+    private ClaimsPrincipal? user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshUserInfo();
+    }
+
+    private async Task RefreshUserInfo()
+    {
+        isAuthenticated = await AuthService.IsAuthenticatedAsync();
+        if (isAuthenticated)
+        {
+            user = await AuthService.GetUserAsync();
+        }
+        StateHasChanged();
+    }
+}

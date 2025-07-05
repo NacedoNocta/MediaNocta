@@ -1,5 +1,4 @@
-﻿using ArtLibrary;
-using BlogLibrary;
+﻿using BlogLibrary;
 using Microsoft.AspNetCore.Mvc;
 using SharedLibrary;
 
@@ -27,7 +26,6 @@ public class ActivityController : ControllerBase
             )
         )
         .ToArray();
-        recent = [.. recent, new Art("Post 6", "Summary 6", "Content 6")];
         return recent;
     }
 

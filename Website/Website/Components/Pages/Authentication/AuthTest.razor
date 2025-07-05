@@ -1,0 +1,157 @@
+@page "/auth-test"
+@using Website.Authentication.Interfaces
+@using Website.Components.Components.Authentication
+@inject IAuthenticationService AuthService
+@inject IHttpClientFactory HttpClientFactory
+@inject ILogger<AuthTest> Logger
+@rendermode InteractiveServer
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Authentication Test Page</h2>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Authentication Status</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Status:</strong> 
+                        @if (isAuthenticated)
+                        {
+                            <span class="badge bg-success">Authenticated</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Not Authenticated</span>
+                        }
+                    </p>
+                    <LoginButton />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Protected API Test</h5>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-primary mb-2" @onclick="TestProtectedEndpoint" disabled="@(!isAuthenticated)">
+                        Test Protected Endpoint
+                    </button>
+                    <br />
+                    <button class="btn btn-info mb-2" @onclick="TestDebugEndpoint" disabled="@(!isAuthenticated)">
+                        Debug Token Info
+                    </button>
+                    @if (!string.IsNullOrEmpty(apiResult))
+                    {
+                        <div class="mt-3">
+                            <strong>API Result:</strong>
+                            <div class="alert @(apiSuccess ? "alert-success" : "alert-danger")">
+                                @apiResult
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (isAuthenticated)
+    {
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <UserInfo />
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private bool isAuthenticated = false;
+    private string apiResult = "";
+    private bool apiSuccess = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshAuthenticationState();
+    }
+
+    private async Task RefreshAuthenticationState()
+    {
+        isAuthenticated = await AuthService.IsAuthenticatedAsync();
+        StateHasChanged();
+    }
+
+    private async Task TestProtectedEndpoint()
+    {
+        try
+        {
+            var token = await AuthService.GetAccessTokenAsync();
+            
+            if (string.IsNullOrEmpty(token))
+            {
+                apiResult = "No access token found";
+                apiSuccess = false;
+                return;
+            }
+
+            var httpClient = HttpClientFactory.CreateClient("AuthorizedGateway");
+            using var request = new HttpRequestMessage(HttpMethod.Get, "/api/test/protected");
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await httpClient.SendAsync(request);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                apiResult = await response.Content.ReadAsStringAsync();
+                apiSuccess = true;
+            }
+            else
+            {
+                apiResult = $"Error: {response.StatusCode} - {response.ReasonPhrase}";
+                apiSuccess = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error testing protected endpoint");
+            apiResult = $"Exception: {ex.Message}";
+            apiSuccess = false;
+        }
+    }
+
+    private async Task TestDebugEndpoint()
+    {
+        try
+        {
+            var httpClient = HttpClientFactory.CreateClient();
+            httpClient.BaseAddress = new Uri("http://localhost:5266"); // Website base address
+            
+            var response = await httpClient.GetAsync("/debug/token");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                apiResult = await response.Content.ReadAsStringAsync();
+                apiSuccess = true;
+            }
+            else
+            {
+                apiResult = $"Debug Error: {response.StatusCode} - {response.ReasonPhrase}";
+                apiSuccess = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error testing debug endpoint");
+            apiResult = $"Debug Exception: {ex.Message}";
+            apiSuccess = false;
+        }
+    }
+}

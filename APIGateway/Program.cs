@@ -14,15 +14,29 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 builder.AddServiceDefaults();
 
 var app = builder.Build();
 
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapReverseProxy();
 
 app.MapGet("/", () => "Hello World!");
+
+app.MapGet("/api/test/protected", () => "Protected endpoint accessed successfully!")
+    .RequireAuthorization();
 
 app.Run();

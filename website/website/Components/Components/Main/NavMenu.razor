@@ -1,4 +1,5 @@
 ﻿@using SharedLibrary
+@using Website.Components.Components.Authentication
 <div class="bg-dark-subtle" role="navigation">
     <div class="p-3">
         <div class="container">
@@ -53,8 +54,11 @@
                         <li class="nav-item pt-0">
                             <NavLink href="/about-me" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.Prefix">About me</NavLink>
                         </li>
-                        <li class="nav-item">
-                            <NavLink href="/learn" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.Prefix">Login</NavLink>
+                        <li class="nav-item pt-0">
+                            <NavLink href="/auth-test" class="mx-4 btn btn-outline-secondary px-4 py-3" role="button" ActiveClass="bg-secondary" Match="NavLinkMatch.Prefix">Auth Test</NavLink>
+                        </li>
+                        <li class="nav-item pt-0">
+                            <LoginButton />
                         </li>
                     </ul>
                 </div>

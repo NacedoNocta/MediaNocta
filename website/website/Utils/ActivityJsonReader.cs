@@ -1,7 +1,5 @@
 ﻿using SharedLibrary;
 using System.Text.Json;
-using ArtLibrary;
-using ArtLibrary.Interfaces;
 using BlogLibrary;
 using BlogLibrary.Interfaces;
 using SharedLibrary.Interfaces;
@@ -29,7 +27,6 @@ namespace Website.Utils
                 IActivity activity = activityType switch
                 {
                     TextKeys.blogTypeKey => JsonSerializer.Deserialize<Blog>(element.GetRawText(), options) as IActivity,
-                    TextKeys.artTypeKey => JsonSerializer.Deserialize<Art>(element.GetRawText(), options) as IActivity,
                     _ => throw new NotSupportedException($"Activity type {activityType} is not supported")
                 } ?? throw new NotSupportedException($"Activity not serializable.");
 

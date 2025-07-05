@@ -36,6 +36,7 @@ var apiGatewayProject = builder.AddProject<Projects.APIGateway>("gateway")
 // Main Website
 var website = builder.AddProject<Projects.Website>("website")
     .WithReference(apiGatewayProject)
+    .WithReference(keycloak)
     .WaitFor(apiGatewayProject)
     .WithExternalHttpEndpoints();
 

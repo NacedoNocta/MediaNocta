@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\ArtLibrary\ArtLibrary.csproj" />
+		<PackageReference Include="Aspire.Keycloak.Authentication" Version="9.3.1-preview.1.25305.6" />
 		<ProjectReference Include="..\..\BlogLibrary\BlogLibrary.csproj" />
 		<ProjectReference Include="..\..\medianocta.ServiceDefaults\medianocta.ServiceDefaults.csproj" />
 		<ProjectReference Include="..\..\SharedLibrary\SharedLibrary.csproj" />
@@ -20,6 +20,7 @@
 
 	<ItemGroup>
 	  <Folder Include="wwwroot\img\" />
+	  <Folder Update="Components\Components\Authentification" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -28,11 +29,34 @@
 	  <_ContentIncludedByDefault Remove="Components\Pages\temp\TestInteraction.razor" />
 	  <_ContentIncludedByDefault Remove="Components\Components\Main\AboutMe\AboutMeMedianocta.razor" />
 	  <_ContentIncludedByDefault Remove="Components\Components\Main\AboutMe\AboutMeNacedo.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Components\Authentification\LoginButton.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Components\Authentification\UserInfo.razor" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <AdditionalFiles Include="Components\Components\AboutMe\AboutMeMedianocta.razor" />
 	  <AdditionalFiles Include="Components\Components\AboutMe\AboutMeNacedo.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="Components\Components\Authentification\LoginButton.razor">
+	    <Link>Authentication\Authentification\LoginButton.razor</Link>
+	  </Content>
+	  <Content Update="Components\Components\Authentification\UserInfo.razor">
+	    <Link>Authentication\Authentification\UserInfo.razor</Link>
+	  </Content>
+	  <Content Update="Components\Components\Authentification\LoginButton.razor">
+	    <Link>Authentication\Authentification\LoginButton.razor</Link>
+	  </Content>
+	  <Content Update="Components\Components\Authentification\UserInfo.razor">
+	    <Link>Authentication\Authentification\UserInfo.razor</Link>
+	  </Content>
+	  <Content Update="Components\Components\Authentification\LoginButton.razor">
+	    <Link>Authentication\Authentification\LoginButton.razor</Link>
+	  </Content>
+	  <Content Update="Components\Components\Authentification\UserInfo.razor">
+	    <Link>Authentication\Authentification\UserInfo.razor</Link>
+	  </Content>
 	</ItemGroup>
 
 </Project>
