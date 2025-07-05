@@ -38,8 +38,6 @@ builder.Services.AddHttpClient("AuthorizedGateway", c =>
     c.BaseAddress = new Uri(gatewayUrl);
 });
 
-builder.Services.AddScoped<IBlogDataService, BlogDataService>();
-
 var app = builder.Build();
 
 app.MapDefaultEndpoints();

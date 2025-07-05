@@ -17,3 +17,9 @@
       context: .
       dockerfile: KingdomDemo/KingdomDemo.Client/Dockerfile
 
+  fragmentapi:
+    image: fragmentapi
+    build:
+      context: .
+      dockerfile: FragmentAPI/Dockerfile
+

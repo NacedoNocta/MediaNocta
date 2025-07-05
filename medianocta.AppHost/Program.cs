@@ -23,13 +23,19 @@ var blogApiProject = builder.AddProject<Projects.BlogApi>("blogapi")
 var activityApiProject = builder.AddProject<Projects.ActivityAPI>("activityapi")
     .WithReference(postgresDb);
 
+// Fragment Api
+var fragmentApiProject = builder.AddProject<Projects.FragmentAPI>("fragmentapi")
+    .WithReference(postgresDb);
+
 // API Gateway
 var apiGatewayProject = builder.AddProject<Projects.APIGateway>("gateway")
     .WithReference(activityApiProject)
     .WithReference(blogApiProject)
+    .WithReference(fragmentApiProject)
     .WithReference(keycloak)
     .WaitFor(activityApiProject)
     .WaitFor(blogApiProject)
+    .WaitFor(fragmentApiProject)
     .WaitFor(keycloak)
     .WithExternalHttpEndpoints();
 

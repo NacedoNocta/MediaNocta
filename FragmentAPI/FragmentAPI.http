@@ -1,0 +1,6 @@
+@FragmentAPI_HostAddress = http://localhost:5217
+
+GET {{FragmentAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -22,6 +22,7 @@
     <ProjectReference Include="..\APIGateway\APIGateway.csproj" />
     <ProjectReference Include="..\BlogApi\BlogApi.csproj" />
     <ProjectReference Include="..\DatabaseManager\DatabaseManager.csproj" />
+    <ProjectReference Include="..\FragmentAPI\FragmentAPI.csproj" />
     <ProjectReference Include="..\Website\Website\Website.csproj" />
   </ItemGroup>
 
