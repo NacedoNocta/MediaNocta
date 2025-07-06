@@ -61,4 +61,10 @@
 	  </Content>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\Localization.fr.resx">
+	    <DependentUpon>Localization.cs</DependentUpon>
+	  </EmbeddedResource>
+	</ItemGroup>
+
 </Project>

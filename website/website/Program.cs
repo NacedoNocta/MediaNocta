@@ -13,10 +13,26 @@ builder.Services.AddCustomAuthentication(builder.Configuration);
 // Add HTTP context accessor
 builder.Services.AddHttpContextAccessor();
 
+// Add localization services
+builder.Services.AddLocalization();
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { "en", "fr" };
+    options.SetDefaultCulture(supportedCultures[0])
+        .AddSupportedCultures(supportedCultures)
+        .AddSupportedUICultures(supportedCultures);
+});
+
+// Add culture service
+builder.Services.AddScoped<CultureService>();
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+
+// Add controllers for culture switching
+builder.Services.AddControllers();
 
 // Single Gateway endpoint for all API services
 var gatewayUrl = builder.Configuration["GatewayEndpoint"] ?? throw new InvalidOperationException("GatewayEndpoint is not set");
@@ -61,6 +77,8 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseRequestLocalization();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -70,6 +88,9 @@ app.MapStaticAssets();
 
 // Add authentication endpoints
 app.MapAuthenticationEndpoints();
+
+// Map controllers for culture switching
+app.MapControllers();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Navigation -->
+  <data name="Navigation.Menu" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="Navigation.Homepage" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="Navigation.BlogAndArticles" xml:space="preserve">
+    <value>Blog et Articles</value>
+  </data>
+  <data name="Navigation.TechProjects" xml:space="preserve">
+    <value>Projets Tech</value>
+  </data>
+  <data name="Navigation.Fragments" xml:space="preserve">
+    <value>Fragments</value>
+  </data>
+  <data name="Navigation.LearnAndAct" xml:space="preserve">
+    <value>Apprendre</value>
+  </data>
+  <data name="Navigation.AboutMe" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  
+  <!-- Header -->
+  <data name="Header.Title" xml:space="preserve">
+    <value>MEDIA NOCTA</value>
+  </data>
+  <data name="Header.Subtitle" xml:space="preserve">
+    <value>par Nacedo NOCTA</value>
+  </data>
+  <data name="Header.Description" xml:space="preserve">
+    <value>La Lune est le symbole des Secrets, de l'Intuition, et du voyage vers la Vérité.</value>
+  </data>
+  
+  <!-- Common -->
+  <data name="Common.Loading" xml:space="preserve">
+    <value>Chargement...</value>
+  </data>
+  <data name="Common.Search" xml:space="preserve">
+    <value>Rechercher</value>
+  </data>
+  <data name="Common.SeeMore" xml:space="preserve">
+    <value>Voir plus</value>
+  </data>
+  <data name="Common.Previous" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="Common.Next" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
+  <data name="Common.Retry" xml:space="preserve">
+    <value>Réessayer</value>
+  </data>
+  
+  <!-- Authentication -->
+  <data name="Auth.Login" xml:space="preserve">
+    <value>Connexion</value>
+  </data>
+  <data name="Auth.Logout" xml:space="preserve">
+    <value>Déconnexion</value>
+  </data>
+  
+  <!-- Home Page -->
+  <data name="Home.RecentActivities" xml:space="preserve">
+    <value>Activités récentes :</value>
+  </data>
+  
+  <!-- Search -->
+  <data name="Search.Placeholder" xml:space="preserve">
+    <value>Rechercher un article ou projet...</value>
+  </data>
+  <data name="Search.Discover" xml:space="preserve">
+    <value>Découvrir : </value>
+  </data>
+  <data name="Search.Random" xml:space="preserve">
+    <value>Aléatoire</value>
+  </data>
+  
+  <!-- Footer -->
+  <data name="Footer.BackToTop" xml:space="preserve">
+    <value>Retour en haut</value>
+  </data>
+  <data name="Footer.HomePage" xml:space="preserve">
+    <value>Page d'accueil</value>
+  </data>
+  <data name="Footer.AboutMe" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  <data name="Footer.TermsAndPrivacy" xml:space="preserve">
+    <value>Conditions et confidentialité</value>
+  </data>
+  <data name="Footer.Description" xml:space="preserve">
+    <value>Media Nocta est un espace numérique dédié à l'exploration de l'intersection entre technologie, créativité et innovation. À travers des articles, projets et fragments de pensée, nous voyageons ensemble vers la compréhension et l'innovation.</value>
+  </data>
+  <data name="Footer.Copyright" xml:space="preserve">
+    <value>© 2023-2025 Copyright : Media Nocta</value>
+  </data>
+</root>

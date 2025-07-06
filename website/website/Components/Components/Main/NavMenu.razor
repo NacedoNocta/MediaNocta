@@ -1,5 +1,8 @@
 ﻿@using SharedLibrary
 @using Website.Components.Components.Authentication
+@using Microsoft.Extensions.Localization
+@using Website.Resources
+@inject IStringLocalizer<Localization> Localizer
 <div class="bg-dark-subtle" role="navigation">
     <div class="p-3">
         <div class="container">
@@ -9,20 +12,17 @@
                 </div>
                 <div class="col-lg-6 col-md-6 d-flex flex-column text-center justify-content-center header-content">
                     <div class="d-flex flex-column justify-content-end header-title">
-                        <h1 class="m-0">MEDIA NOCTA</h1>
-                        <h5 class="text-secondary mt-0">by Nacedo NOCTA</h5>
+                        <h1 class="m-0">@Localizer["Header.Title"]</h1>
+                        <h5 class="text-secondary mt-0">@Localizer["Header.Subtitle"]</h5>
                     </div>
                     <div class="d-none d-lg-flex flex-column justify-content-end header-subtitle">
-                        <h6 class="text-body-tertiary m-0">The Moon is the symbol of Secrets, of Intuition, and of the travel toward Truth.</h6>
+                        <h6 class="text-body-tertiary m-0">@Localizer["Header.Description"]</h6>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 d-none d-md-block">
                     <div class="d-flex row h-100">
                         <div class="d-flex justify-content-end">
-                            <select class="form-select form-select-sm w-auto">
-                                <option value="en">EN</option>
-                                <option value="fr">FR</option>
-                            </select>
+                            <LanguageSwitcher />
                         </div>
                         <div class="mt-5 pb-3">
                             <SearchBar />
@@ -38,27 +38,27 @@
             <div class="container-fluid">
                 <button class="navbar-toggler mx-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fas fa-bars me-2"></i>
-                    Menu
+                    @Localizer["Navigation.Menu"]
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav w-100 justify-content-evenly pt-3">
                         <li class="nav-item pt-0">
-                            <NavLink href="/" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.All">Homepage</NavLink>
+                            <NavLink href="/" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.All">@Localizer["Navigation.Homepage"]</NavLink>
                         </li>
                         <li class="nav-item pt-0">
-                            <NavLink href="/blog" class="@($"mx-4 btn btn-outline-{TextKeys.blogThemeColor} px-4 py-3")" role="button" ActiveClass=@($"bg-{TextKeys.blogThemeColor}") Match="NavLinkMatch.Prefix">Blog and Articles</NavLink>
+                            <NavLink href="/blog" class="@($"mx-4 btn btn-outline-{TextKeys.blogThemeColor} px-4 py-3")" role="button" ActiveClass=@($"bg-{TextKeys.blogThemeColor}") Match="NavLinkMatch.Prefix">@Localizer["Navigation.BlogAndArticles"]</NavLink>
                         </li>
                         <li class="nav-item pt-0">
-                            <NavLink href="/tech" class="@($"mx-4 btn btn-outline-{TextKeys.techThemeColor} px-4 py-3")" role="button" ActiveClass=@($"bg-{TextKeys.techThemeColor}") Match="NavLinkMatch.Prefix">Tech Projects</NavLink>
+                            <NavLink href="/tech" class="@($"mx-4 btn btn-outline-{TextKeys.techThemeColor} px-4 py-3")" role="button" ActiveClass=@($"bg-{TextKeys.techThemeColor}") Match="NavLinkMatch.Prefix">@Localizer["Navigation.TechProjects"]</NavLink>
                         </li>
                         <li class="nav-item pt-0">
-                            <NavLink href="/fragments" class="@($"mx-4 btn btn-outline-{TextKeys.fragmentThemeColor} px-4 py-3")" role="button" ActiveClass=@($"bg-{TextKeys.fragmentThemeColor}")>Fragments</NavLink>
+                            <NavLink href="/fragments" class="@($"mx-4 btn btn-outline-{TextKeys.fragmentThemeColor} px-4 py-3")" role="button" ActiveClass=@($"bg-{TextKeys.fragmentThemeColor}")>@Localizer["Navigation.Fragments"]</NavLink>
                         </li>
                         <li class="nav-item pt-0">
-                            <NavLink href="/learn" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.Prefix">Learn & Act</NavLink>
+                            <NavLink href="/learn" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.Prefix">@Localizer["Navigation.LearnAndAct"]</NavLink>
                         </li>
                         <li class="nav-item pt-0">
-                            <NavLink href="/about-me" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.Prefix">About me</NavLink>
+                            <NavLink href="/about-me" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.Prefix">@Localizer["Navigation.AboutMe"]</NavLink>
                         </li>
                         <li class="nav-item pt-0">
                             <LoginButton />

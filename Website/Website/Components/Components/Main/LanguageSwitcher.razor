@@ -1,0 +1,35 @@
+@using Microsoft.Extensions.Localization
+@using Website.Services
+@using Website.Resources
+@inject CultureService CultureService
+@inject IStringLocalizer<Localization> Localizer
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<select class="form-select form-select-sm w-auto" @onchange="OnLanguageChanged" value="@CurrentCulture">
+    @foreach (var culture in SupportedCultures)
+    {
+        <option value="@culture.Code">@culture.Code.ToUpper()</option>
+    }
+</select>
+
+@code {
+    private string CurrentCulture = "en";
+    private List<(string Code, string Name)> SupportedCultures = new();
+
+    protected override void OnInitialized()
+    {
+        CurrentCulture = CultureService.GetCurrentCulture();
+        SupportedCultures = CultureService.GetSupportedCultures();
+    }
+
+    private void OnLanguageChanged(ChangeEventArgs e)
+    {
+        if (e.Value?.ToString() is string newCulture && newCulture != CurrentCulture)
+        {
+            var currentUri = new Uri(Navigation.Uri);
+            var returnUrl = currentUri.PathAndQuery;
+            Navigation.NavigateTo($"/Culture/SetCulture?culture={newCulture}&returnUrl={Uri.EscapeDataString(returnUrl)}", forceLoad: true);
+        }
+    }   
+}
