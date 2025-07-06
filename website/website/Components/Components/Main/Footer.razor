@@ -1,25 +1,30 @@
-﻿<footer class="text-center">
+@using Microsoft.Extensions.Localization
+@using Website.Resources
+@inject IJSRuntime JSRuntime
+@inject IStringLocalizer<Localization> Localizer
+
+<footer class="text-center">
     <div class="container">
         <section class="">
             <div class="row text-center d-flex justify-content-center pt-5">
                 <div class="col-md-2">
                     <h6 class="text-uppercase font-weight-bold">
-                        <a href="#" class="text-decoration-none" @onclick="ScrollToTop">Back to top</a>
+                        <a href="#" class="text-decoration-none" @onclick="ScrollToTop">@Localizer["Footer.BackToTop"]</a>
                     </h6>
                 </div>
                 <div class="col-md-2">
                     <h6 class="text-uppercase font-weight-bold">
-                        <NavLink href="/" class="">Home page</NavLink>
+                        <NavLink href="/" class="">@Localizer["Footer.HomePage"]</NavLink>
                     </h6>
                 </div>
                 <div class="col-md-2">
                     <h6 class="text-uppercase font-weight-bold">
-                        <NavLink href="/about-me" class="">About me</NavLink>
+                        <NavLink href="/about-me" class="">@Localizer["Footer.AboutMe"]</NavLink>
                     </h6>
                 </div>
                 <div class="col-md-2">
                     <h6 class="text-uppercase font-weight-bold">
-                        <NavLink href="/tos" class="">Terms & confidentiality</NavLink>
+                        <NavLink href="/tos" class="">@Localizer["Footer.TermsAndPrivacy"]</NavLink>
                     </h6>
                 </div>
             </div>
@@ -30,19 +35,16 @@
             <div class="row d-flex justify-content-center">
                 <div class="col-lg-8">
                     <p>
-                        Media Nocta is a digital space dedicated to exploring the intersection of technology, creativity, and knowledge. 
-                        Through articles, projects, and fragments of thought, we journey together toward understanding and innovation.
+                        @Localizer["Footer.Description"]
                     </p>
                 </div>
             </div>
         </section>
     </div>
     <div class="text-center p-3 bg-dark-subtle">
-        © 2023-2025 Copyright: Media Nocta
+        @Localizer["Footer.Copyright"]
     </div>
 </footer>
-
-@inject IJSRuntime JSRuntime
 
 @code {
     private async Task ScrollToTop()

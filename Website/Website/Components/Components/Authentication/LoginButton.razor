@@ -1,7 +1,10 @@
 @using Website.Authentication.Routes
 @using Website.Authentication.Interfaces
+@using Microsoft.Extensions.Localization
+@using Website.Resources
 @inject NavigationManager Navigation
 @inject IAuthenticationService AuthService
+@inject IStringLocalizer<Localization> Localizer
 @rendermode InteractiveServer
 @implements IDisposable
 
@@ -9,13 +12,13 @@
     @if (isAuthenticated)
     {
         <button class="mx-4 btn btn-outline-danger px-4 py-3" @onclick="HandleLogout">
-            Logout
+            @Localizer["Auth.Logout"]
         </button>
     }
     else
     {
         <button class="mx-4 btn btn-outline-primary px-4 py-3" @onclick="HandleLogin">
-            Login
+            @Localizer["Auth.Login"]
         </button>
     }
 </div>

@@ -156,4 +156,80 @@
   <data name="Footer.Copyright" xml:space="preserve">
     <value>© 2023-2025 Copyright: Media Nocta</value>
   </data>
+  
+  <!-- Error Messages -->
+  <data name="Error.Title" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Error.Occurred" xml:space="preserve">
+    <value>An error occurred while processing your request.</value>
+  </data>
+  <data name="Error.LoadingPosts" xml:space="preserve">
+    <value>Error Loading Posts</value>
+  </data>
+  <data name="Error.LoadingPostsMessage" xml:space="preserve">
+    <value>We encountered an issue while loading the blog posts. Please try again later.</value>
+  </data>
+  <data name="Error.LoadingFragments" xml:space="preserve">
+    <value>Error Loading Fragments</value>
+  </data>
+  <data name="Error.LoadingFragmentsMessage" xml:space="preserve">
+    <value>We encountered an issue while loading the fragments. Please try again later.</value>
+  </data>
+  
+  <!-- Empty States -->
+  <data name="Empty.NoPostsFound" xml:space="preserve">
+    <value>No Posts Found</value>
+  </data>
+  <data name="Empty.NoPostsMessage" xml:space="preserve">
+    <value>There are currently no blog posts to display.</value>
+  </data>
+  <data name="Empty.NoFragmentsFound" xml:space="preserve">
+    <value>No Fragments Found</value>
+  </data>
+  <data name="Empty.NoFragmentsMessage" xml:space="preserve">
+    <value>There are currently no fragments to display.</value>
+  </data>
+  
+  <!-- Pagination -->
+  <data name="Pagination.Page" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="Pagination.Of" xml:space="preserve">
+    <value>of</value>
+  </data>
+  <data name="Pagination.TotalPosts" xml:space="preserve">
+    <value>total posts</value>
+  </data>
+  <data name="Pagination.TotalFragments" xml:space="preserve">
+    <value>fragments on this page</value>
+  </data>
+  
+  <!-- Forms -->
+  <data name="Form.Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Form.AllTypes" xml:space="preserve">
+    <value>All Types</value>
+  </data>
+  <data name="Form.FilterByType" xml:space="preserve">
+    <value>Filter by Type</value>
+  </data>
+  
+  <!-- Content -->
+  <data name="Content.Content" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="Content.Attachment" xml:space="preserve">
+    <value>Attachment</value>
+  </data>
+  <data name="Content.View" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="Content.Collapse" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
+  <data name="Content.Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
 </root>
