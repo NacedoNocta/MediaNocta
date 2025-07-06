@@ -1,8 +1,16 @@
+using ActivityAPI.Repositories;
+using DatabaseManager;
+using SharedLibrary.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
 // Add services to the container.
+builder.AddNpgsqlDbContext<AppDbContext>("DefaultConnection");
+
+// Register repository
+builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

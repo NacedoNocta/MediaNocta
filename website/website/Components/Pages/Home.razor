@@ -3,6 +3,7 @@
 @inject ActivityService ActivityService
 @using SharedLibrary.Interfaces
 @using Website.Components.Components
+@using Website.Components.Components.Common
 @using Website.Services
 
 <PageTitle>Media Nocta</PageTitle>
@@ -11,19 +12,23 @@
 <div class="row row-cols-lg-3 row-cols-1 row-cols-md-2 g-4 mt-3">
     @if (recents is null)
     {
-        <h1>Loading...</h1>
+        <div class="col-12 d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
     }
     else
     {
         @foreach (var activity in recents)
         {
-            <ActivitySummary activity="@activity" />
+            <HomeActivityCard activity="@activity" />
         }
     }
 
 </div>
-<div class="justify-content-center d-flex mt-3">
-    <button class="btn btn-lg btn-outline-primary mb-3" type="button">See more !</button>
+<div class="d-flex justify-content-center mt-3">
+    <a href="/activities" class="btn btn-lg btn-outline-primary mb-3">See more !</a>
 </div>
 
 @code {

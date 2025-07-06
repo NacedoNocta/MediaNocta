@@ -1,0 +1,72 @@
+@inject NavigationManager Navigation
+
+<div class="search-container">
+    <form @onsubmit="HandleSearch" @onsubmit:preventDefault="true" class="d-flex">
+        <input @bind="searchQuery" @bind:event="oninput" 
+               class="form-control search-input" 
+               placeholder="@PlaceholderText" 
+               type="search" />
+        <button class="btn btn-primary btn-sm search-button" type="submit">
+            <i class="bi bi-search"></i>
+            <span class="d-none d-md-inline ms-1">Search</span>
+        </button>
+    </form>
+    @if (ShowDiscoverLink)
+    {
+        <div class="mt-2 discover-link">
+            <strong>Discover: </strong>
+            <a href="/random" class="text-decoration-none">Random</a>
+        </div>
+    }
+</div>
+
+<style>
+    .search-container {
+        width: 100%;
+    }
+
+    .search-input {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .search-button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        white-space: nowrap;
+    }
+
+    .discover-link {
+        font-size: 0.9rem;
+    }
+
+    @@media (max-width: 768px) {
+        .search-container {
+            max-width: 100%;
+        }
+    }
+</style>
+
+@code {
+    [Parameter] public string PlaceholderText { get; set; } = "Search article or project...";
+    [Parameter] public bool ShowDiscoverLink { get; set; } = true;
+    [Parameter] public EventCallback<string> OnSearch { get; set; }
+    [Parameter] public string SearchAction { get; set; } = "/search";
+
+    private string searchQuery = "";
+
+    private async Task HandleSearch()
+    {
+        if (string.IsNullOrWhiteSpace(searchQuery))
+            return;
+
+        if (OnSearch.HasDelegate)
+        {
+            await OnSearch.InvokeAsync(searchQuery);
+        }
+        else
+        {
+            Navigation.NavigateTo($"{SearchAction}?q={Uri.EscapeDataString(searchQuery)}");
+        }
+    }
+}

@@ -1,27 +1,24 @@
 ﻿@using SharedLibrary
 @using Website.Components.Components.Authentication
+@using Website.Components.Components.Common
 <div class="bg-dark-subtle" role="navigation">
     <div class="p-3">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-2 d-none d-lg-block border border-dark">
-                    <img src="@Assets["img/MN.png"]" alt="C'est moi !" style="height: 10rem" class="img-fluid card border-secondary">
+                    <img src="@Assets["img/MN.png"]" alt="Media Nocta Logo" class="img-fluid card border-secondary logo-image">
                 </div>
-                <div class="col-lg-6 col-md-6 d-flex flex-column text-center justify-content-center" style="height:10rem">
-                    <div class="d-flex flex-column justify-content-end" style="min-height:7rem">
+                <div class="col-lg-6 col-md-6 d-flex flex-column text-center justify-content-center header-content">
+                    <div class="d-flex flex-column justify-content-end header-title">
                         <h1 class="m-0">MEDIA NOCTA</h1>
                         <h5 class="text-secondary mt-0">by Nacedo NOCTA</h5>
                     </div>
-                    <div class="d-none d-lg-flex flex-column justify-content-end" style="min-height:3rem">
+                    <div class="d-none d-lg-flex flex-column justify-content-end header-subtitle">
                         <h6 class="text-body-tertiary m-0">The Moon is the symbol of Secrets, of Intuition, and of the travel toward Truth.</h6>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-3 text-end d-none d-md-block">
-                    <form action="" class="d-flex">
-                        <input class="form-control" placeholder="Search article or project..." />
-                        <button class="btn btn-primary btn-sm">Search</button>
-                    </form>
-                    <div class="mt-2"><strong>Discover : Rand </strong></div>
+                    <SearchBar />
                 </div>
             </div>
         </div>
@@ -77,3 +74,27 @@
         </p>
     </div> 
 *@
+
+<style>
+    .logo-image {
+        height: 10rem;
+    }
+
+    .header-content {
+        height: 10rem;
+    }
+
+    .header-title {
+        min-height: 7rem;
+    }
+
+    .header-subtitle {
+        min-height: 3rem;
+    }
+
+    @@media (max-width: 992px) {
+        .header-content {
+            height: auto;
+        }
+    }
+</style>

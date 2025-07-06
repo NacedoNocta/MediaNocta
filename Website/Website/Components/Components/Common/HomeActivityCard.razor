@@ -1,0 +1,71 @@
+@using SharedLibrary.Interfaces
+@using Humanizer
+@inject NavigationManager Navigation
+
+<div class="px-2">
+    <div class="card border-@activity.ThemeColor h-100 cursor-pointer" @onclick="OnCardClick">
+        <div class="card-header p-0 border-@activity.ThemeColor card-img-top overflow-hidden">
+            <a href="@GetNavigationUrl()" class="d-block h-100">
+                <img src="@GetImageUrl()" alt="Activity image" class="img-fluid img-thumbnail object-fit-cover w-100 h-100" style="object-fit: cover;aspect-ratio: 2 / 1">
+            </a>
+        </div>
+        <div class="card-body p-2">
+            <h5 class="card-title h6">
+                <a href="@GetNavigationUrl()" class="text-decoration-none">@activity.Title</a>
+            </h5>
+            <p class="card-text overflow-hidden">
+                @GetSummaryText()
+            </p>
+            <div class="d-flex justify-content-between">
+                <a href="@GetNavigationUrl()" class="text-info text-decoration-none">See more</a>
+                <span class="text-muted">@GetTimeAgoText()</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public IActivity activity { get; set; } = default!;
+
+    private string GetImageUrl()
+    {
+        return activity.ImageUrl ?? "https://placehold.co/600x400";
+    }
+
+    private string GetNavigationUrl()
+    {
+        return activity.ActivityType?.ToLower() switch
+        {
+            "blog" => $"/blog/{activity.Id}",
+            "tech" => $"/tech/{activity.Id}",
+            "fragment" => $"/fragments/{activity.Id}",
+            _ => "#"
+        };
+    }
+
+    private string GetSummaryText()
+    {
+        if (string.IsNullOrEmpty(activity.Summary))
+            return "";
+
+        return activity.Summary.Truncate(200);
+    }
+
+    private string GetTimeAgoText()
+    {
+        if (activity.CreatedAt == default)
+            return "";
+
+        return activity.CreatedAt.Humanize().Transform(To.SentenceCase);
+    }
+
+    private void OnCardClick()
+    {
+        var navigationUrl = GetNavigationUrl();
+        if (!string.IsNullOrEmpty(navigationUrl) && navigationUrl != "#")
+        {
+            Navigation.NavigateTo(navigationUrl);
+        }
+    }
+}

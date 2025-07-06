@@ -1,6 +1,6 @@
-﻿using BlogLibrary;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SharedLibrary;
+using SharedLibrary.Interfaces;
 
 namespace ActivityAPI.Controllers;
 
@@ -9,49 +9,33 @@ namespace ActivityAPI.Controllers;
 public class ActivityController : ControllerBase
 {
     private readonly ILogger<ActivityController> _logger;
+    private readonly IActivityRepository _activityRepository;
+
+    public ActivityController(ILogger<ActivityController> logger, IActivityRepository activityRepository)
+    {
+        _logger = logger;
+        _activityRepository = activityRepository;
+    }
 
     [HttpGet(Name = "recent")]
     [Route("recent")]
-    public IEnumerable<Activity> GetRecent()
+    public async Task<IEnumerable<Activity>> GetRecent()
     {
-        Author author = new Author("Author Name", "Author Biography", "Author Image Url");
-
-        Activity[] recent = Enumerable.Range(1, 5).Select(index => new Blog(
-            ("Post " + index.ToString()),
-            "Summary " + index.ToString(),
-            "Content " + index.ToString(),
-            author,
-            null,
-            imageUrl: "https://cdn.discordapp.com/attachments/915961412537450556/1343137362154225737/image.png?ex=67fe18a5&is=67fcc725&hm=dc6d8f2f0f125b29d108fa1e7f80e64c297dbab4c3127212357480c3a1289853&"
-            )
-        )
-        .ToArray();
-        return recent;
+        return await _activityRepository.GetRecentActivitiesAsync(5);
     }
 
     [HttpGet(Name = "pinned")]
     [Route("pinned")]
-    public IEnumerable<Activity> GetPinned()
+    public async Task<IEnumerable<Activity>> GetPinned()
     {
-        Author author = new Author("Author Name", "Author Biography", "Author Image Url");
-
-        return Enumerable.Range(1, 2).Select(index => new Blog(
-            ("Post " + index.ToString()),
-            "Summary " + index.ToString(),
-            "Content " + index.ToString(),
-            author,
-            null,
-            imageUrl: "https://cdn.discordapp.com/attachments/915961412537450556/1343137362154225737/image.png?ex=67fe18a5&is=67fcc725&hm=dc6d8f2f0f125b29d108fa1e7f80e64c297dbab4c3127212357480c3a1289853&"
-        )
-        ).ToArray();
+        return await _activityRepository.GetPinnedActivitiesAsync(2);
     }
 
     [HttpGet(Name = "random")]
     [Route("simpleBlogs")]
-    public IEnumerable<Activity> GetRandom()
+    public async Task<IEnumerable<Activity>> GetRandom()
     {
-        Author author = new Author("Author Name", "Author Biography", "Author Image Url");
-        return [new Blog("Post ", "Summary", "Content ", author, null)];
+        return await _activityRepository.GetRandomActivitiesAsync(1);
     }
 }
 

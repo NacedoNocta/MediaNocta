@@ -1,0 +1,66 @@
+@using BlogLibrary.Interfaces
+@using SharedLibrary.Interfaces
+@using Humanizer
+@inject NavigationManager Navigation
+
+<div class="col-12 col-md-6 col-lg-4 mb-3">
+    <div class="card border-@blog.ThemeColor h-100 cursor-pointer" @onclick="OnCardClick">
+        <div class="card-img-top overflow-hidden">
+            <a href="@GetNavigationUrl()" class="d-block h-100">
+                <img src="@GetImageUrl()" alt="Blog post image" class="card-img border border-1 border-@blog.ThemeColor object-fit-cover w-100" style="object-fit: cover;aspect-ratio: 2 / 1">
+            </a>
+        </div>
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">
+                <a href="@GetNavigationUrl()" class="text-decoration-none">@blog.Title</a>
+            </h5>
+            <p class="card-text mt-3 text-primary-emphasis flex-grow-1">
+                @GetSummaryText()
+            </p>
+            <div class="card-footer text-muted mt-auto ps-0 pb-0">
+                <a href="@GetNavigationUrl()" class="text-info text-decoration-none">See more</a>
+                <span class="text-muted">@GetTimeAgoText()</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public IBlog blog { get; set; } = default!;
+
+    private string GetImageUrl()
+    {
+        return blog.ImageUrl ?? "https://placehold.co/600x400";
+    }
+
+    private string GetNavigationUrl()
+    {
+        return $"/blog/{blog.Id}/";
+    }
+
+    private string GetSummaryText()
+    {
+        if (string.IsNullOrEmpty(blog.Summary))
+            return "";
+
+        return blog.Summary.Truncate(150);
+    }
+
+    private string GetTimeAgoText()
+    {
+        if (blog.CreatedAt == default)
+            return "";
+
+        return blog.CreatedAt.Humanize().Transform(To.SentenceCase);
+    }
+
+    private void OnCardClick()
+    {
+        var navigationUrl = GetNavigationUrl();
+        if (!string.IsNullOrEmpty(navigationUrl) && navigationUrl != "#")
+        {
+            Navigation.NavigateTo(navigationUrl);
+        }
+    }
+}

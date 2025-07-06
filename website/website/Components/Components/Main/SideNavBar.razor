@@ -1,24 +1,18 @@
 @using SharedLibrary.Interfaces
 @using Website.Services
+@using Website.Components.Components.Common
 @attribute [StreamRendering(true)]
 @inject ActivityService ActivityService
 
         <div class="col col-3">
-            <div class="row card border-primary py-4 bg-dark" style="min-height:80vh">
-                <div class="text-center border rounded">
-                    <img src="@Assets["img/me-icon.jpg"]" alt="Your Name" class="rounded-circle mb-2 img-fluid border border-1 border-primary card mx-auto"
-                         style="width: 5rem; height: 5rem; object-fit: cover;">
-                    <h3 class="mb-1 mt-3 text-body-emphasis">Nacedo NOCTA</h3>
-                    <blockquote><p class="text-body-secondary text-center my-4" style="text-align: justify"> Véritable passionné des arts et des sciences, et explorateur dans l'âme, je suis constamment à la recherche de nouvelles expériences, et je mets un point d'honneur à faire preuve d'expertise lors de chacun de mes travaux. Aujourd'hui, à 23 ans, je profite de chacune de mes expériences pour forger ma voie et ma manière de travailler.</p></blockquote>
-                    <div class="row justify-content-center">
-                        <a href="https://www.linkedin.com/in/nacedonocta/" class="text-body-emphasis h1 col-4"><i class="bi bi-linkedin"></i></a>
-                        <a href="https://github.com/NacedoNocta" class="text-body-emphasis h1 col-4"><i class="bi bi-github"></i></a>
-                        <a href="mailto:nacedo@medianocta.com" class="text-body-emphasis h1 col-4"><i class="bi bi-envelope-fill"></i></a>
-                        <a href="https://discord.com/invite/VnGMPGUs" class="text-body-emphasis h1 col-4"><i class="bi bi-discord"></i></a>
-                    </div>
-                </div>
+            <div class="row card border-primary py-4 bg-dark sidebar-container">
+                <ProfileInfo />
                 <hr class="my-3 d-none d-lg-block">
-                <iframe class="d-none d-lg-block" src="https://discord.com/widget?id=1189296796250415195&theme=dark" style="height: 30vh" allowtransparency="true" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+                <iframe class="d-none d-lg-block discord-widget" 
+                        src="https://discord.com/widget?id=1189296796250415195&theme=dark" 
+                        allowtransparency="true" 
+                        sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
+                </iframe>
                 <hr class="my-3 d-none d-lg-block">
                 <div>
                     <h2 class="mt-2 mb-4">Pinned articles</h2>
@@ -26,31 +20,40 @@
 
                         @if (pinned is null)
                         {
-                            <h1>Loading...</h1>
+                            <div class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
                         }
                         else
                         {
                             @foreach (var activity in pinned)
                             {
-                                <div class="card border-@activity.ThemeColor">
-                                    <div class="card-body">
-                                        <h4 class="card-title"><a href="#" class="">@activity.Title</a></h4>
-                                        <p class="card-text" style="max-height: 10vh; overflow: hidden">
-                                            @activity.Summary
-                                        </p>
-                                        <a href="#" class="text-info">See more</a>
-
-                                    </div>
-                                    <div class="card-footer text-muted">
-                                        X time ago
-                                    </div>
-                                </div>
+                                <PinnedActivityCard activity="@activity" />
                             }
                         }
                     </div>
                 </div>
             </div>
         </div>
+
+<style>
+    .sidebar-container {
+        min-height: 80vh;
+    }
+
+    .discord-widget {
+        height: 30vh;
+    }
+
+    @@media (max-width: 992px) {
+        .sidebar-container {
+            min-height: auto;
+        }
+    }
+</style>
+
 @code {
     private List<IActivity>? pinned;
 
@@ -58,4 +61,5 @@
     {
         pinned = await ActivityService.GetPinned();
     }
+
 }
