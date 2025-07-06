@@ -1,6 +1,5 @@
 using DatabaseManager;
 using Microsoft.EntityFrameworkCore;
-using FragmentAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,22 +8,13 @@ builder.AddServiceDefaults();
 
 // Add database context
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("mainDatabase")));
 
 // Add services to the container.
-builder.Services.AddScoped<FragmentSeedService>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
-
-// Seed the database
-using (var scope = app.Services.CreateScope())
-{
-    var seedService = scope.ServiceProvider.GetRequiredService<FragmentSeedService>();
-    await seedService.SeedFragmentTypesAsync();
-    await seedService.SeedFragmentsAsync();
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

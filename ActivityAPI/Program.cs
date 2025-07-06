@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 // Add services to the container.
-builder.AddNpgsqlDbContext<AppDbContext>("DefaultConnection");
+builder.AddNpgsqlDbContext<AppDbContext>("mainDatabase");
 
 // Register repository
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();

@@ -12,7 +12,7 @@ builder.AddServiceDefaults();
 // Add Entity Framework
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    var connectionString = builder.Configuration.GetConnectionString("mainDatabase");
     options.UseNpgsql(connectionString);
 });
 

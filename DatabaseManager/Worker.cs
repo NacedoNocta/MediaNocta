@@ -1,13 +1,15 @@
 using DatabaseManager;
 using Microsoft.EntityFrameworkCore;
 
-public class Worker : BackgroundService
+namespace DatabaseManager;
+
+public class DatabaseMigrationWorker : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<Worker> _logger;
+    private readonly ILogger<DatabaseMigrationWorker> _logger;
     private readonly IHostApplicationLifetime _applicationLifetime;
 
-    public Worker(IServiceProvider serviceProvider, ILogger<Worker> logger, IHostApplicationLifetime applicationLifetime)
+    public DatabaseMigrationWorker(IServiceProvider serviceProvider, ILogger<DatabaseMigrationWorker> logger, IHostApplicationLifetime applicationLifetime)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
@@ -19,6 +21,7 @@ public class Worker : BackgroundService
         try
         {
             _logger.LogInformation("Starting Database Migration Worker...");
+            _logger.LogInformation("THIS IS THE DATABASE MANAGER WORKER");
 
             using (var scope = _serviceProvider.CreateScope())
             {

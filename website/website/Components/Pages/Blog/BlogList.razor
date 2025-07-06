@@ -1,10 +1,12 @@
 @page "/blog"
 @using BlogLibrary
 @using Website.Services
+@using Website.Components
+@using Website.Components.Components
+@using Website.Components.Components.Blog
 @inject BlogService BlogService
 @inject ILogger<BlogList> Logger
 @inject NavigationManager Navigation
-@using Website.Components.Components.Blog
 @rendermode InteractiveServer
 
 
@@ -43,7 +45,7 @@
                 <div class="row">
                     @foreach (var blog in blogs)
                     {
-                        <BlogListItem blog="@blog" />
+                        <BlogListCard blog="@blog" />
                     }
                 </div>
 

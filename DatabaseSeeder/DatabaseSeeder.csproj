@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-DatabaseSeeder-5381a3b7-1dd1-4806-a73a-a1a01fd9d994</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.6" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.6"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.6"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.6"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.6"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\DatabaseManager\DatabaseManager.csproj"/>
+        <ProjectReference Include="..\medianocta.ServiceDefaults\medianocta.ServiceDefaults.csproj"/>
+        <ProjectReference Include="..\FragmentLibrary\FragmentLibrary.csproj"/>
+        <ProjectReference Include="..\BlogLibrary\BlogLibrary.csproj"/>
+    </ItemGroup>
+</Project>

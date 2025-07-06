@@ -5,7 +5,7 @@ var postgres = builder.AddPostgres("postgres")
     .WithDataVolume()
     .WithPgAdmin();
 
-var postgresDb = postgres.AddDatabase("medianocta");
+var postgresDb = postgres.AddDatabase("mainDatabase");
 
 // Keycloak Identity Provider
 var keycloak = builder.AddKeycloak("keycloak", port: 8080)
@@ -15,7 +15,13 @@ var keycloak = builder.AddKeycloak("keycloak", port: 8080)
 // Database Manager
 var databaseManager = builder.AddProject<Projects.DatabaseManager>("databasemanager")
     .WithReference(postgresDb)
-    .WaitFor(postgresDb);
+    .WaitFor(postgresDb)
+    .WithExplicitStart();
+
+var databaseSeeder = builder.AddProject<Projects.DatabaseSeeder>("databaseseeder")
+    .WithReference(postgresDb)
+    .WaitFor(postgresDb)
+    .WithExplicitStart();
 
 // Blog Api
 var blogApiProject = builder.AddProject<Projects.BlogApi>("blogapi")

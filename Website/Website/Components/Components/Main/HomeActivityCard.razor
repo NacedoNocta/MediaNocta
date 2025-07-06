@@ -2,11 +2,11 @@
 @using Humanizer
 @inject NavigationManager Navigation
 
-<div class="px-2">
+<div class="">
     <div class="card border-@activity.ThemeColor h-100 cursor-pointer" @onclick="OnCardClick">
         <div class="card-header p-0 border-@activity.ThemeColor card-img-top overflow-hidden">
             <a href="@GetNavigationUrl()" class="d-block h-100">
-                <img src="@GetImageUrl()" alt="Activity image" class="img-fluid img-thumbnail object-fit-cover w-100 h-100" style="object-fit: cover;aspect-ratio: 2 / 1">
+                <img src="@GetImageUrl()" alt="Activity image" class="img-fluid p-0 img-thumbnail object-fit-cover w-100 h-100" style="object-fit: cover;aspect-ratio: 2 / 1">
             </a>
         </div>
         <div class="card-body p-2">

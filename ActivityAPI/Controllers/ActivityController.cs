@@ -21,7 +21,7 @@ public class ActivityController : ControllerBase
     [Route("recent")]
     public async Task<IEnumerable<Activity>> GetRecent()
     {
-        return await _activityRepository.GetRecentActivitiesAsync(5);
+        return await _activityRepository.GetRecentActivitiesAsync(9);
     }
 
     [HttpGet(Name = "pinned")]

@@ -1,6 +1,5 @@
 ﻿@using SharedLibrary
 @using Website.Components.Components.Authentication
-@using Website.Components.Components.Common
 <div class="bg-dark-subtle" role="navigation">
     <div class="p-3">
         <div class="container">
@@ -17,8 +16,18 @@
                         <h6 class="text-body-tertiary m-0">The Moon is the symbol of Secrets, of Intuition, and of the travel toward Truth.</h6>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-3 text-end d-none d-md-block">
-                    <SearchBar />
+                <div class="col-lg-3 col-md-3 d-none d-md-block">
+                    <div class="d-flex row h-100">
+                        <div class="d-flex justify-content-end">
+                            <select class="form-select form-select-sm w-auto">
+                                <option value="en">EN</option>
+                                <option value="fr">FR</option>
+                            </select>
+                        </div>
+                        <div class="mt-5 pb-3">
+                            <SearchBar />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -52,9 +61,6 @@
                             <NavLink href="/about-me" class="mx-4 btn btn-outline-primary px-4 py-3" role="button" ActiveClass="bg-primary" Match="NavLinkMatch.Prefix">About me</NavLink>
                         </li>
                         <li class="nav-item pt-0">
-                            <NavLink href="/auth-test" class="mx-4 btn btn-outline-secondary px-4 py-3" role="button" ActiveClass="bg-secondary" Match="NavLinkMatch.Prefix">Auth Test</NavLink>
-                        </li>
-                        <li class="nav-item pt-0">
                             <LoginButton />
                         </li>
                     </ul>
@@ -63,17 +69,6 @@
         </nav>
     </div>
 </div>
-
-
-@*  
-    <div class="my-3 mx-5 alert alert-warning alert-warning text-dark">
-        <h4 class="alert-heading">Work In Progress !</h4>
-        <p class="mb-0">The Media Nocta website is currently being rebuilt entirely from its last, outdated visuals and technologies, in favor of this one. Content is being transfered over time.
-            <br />
-            Please be patient !
-        </p>
-    </div> 
-*@
 
 <style>
     .logo-image {
