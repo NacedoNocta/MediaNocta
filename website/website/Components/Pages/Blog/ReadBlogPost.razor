@@ -1,8 +1,12 @@
 ﻿@page "/blog/{blogid}/"
 @using BlogLibrary
+@using BlogLibrary.Interfaces
 @using Website.Services
+@using Humanizer
 @inject BlogService BlogService
+@inject CultureService CultureService
 @inject ILogger<ReadBlogPost> Logger
+@rendermode InteractiveServer
 
 @layout Layout.NoNavBarLayout
 
@@ -33,24 +37,72 @@
             {
                 <article class="col-10">
                     <header class="mb-4 text-center">
-                        <h1 class="display-5 fw-bold">@post.Title</h1>
-                        <p class="text-muted">
-                            By <a href="" class="text-decoration-none">@post.Author.Name</a>, @post.CreatedAt.ToString("g")
+                        <div class="mb-3">
+                            @if (post.State != BlogState.Published)
+                            {
+                                <span class="badge bg-secondary fs-6">@post.State</span>
+                            }
+                            @if (post.Featured)
+                            {
+                                <span class="badge bg-warning text-dark fs-6">Featured</span>
+                            }
+                        </div>
+                        <h1 class="display-5 fw-bold">@GetLocalizedTitle()</h1>
+                        <p class="text-muted mb-2">
+                            By <a href="" class="text-decoration-none">@post.Author.Name</a>
                         </p>
+                        <div class="text-muted small">
+                            @if (post.PublishedAt.HasValue)
+                            {
+                                <span>Published @post.PublishedAt.Value.Humanize()</span>
+                            }
+                            else
+                            {
+                                <span>Created @post.CreatedAt.Humanize()</span>
+                            }
+                            @if (post.UpdatedAt.HasValue && post.UpdatedAt != post.PublishedAt)
+                            {
+                                <span class="ms-2">• Updated @post.UpdatedAt.Value.Humanize()</span>
+                            }
+                            @if (post.ReadingTimeMinutes > 0)
+                            {
+                                <span class="ms-2">• @post.ReadingTimeMinutes min read</span>
+                            }
+                            @if (post.Views > 0)
+                            {
+                                <span class="ms-2">• @post.Views views</span>
+                            }
+                        </div>
+                        @if (post.Tags.Any())
+                        {
+                            <div class="mt-3">
+                                @foreach (var tag in post.Tags)
+                                {
+                                    <span class="badge bg-@GetTagColor(tag) me-1">@tag.Name</span>
+                                }
+                            </div>
+                        }
                     </header>
 
                     <hr class="my-4">
 
                     <div class="content">
-                        <p>@post.Content</p>
+                        <div>@((MarkupString)GetLocalizedContent())</div>
                     </div>
 
-                    <hr class="my-4">
-                    
-                    <div class="additional-links mb-4">
-                        <strong>Additional links:</strong><br>
-                        <a href="" class="text-decoration-none">Link</a>
-                    </div>
+                    @if (post.Links.Any())
+                    {
+                        <hr class="my-4">
+                        <div class="additional-links mb-4">
+                            <strong>Additional Resources:</strong>
+                            <ul class="mt-2">
+                                @foreach (var link in post.Links)
+                                {
+                                    <li><a href="@link" target="_blank" class="text-decoration-none">@link</a></li>
+                                }
+                            </ul>
+                        </div>
+                    }
                 </article>
 
                 <!-- About the Author Section - Moved to bottom -->
@@ -62,13 +114,54 @@
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-md-3 text-center mb-3 mb-md-0">
-                                    <div class="bg-light rounded" style="width: 150px; height: 150px; margin: 0 auto;"></div>
+                                    @if (!string.IsNullOrEmpty(post.Author.ImageUrl))
+                                    {
+                                        <img src="@post.Author.ImageUrl" alt="@post.Author.Name" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 150px; height: 150px; margin: 0 auto;">
+                                            <i class="fas fa-user fa-3x text-muted"></i>
+                                        </div>
+                                    }
                                 </div>
                                 <div class="col-md-9">
                                     <h5 class="card-title">
                                         <a href="" class="text-decoration-none">@post.Author.Name</a>
                                     </h5>
-                                    <p class="card-text">@post.Author.Biography</p>
+                                    @if (post.Author.Biography != null)
+                                    {
+                                        <p class="card-text">@GetLocalizedBiography()</p>
+                                    }
+                                    @if (HasAuthorSocialLinks())
+                                    {
+                                        <div class="author-links mt-3">
+                                            @if (!string.IsNullOrEmpty(post.Author.Website))
+                                            {
+                                                <a href="@post.Author.Website" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                                                    <i class="fas fa-globe"></i> Website
+                                                </a>
+                                            }
+                                            @if (!string.IsNullOrEmpty(post.Author.Twitter))
+                                            {
+                                                <a href="https://twitter.com/@post.Author.Twitter.TrimStart('@')" target="_blank" class="btn btn-outline-info btn-sm me-2">
+                                                    <i class="fab fa-twitter"></i> Twitter
+                                                </a>
+                                            }
+                                            @if (!string.IsNullOrEmpty(post.Author.LinkedIn))
+                                            {
+                                                <a href="@post.Author.LinkedIn" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                                                    <i class="fab fa-linkedin"></i> LinkedIn
+                                                </a>
+                                            }
+                                            @if (!string.IsNullOrEmpty(post.Author.GitHub))
+                                            {
+                                                <a href="https://github.com/@post.Author.GitHub" target="_blank" class="btn btn-outline-dark btn-sm me-2">
+                                                    <i class="fab fa-github"></i> GitHub
+                                                </a>
+                                            }
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -121,5 +214,39 @@
             isLoading = false;
             StateHasChanged();
         }
+    }
+
+    private string GetLocalizedTitle()
+    {
+        if (post?.Title == null) return "";
+        var currentLanguage = CultureService.GetCurrentCulture();
+        return post.Title.GetText(currentLanguage);
+    }
+
+    private string GetLocalizedContent()
+    {
+        if (post?.Content == null) return "";
+        var currentLanguage = CultureService.GetCurrentCulture();
+        return post.Content.GetText(currentLanguage);
+    }
+
+    private string GetLocalizedBiography()
+    {
+        if (post?.Author.Biography == null) return "";
+        var currentLanguage = CultureService.GetCurrentCulture();
+        return post.Author.Biography.GetText(currentLanguage);
+    }
+
+    private string GetTagColor(BlogLibrary.Tag tag)
+    {
+        return !string.IsNullOrEmpty(tag.Color) ? tag.Color : "secondary";
+    }
+
+    private bool HasAuthorSocialLinks()
+    {
+        return !string.IsNullOrEmpty(post?.Author.Website) ||
+               !string.IsNullOrEmpty(post?.Author.Twitter) ||
+               !string.IsNullOrEmpty(post?.Author.LinkedIn) ||
+               !string.IsNullOrEmpty(post?.Author.GitHub);
     }
 }

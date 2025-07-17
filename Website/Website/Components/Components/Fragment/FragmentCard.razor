@@ -4,6 +4,8 @@
 @using SharedLibrary
 @using Markdig
 @using Microsoft.AspNetCore.Components.Web
+@inject Website.Services.CultureService CultureService
+@rendermode InteractiveServer
 
 <div class="col-12 col-lg-6 mb-3">
     <div class="card border-@GetTypeColor() bg-@GetTypeColor()-subtle h-100 @(IsExpanded ? "shadow-lg" : "")">
@@ -14,7 +16,7 @@
         <div class="card-body d-flex flex-column">
             <!-- Header section - consistent across both views -->
             <div class="d-flex justify-content-between align-items-start mb-3">
-                <h5 class="card-title mb-0">@fragment.Title</h5>
+                <h5 class="card-title mb-0">@GetLocalizedTitle()</h5>
                 <div class="d-flex align-items-center">
                     @if (!string.IsNullOrEmpty(fragment.TypeTag))
                     {
@@ -29,19 +31,19 @@
             @if (IsExpanded)
             {
                 <!-- Expanded view with full content -->
-                @if (!string.IsNullOrEmpty(fragment.Summary))
+                @if (!string.IsNullOrEmpty(GetLocalizedSummaryTruncated()))
                 {
                     <p class="card-text flex-grow-1 text-primary-emphasis">
-                        @fragment.Summary
+                        @GetLocalizedSummaryTruncated()
                     </p>
                 }
                 
-                @if (!string.IsNullOrEmpty(fragment.Content))
+                @if (!string.IsNullOrEmpty(GetLocalizedContent()))
                 {
                     <div class="mb-3 flex-grow-1">
                         <h6 class="text-muted mb-2">Content</h6>
                         <div class="card-text border rounded p-3 bg-@GetTypeColor() markdown-content" style="max-height: 400px; overflow-y: auto;">
-                            @((MarkupString)RenderMarkdown(fragment.Content))
+                            @((MarkupString)RenderMarkdown(GetLocalizedContent()))
                         </div>
                     </div>
                 }
@@ -70,7 +72,7 @@
             {
                 <!-- Collapsed view with summary -->
                 <p class="card-text flex-grow-1 text-primary-emphasis">
-                    @fragment.Summary.Truncate(120)
+                    @GetLocalizedSummaryTruncated()
                 </p>
                 
                 <!-- Action buttons - consistent styling and position -->
@@ -156,5 +158,27 @@
             .Build();
 
         return Markdown.ToHtml(markdown, pipeline);
+    }
+
+    private string GetLocalizedTitle()
+    {
+        if (fragment.Title == null) return "";
+        var currentLanguage = CultureService.GetCurrentCulture();
+        return fragment.Title.GetText(currentLanguage);
+    }
+
+    private string GetLocalizedSummaryTruncated()
+    {
+        if (fragment.Summary == null) return "";
+        var currentLanguage = CultureService.GetCurrentCulture();
+        var localizedSummary = fragment.Summary.GetText(currentLanguage);
+        return localizedSummary.Truncate(150);
+    }
+
+    private string GetLocalizedContent()
+    {
+        if (fragment.Content == null) return "";
+        var currentLanguage = CultureService.GetCurrentCulture();
+        return fragment.Content.GetText(currentLanguage);
     }
 }

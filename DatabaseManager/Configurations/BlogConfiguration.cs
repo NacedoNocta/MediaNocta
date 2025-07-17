@@ -1,6 +1,8 @@
 using BlogLibrary;
+using SharedLibrary;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Text.Json;
 
 namespace DatabaseManager.Configurations;
 
@@ -10,20 +12,54 @@ public class BlogConfiguration : IEntityTypeConfiguration<Blog>
     {
         builder.HasKey(e => e.Id);
         
+        // Configure LocalizedText properties as JSON
         builder.Property(e => e.Title)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                v => JsonSerializer.Deserialize<LocalizedText>(v, (JsonSerializerOptions?)null) ?? new LocalizedText())
             .IsRequired()
-            .HasMaxLength(500);
+            .HasColumnType("jsonb");
             
         builder.Property(e => e.Summary)
-            .HasMaxLength(1000);
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                v => JsonSerializer.Deserialize<LocalizedText>(v, (JsonSerializerOptions?)null) ?? new LocalizedText())
+            .HasColumnType("jsonb");
             
         builder.Property(e => e.Content)
-            .IsRequired();
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                v => JsonSerializer.Deserialize<LocalizedText>(v, (JsonSerializerOptions?)null) ?? new LocalizedText())
+            .IsRequired()
+            .HasColumnType("jsonb");
             
         builder.Property(e => e.ImageUrl)
             .HasMaxLength(1000);
             
         builder.Property(e => e.CreatedAt);
+
+        // Configure new blog properties
+        builder.Property(e => e.ContentType)
+            .HasConversion<string>()
+            .HasMaxLength(50);
+
+        builder.Property(e => e.State)
+            .HasConversion<string>()
+            .HasMaxLength(50);
+
+        builder.Property(e => e.UpdatedAt);
+        
+        builder.Property(e => e.PublishedAt);
+
+        builder.Property(e => e.Slug)
+            .HasMaxLength(500);
+
+        builder.Property(e => e.ReadingTimeMinutes);
+
+        builder.Property(e => e.Views);
+
+        // Configure inherited Activity properties
+        builder.Property(e => e.Featured);
 
         // Ignore computed properties
         builder.Ignore(e => e.ActivityType);

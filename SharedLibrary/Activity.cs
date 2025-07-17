@@ -13,13 +13,13 @@ namespace SharedLibrary
         public Guid Id { get; init; } = Guid.NewGuid();
 
         [JsonPropertyName("title")]
-        public string Title { get; set; }
+        public LocalizedText Title { get; set; } = new();
 
         [JsonPropertyName("summary")]
-        public string Summary { get; set; }
+        public LocalizedText Summary { get; set; } = new();
 
         [JsonPropertyName("content")]
-        public string Content { get; set; }
+        public LocalizedText Content { get; set; } = new();
 
         [JsonPropertyName("image_url")]
         public string? ImageUrl { get; set; }
@@ -29,6 +29,9 @@ namespace SharedLibrary
 
         [JsonPropertyName("links")]
         public List<string> Links { get; set; } = new();
+
+        [JsonPropertyName("featured")]
+        public bool Featured { get; set; } = false;
 
         /// <summary>
         /// The type of the activity, used to determine the class of the activity when 
@@ -45,7 +48,7 @@ namespace SharedLibrary
         [JsonIgnore]
         public abstract string ThemeColor { get; }
 
-        protected Activity(string title, string summary, string content, string? imageUrl = null, List<string>? links = null)
+        protected Activity(LocalizedText title, LocalizedText summary, LocalizedText content, string? imageUrl = null, List<string>? links = null)
         {
             Title = title;
             Summary = summary;
@@ -57,11 +60,16 @@ namespace SharedLibrary
             }
         }
 
+        protected Activity(string title, string summary, string content, string? imageUrl = null, List<string>? links = null)
+            : this(new LocalizedText(title), new LocalizedText(summary), new LocalizedText(content), imageUrl, links)
+        {
+        }
+
         protected Activity()
         {
-            Title = string.Empty;
-            Summary = string.Empty;
-            Content = string.Empty;
+            Title = new LocalizedText();
+            Summary = new LocalizedText();
+            Content = new LocalizedText();
         }
 
         public string ToJson()

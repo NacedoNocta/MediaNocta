@@ -19,10 +19,14 @@ namespace BlogLibrary
         [Required]
         public required string Name { get; set; }
 
+        [JsonPropertyName("color")]
+        public string Color { get; set; } = "secondary";
+
         [SetsRequiredMembers]
-        public Tag(string name)
+        public Tag(string name, string color = "secondary")
         {
             Name = name;
+            Color = color;
         }
         private Tag() { }
         

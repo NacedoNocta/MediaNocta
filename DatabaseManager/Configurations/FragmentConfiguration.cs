@@ -1,6 +1,8 @@
 using FragmentLibrary;
+using SharedLibrary;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Text.Json;
 
 namespace DatabaseManager.Configurations
 {
@@ -10,15 +12,27 @@ namespace DatabaseManager.Configurations
         {
             builder.HasKey(f => f.Id);
             
+            // Configure LocalizedText properties as JSON
             builder.Property(f => f.Title)
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                    v => JsonSerializer.Deserialize<LocalizedText>(v, (JsonSerializerOptions?)null) ?? new LocalizedText())
                 .IsRequired()
-                .HasMaxLength(255);
+                .HasColumnType("jsonb");
 
             builder.Property(f => f.Content)
-                .IsRequired();
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                    v => JsonSerializer.Deserialize<LocalizedText>(v, (JsonSerializerOptions?)null) ?? new LocalizedText())
+                .IsRequired()
+                .HasColumnType("jsonb");
 
             builder.Property(f => f.Summary)
-                .IsRequired();
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                    v => JsonSerializer.Deserialize<LocalizedText>(v, (JsonSerializerOptions?)null) ?? new LocalizedText())
+                .IsRequired()
+                .HasColumnType("jsonb");
 
             builder.Property(f => f.TypeTag)
                 .HasMaxLength(50);
@@ -37,6 +51,9 @@ namespace DatabaseManager.Configurations
 
             builder.Property(f => f.CreatedAt)
                 .HasDefaultValueSql("NOW()");
+
+            // Configure inherited Activity properties
+            builder.Property(f => f.Featured);
 
             // Configure Links as JSON
             builder.Property(f => f.Links)

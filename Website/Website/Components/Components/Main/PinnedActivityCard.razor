@@ -39,7 +39,7 @@
         if (string.IsNullOrEmpty(activity.Summary))
             return "";
 
-        return activity.Summary.Truncate(100);
+        return ((string)activity.Summary).Truncate(100);
     }
 
     private string GetTimeAgoText()

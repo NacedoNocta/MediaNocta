@@ -6,12 +6,23 @@
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-<select class="form-select form-select-sm w-auto" @onchange="OnLanguageChanged" value="@CurrentCulture">
-    @foreach (var culture in SupportedCultures)
-    {
-        <option value="@culture.Code">@culture.Code.ToUpper()</option>
-    }
-</select>
+<div class="dropdown">
+    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-globe me-1"></i>@GetCurrentLanguageName()
+    </button>
+    <ul class="dropdown-menu">
+        @foreach (var culture in SupportedCultures)
+        {
+            <li>
+                <button class="dropdown-item @(culture.Code == CurrentCulture ? "active" : "")" 
+                        type="button" 
+                        @onclick="() => OnLanguageChanged(culture.Code)">
+                    @culture.Name
+                </button>
+            </li>
+        }
+    </ul>
+</div>
 
 @code {
     private string CurrentCulture = "en";
@@ -23,9 +34,14 @@
         SupportedCultures = CultureService.GetSupportedCultures();
     }
 
-    private void OnLanguageChanged(ChangeEventArgs e)
+    private string GetCurrentLanguageName()
     {
-        if (e.Value?.ToString() is string newCulture && newCulture != CurrentCulture)
+        return SupportedCultures.FirstOrDefault(c => c.Code == CurrentCulture).Name ?? CurrentCulture.ToUpper();
+    }
+
+    private void OnLanguageChanged(string newCulture)
+    {
+        if (newCulture != CurrentCulture)
         {
             var currentUri = new Uri(Navigation.Uri);
             var returnUrl = currentUri.PathAndQuery;
