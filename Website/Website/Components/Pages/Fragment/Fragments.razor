@@ -10,9 +10,9 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="mb-4">
+            <div class="mb-4 text-center">
                 <h1 class="display-4 text-@(SharedLibrary.TextKeys.fragmentThemeColor)">Fragments</h1>
-                <p class="lead">Discover thoughts, ideas, code snippets, and creative fragments.</p>
+                <p class="lead text-body-tertiary">Discover thoughts, ideas, code snippets, and creative fragments.</p>
             </div>
 
             <!-- Search and Filter Section -->
@@ -67,7 +67,7 @@
                     }
                 </div>
 
-                <!-- Simple Pagination (Prototype) - Hidden in search/filter mode -->
+                <!-- Pagination Controls - Hidden in search/filter mode -->
                 @if (totalPages > 1 && !isSearchMode && !isFilterMode)
                 {
                     <nav aria-label="Fragment pagination" class="mt-4">
@@ -79,10 +79,47 @@
                                 </button>
                             </li>
 
-                            <!-- Current Page Info -->
-                            <li class="page-item active">
-                                <span class="page-link">@currentPage</span>
-                            </li>
+                            <!-- First Page -->
+                            @if (currentPage > 3)
+                            {
+                                <li class="page-item">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(1))">1</button>
+                                </li>
+                                @if (currentPage > 4)
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                }
+                            }
+
+                            <!-- Page Numbers -->
+                            @{
+                                var startPage = Math.Max(1, currentPage - 2);
+                                var endPage = Math.Min(totalPages, currentPage + 2);
+                            }
+                            @for (int page = startPage; page <= endPage; page++)
+                            {
+                                <li class="page-item @(page == currentPage ? "active" : "")">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(page))">
+                                        @(page)
+                                    </button>
+                                </li>
+                            }
+
+                            <!-- Last Page -->
+                            @if (currentPage < totalPages - 2)
+                            {
+                                @if (currentPage < totalPages - 3)
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                }
+                                <li class="page-item">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(totalPages))">@totalPages</button>
+                                </li>
+                            }
 
                             <!-- Next Page -->
                             <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">

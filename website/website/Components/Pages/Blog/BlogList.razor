@@ -10,9 +10,12 @@
 @rendermode InteractiveServer
 
 
-<div class="container-fluid">
     <div class="row">
         <div class="col-12">
+            <div class="mb-4 text-center">
+                <h1 class="display-4 text-@(SharedLibrary.TextKeys.blogThemeColor)">Blog and Articles</h1>
+                <p class="lead text-body-tertiary">Read written content about programming, medias, and ideas.</p>
+            </div>
             
             @if (isLoading)
             {
@@ -123,7 +126,6 @@
             }
         </div>
     </div>
-</div>
 
 @code {
     private List<Blog> blogs = new();

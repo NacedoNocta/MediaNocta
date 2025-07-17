@@ -1,3 +1,19 @@
+## License
+
+This project is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+
+![CC BY-NC-ND 4.0](https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png)
+
+**You are free to:**
+- **Share** — copy and redistribute the material in any medium or format
+
+**Under the following terms:**
+- **Attribution** — You must give appropriate credit, provide a link to the license, and indicate if changes were made
+- **NonCommercial** — You may not use the material for commercial purposes
+- **NoDerivatives** — If you remix, transform, or build upon the material, you may not distribute the modified material
+
+For the full license text, see [LICENSE](./LICENSE) or visit https://creativecommons.org/licenses/by-nc-nd/4.0/
+
 # Media Nocta
 
 ## Overall Architecture
