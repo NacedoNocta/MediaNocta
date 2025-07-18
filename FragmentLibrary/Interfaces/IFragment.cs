@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using SharedLibrary.Interfaces;
 
 namespace FragmentLibrary.Interfaces
