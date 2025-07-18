@@ -1,7 +1,10 @@
 @using SharedLibrary.Interfaces
 @using Website.Services
+@using Microsoft.Extensions.Localization
+@using Website.Resources
 @attribute [StreamRendering(true)]
 @inject ActivityService ActivityService
+@inject IStringLocalizer<Localization> Localizer
 
         <div class="col col-3">
             <div class="row card border-primary py-4 bg-dark sidebar-container">
@@ -14,14 +17,14 @@
                 </iframe>
                 <hr class="my-3 d-none d-lg-block">
                 <div>
-                    <h2 class="mt-2 mb-4">Pinned articles</h2>
+                    <h2 class="mt-2 mb-4">@Localizer["General.PinnedArticles"]</h2>
                     <div class="row gx-1 gy-3">
 
                         @if (pinned is null)
                         {
                             <div class="text-center">
                                 <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
+                                    <span class="visually-hidden">@Localizer["Common.Loading"]</span>
                                 </div>
                             </div>
                         }

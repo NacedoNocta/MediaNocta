@@ -1,7 +1,10 @@
 @using FragmentLibrary
 @using Website.Services
+@using Microsoft.Extensions.Localization
+@using Website.Resources
 @inject FragmentService FragmentService
 @inject ILogger<FragmentSearch> Logger
+@inject IStringLocalizer<Localization> Localizer
 
 <div class="mb-4">
     <div class="row">
@@ -11,20 +14,20 @@
                     <i class="fas fa-search"></i>
                 </span>
                 <input type="text" class="form-control" 
-                       placeholder="Search fragments..." 
+                       placeholder="@Localizer["Fragment.SearchPlaceholder"]" 
                        @bind="searchQuery" 
                        @onkeypress="@(async (e) => { if (e.Key == "Enter") await SearchAsync(); })"
                        @bind:event="oninput" />
                 <button class="btn btn-outline-@(SharedLibrary.TextKeys.fragmentThemeColor)" 
                         @onclick="SearchAsync" 
                         disabled="@(string.IsNullOrWhiteSpace(searchQuery))">
-                    Search
+                    @Localizer["Common.Search"]
                 </button>
             </div>
         </div>
         <div class="col-md-4">
             <select class="form-select" @bind="selectedTypeTag">
-                <option value="">All Types</option>
+                <option value="">@Localizer["Form.AllTypes"]</option>
                 @foreach (var type in fragmentTypes)
                 {
                     <option value="@type.Name">@type.Name.ToUpper()</option>
@@ -37,9 +40,9 @@
         <div class="mt-2">
             <div class="d-flex align-items-center">
                 <div class="spinner-border spinner-border-sm text-@(SharedLibrary.TextKeys.fragmentThemeColor) me-2" role="status">
-                    <span class="visually-hidden">Searching...</span>
+                    <span class="visually-hidden">@Localizer["Fragment.Searching"]</span>
                 </div>
-                <span class="text-muted">Searching fragments...</span>
+                <span class="text-muted">@Localizer["Fragment.Searching"]</span>
             </div>
         </div>
     }
@@ -48,14 +51,14 @@
         <div class="mt-2">
             <div class="d-flex justify-content-between align-items-center">
                 <span class="text-muted">
-                    Found @searchResults.Count fragment(s) for "@lastSearchQuery"
+                    @Localizer["Fragment.SearchResults", searchResults.Count, lastSearchQuery]
                     @if (!string.IsNullOrEmpty(lastSearchTypeTag))
                     {
                         <span> in "@lastSearchTypeTag"</span>
                     }
                 </span>
                 <button class="btn btn-outline-secondary btn-sm" @onclick="ClearSearch">
-                    <i class="fas fa-times"></i> Clear
+                    <i class="fas fa-times"></i> @Localizer["Form.Clear"]
                 </button>
             </div>
         </div>

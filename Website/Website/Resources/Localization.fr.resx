@@ -232,4 +232,107 @@
   <data name="Content.Open" xml:space="preserve">
     <value>Ouvrir</value>
   </data>
+
+  <!-- Pages -->
+  <data name="Page.AboutMe" xml:space="preserve">
+    <value>À propos de moi</value>
+  </data>
+  <data name="Page.BlogAndArticles" xml:space="preserve">
+    <value>Blog et Articles</value>
+  </data>
+  <data name="Page.BlogDescription" xml:space="preserve">
+    <value>Lire du contenu écrit sur la programmation, les médias et les idées.</value>
+  </data>
+  <data name="Page.Fragments" xml:space="preserve">
+    <value>Fragments</value>
+  </data>
+  <data name="Page.FragmentsDescription" xml:space="preserve">
+    <value>Découvrez des pensées, des idées, des extraits de code et des fragments créatifs.</value>
+  </data>
+
+  <!-- Blog -->
+  <data name="Blog.By" xml:space="preserve">
+    <value>Par</value>
+  </data>
+  <data name="Blog.Published" xml:space="preserve">
+    <value>Publié</value>
+  </data>
+  <data name="Blog.Created" xml:space="preserve">
+    <value>Créé</value>
+  </data>
+  <data name="Blog.Updated" xml:space="preserve">
+    <value>Mis à jour</value>
+  </data>
+  <data name="Blog.MinRead" xml:space="preserve">
+    <value>min de lecture</value>
+  </data>
+  <data name="Blog.Views" xml:space="preserve">
+    <value>vues</value>
+  </data>
+  <data name="Blog.Featured" xml:space="preserve">
+    <value>Épinglé</value>
+  </data>
+  <data name="Blog.AdditionalResources" xml:space="preserve">
+    <value>Ressources supplémentaires :</value>
+  </data>
+  <data name="Blog.AboutTheAuthor" xml:space="preserve">
+    <value>À propos de l'auteur</value>
+  </data>
+  <data name="Blog.Website" xml:space="preserve">
+    <value>Site web</value>
+  </data>
+  <data name="Blog.Twitter" xml:space="preserve">
+    <value>Twitter</value>
+  </data>
+  <data name="Blog.LinkedIn" xml:space="preserve">
+    <value>LinkedIn</value>
+  </data>
+  <data name="Blog.GitHub" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="Blog.NotFound" xml:space="preserve">
+    <value>Article de blog introuvable</value>
+  </data>
+  <data name="Blog.NotFoundMessage" xml:space="preserve">
+    <value>Nous n'avons pas pu trouver l'article de blog que vous recherchez. Il a peut-être été supprimé ou le lien est incorrect.</value>
+  </data>
+  <data name="Blog.ReturnToList" xml:space="preserve">
+    <value>Retour à la liste des articles</value>
+  </data>
+  <data name="Blog.MoreTags" xml:space="preserve">
+    <value>de plus</value>
+  </data>
+
+  <!-- Fragments -->
+  <data name="Fragment.SearchPlaceholder" xml:space="preserve">
+    <value>Rechercher des fragments...</value>
+  </data>
+  <data name="Fragment.Searching" xml:space="preserve">
+    <value>Recherche de fragments...</value>
+  </data>
+  <data name="Fragment.SearchResults" xml:space="preserve">
+    <value>Trouvé {0} fragment(s) pour "{1}"</value>
+  </data>
+  <data name="Fragment.Filtering" xml:space="preserve">
+    <value>Filtrage des fragments...</value>
+  </data>
+
+  <!-- About Me -->
+  <data name="AboutMe.MeNacedo" xml:space="preserve">
+    <value>Moi, Nacedo NOCTA</value>
+  </data>
+  <data name="AboutMe.MyPlatform" xml:space="preserve">
+    <value>Ma plateforme, Media Nocta</value>
+  </data>
+  <data name="AboutMe.ResumeLink" xml:space="preserve">
+    <value>Pour les recruteurs, mon CV virtuel 👆</value>
+  </data>
+  <data name="AboutMe.ProfileDescription" xml:space="preserve">
+    <value>Véritable passionné des arts et des sciences, et explorateur dans l'âme, je suis constamment à la recherche de nouvelles expériences, et je mets un point d'honneur à faire preuve d'expertise lors de chacun de mes travaux. Aujourd'hui, à 23 ans, je profite de chacune de mes expériences pour forger ma voie et ma manière de travailler.</value>
+  </data>
+
+  <!-- General -->
+  <data name="General.PinnedArticles" xml:space="preserve">
+    <value>Articles épinglés</value>
+  </data>
 </root>

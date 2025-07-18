@@ -2,42 +2,45 @@
 @using BlogLibrary
 @using Website.Services
 @using Website.Components.Components.Blog
+@using Microsoft.Extensions.Localization
+@using Website.Resources
 @inject BlogService BlogService
 @inject ILogger<BlogList> Logger
 @inject NavigationManager Navigation
+@inject IStringLocalizer<Localization> Localizer
 @rendermode InteractiveServer
 
 
     <div class="row">
         <div class="col-12">
             <div class="mb-4 text-center">
-                <h1 class="display-4 text-@(SharedLibrary.TextKeys.blogThemeColor)">Blog and Articles</h1>
-                <p class="lead text-body-tertiary">Read written content about programming, medias, and ideas.</p>
+                <h1 class="display-4 text-@(SharedLibrary.TextKeys.blogThemeColor)">@Localizer["Page.BlogAndArticles"]</h1>
+                <p class="lead text-body-tertiary">@Localizer["Page.BlogDescription"]</p>
             </div>
             
             @if (_isLoading)
             {
                 <div class="d-flex justify-content-center my-5">
                     <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                        <span class="visually-hidden">@Localizer["Common.Loading"]</span>
                     </div>
                 </div>
             }
             else if (_hasError)
             {
                 <div class="alert alert-danger" role="alert">
-                    <h4 class="alert-heading">Error Loading Posts</h4>
-                    <p>We encountered an issue while loading the blog posts. Please try again later.</p>
+                    <h4 class="alert-heading">@Localizer["Error.LoadingPosts"]</h4>
+                    <p>@Localizer["Error.LoadingPostsMessage"]</p>
                     <button class="btn btn-outline-danger" @onclick="@(LoadPostsAsync)">
-                        <i class="bi bi-arrow-clockwise"></i> Retry
+                        <i class="bi bi-arrow-clockwise"></i> @Localizer["Common.Retry"]
                     </button>
                 </div>
             }
             else if (!_blogs.Any())
             {
                 <div class="alert alert-info" role="alert">
-                    <h4 class="alert-heading">No Posts Found</h4>
-                    <p>There are currently no blog posts to display.</p>
+                    <h4 class="alert-heading">@Localizer["Empty.NoPostsFound"]</h4>
+                    <p>@Localizer["Empty.NoPostsMessage"]</p>
                 </div>
             }
             else
@@ -58,7 +61,7 @@
                             <!-- Previous Page -->
                             <li class="page-item @(_currentPage <= 1 ? "disabled" : "")">
                                 <button class="page-link" @onclick="@(() => GoToPageAsync(_currentPage - 1))" disabled="@(_currentPage <= 1)">
-                                    <i class="bi bi-chevron-left"></i> Previous
+                                    <i class="bi bi-chevron-left"></i> @Localizer["Common.Previous"]
                                 </button>
                             </li>
 
@@ -108,7 +111,7 @@
                             <!-- Next Page -->
                             <li class="page-item @(_currentPage >= _totalPages ? "disabled" : "")">
                                 <button class="page-link" @onclick="@(() => GoToPageAsync(_currentPage + 1))" disabled="@(_currentPage >= _totalPages)">
-                                    Next <i class="bi bi-chevron-right"></i>
+                                    @Localizer["Common.Next"] <i class="bi bi-chevron-right"></i>
                                 </button>
                             </li>
                         </ul>
@@ -117,7 +120,7 @@
                     <!-- Page Info -->
                     <div class="text-center mt-3">
                         <small class="text-muted">
-                            Page @_currentPage of @_totalPages (@_totalPosts total posts)
+                            @Localizer["Pagination.Page"] @_currentPage @Localizer["Pagination.Of"] @_totalPages (@_totalPosts @Localizer["Pagination.TotalPosts"])
                         </small>
                     </div>
                 }

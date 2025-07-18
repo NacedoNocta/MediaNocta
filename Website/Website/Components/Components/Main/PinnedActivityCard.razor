@@ -1,6 +1,9 @@
 @using SharedLibrary.Interfaces
 @using Humanizer
+@using Microsoft.Extensions.Localization
+@using Website.Resources
 @inject NavigationManager Navigation
+@inject IStringLocalizer<Localization> Localizer
 
 <div class="mb-3">
     <div class="card border-@activity.ThemeColor h-100 cursor-pointer" @onclick="OnCardClick">
@@ -12,7 +15,7 @@
                 @GetSummaryText()
             </p>
             <div class="d-flex justify-content-between">
-                <a href="@GetNavigationUrl()" class="text-info text-decoration-none">See more</a>
+                <a href="@GetNavigationUrl()" class="text-info text-decoration-none">@Localizer["Common.SeeMore"]</a>
                 <span class="text-muted">@GetTimeAgoText()</span>
             </div>
         </div>

@@ -5,10 +5,13 @@
 @using Humanizer
 @using Markdig
 @using System.Web
+@using Microsoft.Extensions.Localization
+@using Website.Resources
 @inject BlogService BlogService
 @inject CultureService CultureService
 @inject ILogger<ReadBlogPost> Logger
 @inject IJSRuntime JSRuntime
+@inject IStringLocalizer<Localization> Localizer
 @rendermode InteractiveServer
 
 @layout Layout.NoNavBarLayout
@@ -20,16 +23,16 @@
             {
                 <div class="d-flex justify-content-center my-5">
                     <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                        <span class="visually-hidden">@Localizer["Common.Loading"]</span>
                     </div>
                 </div>
             }
             else if (hasError || post == null)
             {
                 <div class="alert alert-danger" role="alert">
-                    <h4 class="alert-heading">Blog Post Not Found</h4>
-                    <p>We couldn't find the blog post you're looking for. It may have been removed or the link is incorrect.</p>
-                    <a href="/blog" class="btn btn-outline-danger">Return to Blog List</a>
+                    <h4 class="alert-heading">@Localizer["Blog.NotFound"]</h4>
+                    <p>@Localizer["Blog.NotFoundMessage"]</p>
+                    <a href="/blog" class="btn btn-outline-danger">@Localizer["Blog.ReturnToList"]</a>
                 </div>
             }
             else
@@ -43,33 +46,33 @@
                             }
                             @if (post.Featured)
                             {
-                                <span class="badge bg-warning text-dark fs-6">Featured</span>
+                                <span class="badge bg-warning text-dark fs-6">@Localizer["Blog.Featured"]</span>
                             }
                         </div>
                         <h1 class="display-5 fw-bold">@GetLocalizedTitle()</h1>
                         <p class="text-muted mb-2">
-                            By <a href="" class="text-decoration-none">@post.Author.Name</a>
+                            @Localizer["Blog.By"] <a href="" class="text-decoration-none">@post.Author.Name</a>
                         </p>
                         <div class="text-muted small">
                             @if (post.PublishedAt.HasValue)
                             {
-                                <span>Published @post.PublishedAt.Value.Humanize()</span>
+                                <span>@Localizer["Blog.Published"] @post.PublishedAt.Value.Humanize()</span>
                             }
                             else
                             {
-                                <span>Created @post.CreatedAt.Humanize()</span>
+                                <span>@Localizer["Blog.Created"] @post.CreatedAt.Humanize()</span>
                             }
                             @if (post.UpdatedAt.HasValue && post.UpdatedAt != post.PublishedAt)
                             {
-                                <span class="ms-2">• Updated @post.UpdatedAt.Value.Humanize()</span>
+                                <span class="ms-2">• @Localizer["Blog.Updated"] @post.UpdatedAt.Value.Humanize()</span>
                             }
                             @if (post.ReadingTimeMinutes > 0)
                             {
-                                <span class="ms-2">• @post.ReadingTimeMinutes min read</span>
+                                <span class="ms-2">• @post.ReadingTimeMinutes @Localizer["Blog.MinRead"]</span>
                             }
                             @if (post.Views > 0)
                             {
-                                <span class="ms-2">• @post.Views views</span>
+                                <span class="ms-2">• @post.Views @Localizer["Blog.Views"]</span>
                             }
                         </div>
                         @if (post.Tags.Any())
@@ -93,7 +96,7 @@
                     {
                         <hr class="my-4">
                         <div class="additional-links mb-4">
-                            <strong>Additional Resources:</strong>
+                            <strong>@Localizer["Blog.AdditionalResources"]</strong>
                             <ul class="mt-2">
                                 @foreach (var link in post.Links)
                                 {
@@ -108,7 +111,7 @@
                 <section class="author-section mt-5">
                     <div class="card border-info">
                         <div class="card-header bg-info text-white">
-                            <h4 class="mb-0">About the Author</h4>
+                            <h4 class="mb-0">@Localizer["Blog.AboutTheAuthor"]</h4>
                         </div>
                         <div class="card-body">
                             <div class="row align-items-center">
@@ -138,25 +141,25 @@
                                             @if (!string.IsNullOrEmpty(post.Author.Website))
                                             {
                                                 <a href="@post.Author.Website" target="_blank" class="btn btn-outline-primary btn-sm me-2">
-                                                    <i class="fas fa-globe"></i> Website
+                                                    <i class="fas fa-globe"></i> @Localizer["Blog.Website"]
                                                 </a>
                                             }
                                             @if (!string.IsNullOrEmpty(post.Author.Twitter))
                                             {
                                                 <a href="https://twitter.com/@post.Author.Twitter.TrimStart('@')" target="_blank" class="btn btn-outline-info btn-sm me-2">
-                                                    <i class="fab fa-twitter"></i> Twitter
+                                                    <i class="fab fa-twitter"></i> @Localizer["Blog.Twitter"]
                                                 </a>
                                             }
                                             @if (!string.IsNullOrEmpty(post.Author.LinkedIn))
                                             {
                                                 <a href="@post.Author.LinkedIn" target="_blank" class="btn btn-outline-primary btn-sm me-2">
-                                                    <i class="fab fa-linkedin"></i> LinkedIn
+                                                    <i class="fab fa-linkedin"></i> @Localizer["Blog.LinkedIn"]
                                                 </a>
                                             }
                                             @if (!string.IsNullOrEmpty(post.Author.GitHub))
                                             {
                                                 <a href="https://github.com/@post.Author.GitHub" target="_blank" class="btn btn-outline-dark btn-sm me-2">
-                                                    <i class="fab fa-github"></i> GitHub
+                                                    <i class="fab fa-github"></i> @Localizer["Blog.GitHub"]
                                                 </a>
                                             }
                                         </div>

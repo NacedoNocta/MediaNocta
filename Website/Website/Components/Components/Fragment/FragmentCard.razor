@@ -4,7 +4,10 @@
 @using SharedLibrary
 @using Markdig
 @using Microsoft.AspNetCore.Components.Web
+@using Microsoft.Extensions.Localization
+@using Website.Resources
 @inject Website.Services.CultureService CultureService
+@inject IStringLocalizer<Localization> Localizer
 @rendermode InteractiveServer
 
 <div class="col-12 col-lg-6 mb-3">
@@ -41,7 +44,7 @@
                 @if (!string.IsNullOrEmpty(GetLocalizedContent()))
                 {
                     <div class="mb-3 flex-grow-1">
-                        <h6 class="text-muted mb-2">Content</h6>
+                        <h6 class="text-muted mb-2">@Localizer["Content.Content"]</h6>
                         <div class="card-text border rounded p-3 bg-@GetTypeColor() markdown-content" style="max-height: 400px; overflow-y: auto;">
                             @((MarkupString)RenderMarkdown(GetLocalizedContent()))
                         </div>
@@ -51,9 +54,9 @@
                 @if (!string.IsNullOrEmpty(fragment.AttachmentUrl) && fragment.AttachmentType != "image")
                 {
                     <div class="mb-3">
-                        <h6 class="text-muted mb-2">Attachment</h6>
+                        <h6 class="text-muted mb-2">@Localizer["Content.Attachment"]</h6>
                         <a href="@fragment.AttachmentUrl" target="_blank" class="btn btn-outline-@GetTypeColor() btn-sm">
-                            <i class="fas fa-external-link-alt"></i> Open @fragment.AttachmentType
+                            <i class="fas fa-external-link-alt"></i> @Localizer["Content.Open"] @fragment.AttachmentType
                         </a>
                     </div>
                 }
@@ -64,7 +67,7 @@
                         <i class="fas fa-heart"></i> @fragment.VibeCount
                     </button>
                     <button class="btn btn-outline-@GetTypeColor() btn-sm" @onclick="@(() => HandleCollapseClick())">
-                        <i class="fas fa-compress-alt"></i> Collapse
+                        <i class="fas fa-compress-alt"></i> @Localizer["Content.Collapse"]
                     </button>
                 </div>
             }
@@ -81,7 +84,7 @@
                         <i class="fas fa-heart"></i> @fragment.VibeCount
                     </button>
                     <button class="btn btn-outline-@GetTypeColor() btn-sm" @onclick="@(() => HandleExpandClick())">
-                        <i class="fas fa-expand-alt"></i> View
+                        <i class="fas fa-expand-alt"></i> @Localizer["Content.View"]
                     </button>
                 </div>
             }
