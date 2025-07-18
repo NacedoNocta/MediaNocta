@@ -1,8 +1,6 @@
 @page "/blog"
 @using BlogLibrary
 @using Website.Services
-@using Website.Components
-@using Website.Components.Components
 @using Website.Components.Components.Blog
 @inject BlogService BlogService
 @inject ILogger<BlogList> Logger
@@ -17,7 +15,7 @@
                 <p class="lead text-body-tertiary">Read written content about programming, medias, and ideas.</p>
             </div>
             
-            @if (isLoading)
+            @if (_isLoading)
             {
                 <div class="d-flex justify-content-center my-5">
                     <div class="spinner-border" role="status">
@@ -25,17 +23,17 @@
                     </div>
                 </div>
             }
-            else if (hasError)
+            else if (_hasError)
             {
                 <div class="alert alert-danger" role="alert">
                     <h4 class="alert-heading">Error Loading Posts</h4>
                     <p>We encountered an issue while loading the blog posts. Please try again later.</p>
-                    <button class="btn btn-outline-danger" @onclick="@(() => LoadPostsAsync())">
+                    <button class="btn btn-outline-danger" @onclick="@(LoadPostsAsync)">
                         <i class="bi bi-arrow-clockwise"></i> Retry
                     </button>
                 </div>
             }
-            else if (!blogs.Any())
+            else if (!_blogs.Any())
             {
                 <div class="alert alert-info" role="alert">
                     <h4 class="alert-heading">No Posts Found</h4>
@@ -46,31 +44,31 @@
             {
                 <!-- Blog Posts List -->
                 <div class="row">
-                    @foreach (var blog in blogs)
+                    @foreach (var blog in _blogs)
                     {
                         <BlogListCard blog="@blog" />
                     }
                 </div>
 
                 <!-- Pagination Controls -->
-                @if (totalPages > 1)
+                @if (_totalPages > 1)
                 {
                     <nav aria-label="Blog pagination" class="mt-4">
                         <ul class="pagination justify-content-center">
                             <!-- Previous Page -->
-                            <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
-                                <button class="page-link" @onclick="@(() => GoToPageAsync(currentPage - 1))" disabled="@(currentPage <= 1)">
+                            <li class="page-item @(_currentPage <= 1 ? "disabled" : "")">
+                                <button class="page-link" @onclick="@(() => GoToPageAsync(_currentPage - 1))" disabled="@(_currentPage <= 1)">
                                     <i class="bi bi-chevron-left"></i> Previous
                                 </button>
                             </li>
 
                             <!-- First Page -->
-                            @if (currentPage > 3)
+                            @if (_currentPage > 3)
                             {
                                 <li class="page-item">
                                     <button class="page-link" @onclick="@(() => GoToPageAsync(1))">1</button>
                                 </li>
-                                @if (currentPage > 4)
+                                @if (_currentPage > 4)
                                 {
                                     <li class="page-item disabled">
                                         <span class="page-link">...</span>
@@ -80,13 +78,13 @@
 
                             <!-- Page Numbers -->
                             @{
-                                var startPage = Math.Max(1, (int)currentPage - 2);
-                                var endPage = Math.Min((int)totalPages, (int)currentPage + 2);
+                                var startPage = Math.Max(1, (int)_currentPage - 2);
+                                var endPage = Math.Min((int)_totalPages, (int)_currentPage + 2);
                             }
                             @for (int page = startPage; page <= endPage; page++)
                             {
                                 var pageNumber = (uint)page;
-                                <li class="page-item @(pageNumber == currentPage ? "active" : "")">
+                                <li class="page-item @(pageNumber == _currentPage ? "active" : "")">
                                     <button class="page-link" @onclick="@(() => GoToPageAsync(pageNumber))">
                                         @(page)
                                     </button>
@@ -94,22 +92,22 @@
                             }
 
                             <!-- Last Page -->
-                            @if (currentPage < totalPages - 2)
+                            @if (_currentPage < _totalPages - 2)
                             {
-                                @if (currentPage < totalPages - 3)
+                                @if (_currentPage < _totalPages - 3)
                                 {
                                     <li class="page-item disabled">
                                         <span class="page-link">...</span>
                                     </li>
                                 }
                                 <li class="page-item">
-                                    <button class="page-link" @onclick="@(() => GoToPageAsync(totalPages))">@totalPages</button>
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(_totalPages))">@_totalPages</button>
                                 </li>
                             }
 
                             <!-- Next Page -->
-                            <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
-                                <button class="page-link" @onclick="@(() => GoToPageAsync(currentPage + 1))" disabled="@(currentPage >= totalPages)">
+                            <li class="page-item @(_currentPage >= _totalPages ? "disabled" : "")">
+                                <button class="page-link" @onclick="@(() => GoToPageAsync(_currentPage + 1))" disabled="@(_currentPage >= _totalPages)">
                                     Next <i class="bi bi-chevron-right"></i>
                                 </button>
                             </li>
@@ -119,7 +117,7 @@
                     <!-- Page Info -->
                     <div class="text-center mt-3">
                         <small class="text-muted">
-                            Page @currentPage of @totalPages (@totalPosts total posts)
+                            Page @_currentPage of @_totalPages (@_totalPosts total posts)
                         </small>
                     </div>
                 }
@@ -128,13 +126,13 @@
     </div>
 
 @code {
-    private List<Blog> blogs = new();
-    private uint currentPage = 1;
-    private uint pageSize = 9; // 3x3 grid layout
-    private uint totalPosts = 0;
-    private uint totalPages = 0;
-    private bool isLoading = true;
-    private bool hasError = false;
+    private List<Blog> _blogs = new();
+    private uint _currentPage = 1;
+    private readonly uint _pageSize = 6; // 3x3 grid layout
+    private uint _totalPosts = 0;
+    private uint _totalPages = 0;
+    private bool _isLoading = true;
+    private bool _hasError = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -145,38 +143,38 @@
     {
         try
         {
-            isLoading = true;
-            hasError = false;
+            _isLoading = true;
+            _hasError = false;
             StateHasChanged();
 
-            // Get total count first
-            totalPosts = await BlogService.GetPostCountAsync();
-            totalPages = totalPosts > 0 ? (uint)Math.Ceiling((double)totalPosts / pageSize) : 0;
+            // Get the total count first
+            _totalPosts = await BlogService.GetPostCountAsync();
+            _totalPages = _totalPosts > 0 ? (uint)Math.Ceiling((double)_totalPosts / _pageSize) : 0;
 
-            // Get posts for current page
-            blogs = await BlogService.GetPostListAsync(currentPage, pageSize);
+            // Get posts for the current page
+            _blogs = await BlogService.GetPostListAsync(_currentPage, _pageSize);
 
-            Logger.LogInformation("Loaded {PostCount} posts for page {Page}", blogs.Count, currentPage);
+            Logger.LogInformation("Loaded {PostCount} posts for page {Page}", _blogs.Count, _currentPage);
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Error loading blog posts");
-            hasError = true;
-            blogs = new List<Blog>();
+            _hasError = true;
+            _blogs = new List<Blog>();
         }
         finally
         {
-            isLoading = false;
+            _isLoading = false;
             StateHasChanged();
         }
     }
 
     private async Task GoToPageAsync(uint page)
     {
-        if (page < 1 || page > totalPages || page == currentPage)
+        if (page < 1 || page > _totalPages || page == _currentPage)
             return;
 
-        currentPage = page;
+        _currentPage = page;
         await LoadPostsAsync();
         Navigation.NavigateTo($"{Navigation.Uri.Split('#')[0]}#contentTop", forceLoad:false);
     }

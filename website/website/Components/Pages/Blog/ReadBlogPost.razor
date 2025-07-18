@@ -3,9 +3,12 @@
 @using BlogLibrary.Interfaces
 @using Website.Services
 @using Humanizer
+@using Markdig
+@using System.Web
 @inject BlogService BlogService
 @inject CultureService CultureService
 @inject ILogger<ReadBlogPost> Logger
+@inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 
 @layout Layout.NoNavBarLayout
@@ -87,7 +90,7 @@
                     <hr class="my-4">
 
                     <div class="content">
-                        <div>@((MarkupString)GetLocalizedContent())</div>
+                        <div>@((MarkupString)GetProcessedContent())</div>
                     </div>
 
                     @if (post.Links.Any())
@@ -185,6 +188,11 @@
         await LoadBlogPostAsync();
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+            await JSRuntime.InvokeVoidAsync("scrollToElement", "contentTop");
+    }
+
     private async Task LoadBlogPostAsync()
     {
         try
@@ -230,6 +238,48 @@
         return post.Content.GetText(currentLanguage);
     }
 
+    private string GetProcessedContent()
+    {
+        if (post?.Content == null) return "";
+        
+        var rawContent = GetLocalizedContent();
+        if (string.IsNullOrEmpty(rawContent)) return "";
+
+        return post.ContentType switch
+        {
+            ContentType.Markdown => ProcessMarkdownContent(rawContent),
+            ContentType.Html => rawContent, // HTML content is used as-is
+            ContentType.PlainText => ProcessPlainTextContent(rawContent),
+            _ => rawContent // Fallback to raw content
+        };
+    }
+
+    private string ProcessMarkdownContent(string markdownContent)
+    {
+        try
+        {
+            var pipeline = new MarkdownPipelineBuilder()
+                .UseAdvancedExtensions() // Enables tables, task lists, etc.
+                .UseSoftlineBreakAsHardlineBreak() // Optional: treats single line breaks as <br>
+                .Build();
+            
+            return Markdown.ToHtml(markdownContent, pipeline);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error processing Markdown content");
+            // Fallback to treating as plain text if Markdown processing fails
+            return ProcessPlainTextContent(markdownContent);
+        }
+    }
+
+    private string ProcessPlainTextContent(string plainTextContent)
+    {
+        // HTML encode the content to prevent XSS and then replace line breaks with <br> tags
+        var encodedContent = HttpUtility.HtmlEncode(plainTextContent);
+        return encodedContent.Replace("\n", "<br>").Replace("\r", "");
+    }
+
     private string GetLocalizedBiography()
     {
         if (post?.Author.Biography == null) return "";
@@ -250,3 +300,12 @@
                !string.IsNullOrEmpty(post?.Author.GitHub);
     }
 }
+
+<script>
+    window.scrollToElement = function(elementId) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+</script>
