@@ -112,6 +112,35 @@
   <data name="Common.Retry" xml:space="preserve">
     <value>Retry</value>
   </data>
+  <data name="Common.ViewProject" xml:space="preserve">
+    <value>View Project</value>
+  </data>
+  
+  <!-- Tech -->
+  <data name="Tech.NoActivity" xml:space="preserve">
+    <value>No recent activity</value>
+  </data>
+  
+  <!-- Error -->
+  <data name="Error.LoadingUpdates" xml:space="preserve">
+    <value>Error loading updates</value>
+  </data>
+  <data name="Error.LoadingUpdatesMessage" xml:space="preserve">
+    <value>Unable to load project updates. Please try again.</value>
+  </data>
+  
+  <!-- Empty -->
+  <data name="Empty.NoUpdatesFound" xml:space="preserve">
+    <value>No updates found</value>
+  </data>
+  <data name="Empty.NoUpdatesMessage" xml:space="preserve">
+    <value>There are no updates for this project yet.</value>
+  </data>
+  
+  <!-- Pagination -->
+  <data name="Pagination.TotalUpdates" xml:space="preserve">
+    <value>total updates</value>
+  </data>
   
   <!-- Authentication -->
   <data name="Auth.Login" xml:space="preserve">
@@ -248,6 +277,12 @@
   </data>
   <data name="Page.FragmentsDescription" xml:space="preserve">
     <value>Discover thoughts, ideas, code snippets, and creative fragments.</value>
+  </data>
+  <data name="Page.TechProjects" xml:space="preserve">
+    <value>Tech Projects</value>
+  </data>
+  <data name="Page.TechProjectsDescription" xml:space="preserve">
+    <value>Explore technical projects and development updates.</value>
   </data>
 
   <!-- Blog -->

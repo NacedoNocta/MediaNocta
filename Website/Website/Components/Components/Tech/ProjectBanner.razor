@@ -1,0 +1,78 @@
+@using SharedLibrary
+@using Humanizer
+@using Microsoft.Extensions.Localization
+@using Website.Resources
+@inject NavigationManager Navigation
+@inject IStringLocalizer<Localization> Localizer
+@inject ILogger<ProjectBanner> Logger
+
+<div class="col-12 col-md-6 col-lg-4 mb-4">
+    <div class="card border-@(TextKeys.techThemeColor) h-100 cursor-pointer" @onclick="OnCardClick">
+        <div class="card-img-top overflow-hidden">
+            <a href="@GetNavigationUrl()" class="d-block h-100">
+                <img src="@Project.ImageUrl" alt="@Project.Title project image" class="card-img border border-1 border-@(TextKeys.techThemeColor) object-fit-cover w-100" style="object-fit: cover;aspect-ratio: 2 / 1">
+            </a>
+        </div>
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">
+                <a href="@GetNavigationUrl()" class="text-decoration-none text-@(TextKeys.techThemeColor)">@Project.Title</a>
+            </h5>
+            <p class="card-text mt-3 text-primary-emphasis flex-grow-1">
+                @Project.Description.Truncate(150)
+            </p>
+            @if (Project.Tags.Any())
+            {
+                <div class="mb-2">
+                    @foreach (var tag in Project.Tags.Take(3))
+                    {
+                        <span class="badge bg-@(TextKeys.techThemeColor) me-1">@tag</span>
+                    }
+                    @if (Project.Tags.Length > 3)
+                    {
+                        <span class="text-muted small">+@(Project.Tags.Length - 3) more</span>
+                    }
+                </div>
+            }
+            <div class="card-footer text-muted mt-auto ps-0 pb-0 d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="@GetNavigationUrl()" class="text-info text-decoration-none">@Localizer["Common.ViewProject"]</a>
+                </div>
+                <div class="text-end">
+                    <small class="text-muted">@GetLastActivityText()</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ProjectInfo Project { get; set; } = default!;
+
+    [Parameter] 
+    public DateTime? LastActivity { get; set; }
+
+    private string GetNavigationUrl()
+    {
+        return $"/tech/{Project.Key.ToSlug()}";
+    }
+
+    private string GetLastActivityText()
+    {
+        if (LastActivity.HasValue)
+        {
+            return LastActivity.Value.Humanize().Transform(To.SentenceCase);
+        }
+        return Localizer["Tech.NoActivity"];
+    }
+
+    private void OnCardClick()
+    {
+        var navigationUrl = GetNavigationUrl();
+        if (!string.IsNullOrEmpty(navigationUrl) && navigationUrl != "#")
+        {
+            Navigation.NavigateTo(navigationUrl);
+        }
+    }
+
+}

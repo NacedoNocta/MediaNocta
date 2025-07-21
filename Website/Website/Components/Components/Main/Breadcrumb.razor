@@ -12,14 +12,14 @@
             {
                 @if (breadcrumb.IsActive)
                 {
-                    <li class="breadcrumb-item active" aria-current="page">
+                    <li class="breadcrumb-item active text-primary-emphasis" aria-current="page">
                         @breadcrumb.Text
                     </li>
                 }
                 else
                 {
                     <li class="breadcrumb-item">
-                        <a href="@breadcrumb.Url" class="text-decoration-none">@breadcrumb.Text</a>
+                        <a href="@breadcrumb.Url" class="text-decoration-none text-body-tertiary">@breadcrumb.Text</a>
                     </li>
                 }
             }

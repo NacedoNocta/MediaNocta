@@ -1,5 +1,6 @@
 ﻿using BlogLibrary;
 using FragmentLibrary;
+using TechLibrary;
 using DatabaseManager.Configurations;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,7 @@ namespace DatabaseManager
         public DbSet<Author> Authors { get; set; }
         public DbSet<Fragment> Fragments { get; set; }
         public DbSet<FragmentType> FragmentTypes { get; set; }
+        public DbSet<TechUpdate> TechUpdates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,6 +27,7 @@ namespace DatabaseManager
             modelBuilder.ApplyConfiguration(new TagConfiguration());
             modelBuilder.ApplyConfiguration(new FragmentConfiguration());
             modelBuilder.ApplyConfiguration(new FragmentTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new TechUpdateConfiguration());
         }
     }
 }

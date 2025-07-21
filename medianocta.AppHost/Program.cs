@@ -38,15 +38,22 @@ var fragmentApiProject = builder.AddProject<Projects.FragmentAPI>("fragmentapi")
     .WithReference(postgresDb)
     .WaitFor(postgresDb);
 
+// Tech Api
+var techApiProject = builder.AddProject<Projects.TechAPI>("techapi")
+    .WithReference(postgresDb)
+    .WaitFor(postgresDb);
+
 // API Gateway
 var apiGatewayProject = builder.AddProject<Projects.APIGateway>("gateway")
     .WithReference(activityApiProject)
     .WithReference(blogApiProject)
     .WithReference(fragmentApiProject)
+    .WithReference(techApiProject)
     .WithReference(keycloak)
     .WaitFor(activityApiProject)
     .WaitFor(blogApiProject)
     .WaitFor(fragmentApiProject)
+    .WaitFor(techApiProject)
     .WaitFor(keycloak)
     .WithExternalHttpEndpoints();
 

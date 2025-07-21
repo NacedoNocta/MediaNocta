@@ -12,6 +12,7 @@
 		<PackageReference Include="Markdig" Version="0.41.3" />
 		<ProjectReference Include="..\..\BlogLibrary\BlogLibrary.csproj" />
 		<ProjectReference Include="..\..\FragmentLibrary\FragmentLibrary.csproj" />
+		<ProjectReference Include="..\..\TechLibrary\TechLibrary.csproj" />
 		<ProjectReference Include="..\..\medianocta.ServiceDefaults\medianocta.ServiceDefaults.csproj" />
 		<ProjectReference Include="..\..\SharedLibrary\SharedLibrary.csproj" />
 		<ProjectReference Include="..\Website.Client\Website.Client.csproj" />

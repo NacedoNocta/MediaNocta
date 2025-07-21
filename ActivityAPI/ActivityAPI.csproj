@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BlogLibrary\BlogLibrary.csproj" />
+    <ProjectReference Include="..\TechLibrary\TechLibrary.csproj" />
     <ProjectReference Include="..\DatabaseManager\DatabaseManager.csproj" />
     <ProjectReference Include="..\medianocta.ServiceDefaults\medianocta.ServiceDefaults.csproj" />
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj" />

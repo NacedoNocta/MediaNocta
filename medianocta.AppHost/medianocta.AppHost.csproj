@@ -24,6 +24,7 @@
     <ProjectReference Include="..\DatabaseManager\DatabaseManager.csproj" />
     <ProjectReference Include="..\DatabaseSeeder\DatabaseSeeder.csproj" />
     <ProjectReference Include="..\FragmentAPI\FragmentAPI.csproj" />
+    <ProjectReference Include="..\TechAPI\TechAPI.csproj" />
     <ProjectReference Include="..\Website\Website\Website.csproj" />
   </ItemGroup>
 
