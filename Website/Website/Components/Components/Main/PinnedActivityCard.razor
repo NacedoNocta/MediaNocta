@@ -1,0 +1,64 @@
+@using SharedLibrary.Interfaces
+@using Humanizer
+@using Microsoft.Extensions.Localization
+@using Website.Resources
+@inject NavigationManager Navigation
+@inject IStringLocalizer<Localization> Localizer
+
+<div class="mb-3">
+    <div class="card border-@activity.ThemeColor h-100 cursor-pointer" @onclick="OnCardClick">
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">
+                <a href="@GetNavigationUrl()" class="text-decoration-none">@activity.Title</a>
+            </h5>
+            <p class="card-text overflow-hidden">
+                @GetSummaryText()
+            </p>
+            <div class="d-flex justify-content-between">
+                <a href="@GetNavigationUrl()" class="text-info text-decoration-none">@Localizer["Common.SeeMore"]</a>
+                <span class="text-muted">@GetTimeAgoText()</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public IActivity activity { get; set; } = default!;
+
+    private string GetNavigationUrl()
+    {
+        return activity.ActivityType?.ToLower() switch
+        {
+            "blog" => $"/blog/{activity.Id}",
+            "tech" => $"/tech/{activity.Id}",
+            "fragment" => $"/fragments/{activity.Id}",
+            _ => "#"
+        };
+    }
+
+    private string GetSummaryText()
+    {
+        if (string.IsNullOrEmpty(activity.Summary))
+            return "";
+
+        return ((string)activity.Summary).Truncate(100);
+    }
+
+    private string GetTimeAgoText()
+    {
+        if (activity.CreatedAt == default)
+            return "";
+
+        return activity.CreatedAt.Humanize().Transform(To.SentenceCase);
+    }
+
+    private void OnCardClick()
+    {
+        var navigationUrl = GetNavigationUrl();
+        if (!string.IsNullOrEmpty(navigationUrl) && navigationUrl != "#")
+        {
+            Navigation.NavigateTo(navigationUrl);
+        }
+    }
+}

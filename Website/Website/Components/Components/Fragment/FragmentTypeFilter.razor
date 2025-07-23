@@ -1,0 +1,156 @@
+@using FragmentLibrary
+@using Website.Services
+@using Microsoft.Extensions.Localization
+@using Website.Resources
+@inject FragmentService FragmentService
+@inject ILogger<FragmentTypeFilter> Logger
+@inject IStringLocalizer<Localization> Localizer
+
+<div class="mb-4">
+    <h6 class="text-muted mb-3">@Localizer["Form.FilterByType"]</h6>
+    <div class="d-flex flex-wrap gap-2">
+        <!-- All Types Button -->
+        <button class="btn @(selectedType == null ? "btn-success" : "btn-outline-success") btn-sm" 
+                @onclick="@(() => SelectType(null))">
+            <i class="fas fa-th"></i> @Localizer["Form.AllTypes"]
+            @if (allFragmentsCount > 0)
+            {
+                <span class="badge bg-light text-dark ms-1">@allFragmentsCount</span>
+            }
+        </button>
+
+        <!-- Individual Type Buttons -->
+        @foreach (var type in fragmentTypes)
+        {
+            <button class="btn @(selectedType == type.Name ? $"btn-{type.Color}" : $"btn-outline-{type.Color}") btn-sm" 
+                    @onclick="@(() => SelectType(type.Name))"
+                    disabled="@isFiltering">
+                <i class="fas fa-tag"></i> @type.Name.ToUpper()
+                @if (typeCounts.ContainsKey(type.Name))
+                {
+                    <span class="badge bg-light text-dark ms-1">@typeCounts[type.Name]</span>
+                }
+            </button>
+        }
+    </div>
+
+    @if (isFiltering)
+    {
+        <div class="mt-3">
+            <div class="d-flex align-items-center">
+                <div class="spinner-border spinner-border-sm text-@(SharedLibrary.TextKeys.fragmentThemeColor) me-2" role="status">
+                    <span class="visually-hidden">@Localizer["Fragment.Filtering"]</span>
+                </div>
+                <span class="text-muted">@Localizer["Fragment.Filtering"]</span>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<List<Fragment>> OnFilterResults { get; set; }
+
+    [Parameter]
+    public EventCallback OnShowAll { get; set; }
+
+    [Parameter]
+    public int AllFragmentsCount { get; set; } = 0;
+
+    private List<FragmentType> fragmentTypes = new();
+    private Dictionary<string, int> typeCounts = new();
+    private string? selectedType = null;
+    private bool isFiltering = false;
+    private int allFragmentsCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFragmentTypesAsync();
+        await LoadTypeCountsAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        allFragmentsCount = AllFragmentsCount;
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task LoadFragmentTypesAsync()
+    {
+        try
+        {
+            fragmentTypes = await FragmentService.GetFragmentTypesAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to load fragment types");
+        }
+    }
+
+    private async Task LoadTypeCountsAsync()
+    {
+        try
+        {
+            typeCounts.Clear();
+            
+            foreach (var type in fragmentTypes)
+            {
+                var fragments = await FragmentService.GetFragmentsByTypeAsync(type.Name);
+                typeCounts[type.Name] = fragments.Count;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to load type counts");
+        }
+    }
+
+    private async Task SelectType(string? typeName)
+    {
+        if (selectedType == typeName)
+            return;
+
+        try
+        {
+            isFiltering = true;
+            selectedType = typeName;
+            StateHasChanged();
+
+            if (string.IsNullOrEmpty(typeName))
+            {
+                // Show all fragments
+                if (OnShowAll.HasDelegate)
+                {
+                    await OnShowAll.InvokeAsync();
+                }
+            }
+            else
+            {
+                // Filter by type
+                var filteredFragments = await FragmentService.GetFragmentsByTypeAsync(typeName);
+                
+                if (OnFilterResults.HasDelegate)
+                {
+                    await OnFilterResults.InvokeAsync(filteredFragments);
+                }
+            }
+
+            Logger.LogInformation("Type filter changed to: {TypeName}", typeName ?? "All");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error filtering by type {TypeName}", typeName);
+        }
+        finally
+        {
+            isFiltering = false;
+            StateHasChanged();
+        }
+    }
+
+    public void ResetFilter()
+    {
+        selectedType = null;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,286 @@
+@page "/fragments"
+@using FragmentLibrary
+@using Website.Services
+@using Microsoft.Extensions.Localization
+@using Website.Resources
+@inject FragmentService FragmentService
+@inject ILogger<Fragments> Logger
+@inject NavigationManager Navigation
+@inject IStringLocalizer<Localization> Localizer
+@using Website.Components.Components.Fragment
+@rendermode InteractiveServer
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="mb-4 text-center">
+                <h1 class="display-4 text-@(SharedLibrary.TextKeys.fragmentThemeColor)">@Localizer["Page.Fragments"]</h1>
+                <p class="lead text-body-tertiary">@Localizer["Page.FragmentsDescription"]</p>
+            </div>
+
+            <!-- Search and Filter Section -->
+            <div class="row p-3 mb-4 bg-primary-subtle border border-1 border-@(SharedLibrary.TextKeys.fragmentThemeColor) rounded">
+                <div class="col-lg-8 align-content-center">
+                    <FragmentSearch OnSearchResults="HandleSearchResults" OnClearSearch="HandleClearSearch" />
+                </div>
+                <div class="col-lg-4">
+                    <FragmentTypeFilter OnFilterResults="HandleFilterResults" 
+                                       OnShowAll="HandleShowAll" 
+                                       AllFragmentsCount="@totalFragmentsCount" 
+                                       @ref="typeFilterRef" />
+                </div>
+            </div>
+
+            @if (isLoading)
+            {
+                <div class="d-flex justify-content-center my-5">
+                    <div class="spinner-border text-@(SharedLibrary.TextKeys.fragmentThemeColor)" role="status">
+                        <span class="visually-hidden">@Localizer["Common.Loading"]</span>
+                    </div>
+                </div>
+            }
+            else if (hasError)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">@Localizer["Error.LoadingFragments"]</h4>
+                    <p>@Localizer["Error.LoadingFragmentsMessage"]</p>
+                    <button class="btn btn-outline-danger" @onclick="@(() => LoadFragmentsAsync())">
+                        <i class="fas fa-redo"></i> @Localizer["Common.Retry"]
+                    </button>
+                </div>
+            }
+            else if (!fragments.Any())
+            {
+                <div class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">@Localizer["Empty.NoFragmentsFound"]</h4>
+                    <p>@Localizer["Empty.NoFragmentsMessage"]</p>
+                </div>
+            }
+            else
+            {
+                <!-- Fragments List -->
+                <div class="row">
+                    @foreach (var fragment in fragments)
+                    {
+                        <FragmentCard fragment="@fragment" 
+                                     IsExpanded="@(expandedFragmentId == fragment.Id)"
+                                     OnVibeClicked="@HandleVibeClicked" 
+                                     OnExpandClicked="@HandleExpandClicked"
+                                     OnCollapseClicked="@HandleCollapseClicked" />
+                    }
+                </div>
+
+                <!-- Pagination Controls - Hidden in search/filter mode -->
+                @if (totalPages > 1 && !isSearchMode && !isFilterMode)
+                {
+                    <nav aria-label="Fragment pagination" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <!-- Previous Page -->
+                            <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                                <button class="page-link" @onclick="@(() => GoToPageAsync(currentPage - 1))" disabled="@(currentPage <= 1)">
+                                    <i class="fas fa-chevron-left"></i> @Localizer["Common.Previous"]
+                                </button>
+                            </li>
+
+                            <!-- First Page -->
+                            @if (currentPage > 3)
+                            {
+                                <li class="page-item">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(1))">1</button>
+                                </li>
+                                @if (currentPage > 4)
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                }
+                            }
+
+                            <!-- Page Numbers -->
+                            @{
+                                var startPage = Math.Max(1, currentPage - 2);
+                                var endPage = Math.Min(totalPages, currentPage + 2);
+                            }
+                            @for (int page = startPage; page <= endPage; page++)
+                            {
+                                <li class="page-item @(page == currentPage ? "active" : "")">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(page))">
+                                        @(page)
+                                    </button>
+                                </li>
+                            }
+
+                            <!-- Last Page -->
+                            @if (currentPage < totalPages - 2)
+                            {
+                                @if (currentPage < totalPages - 3)
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                }
+                                <li class="page-item">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(totalPages))">@totalPages</button>
+                                </li>
+                            }
+
+                            <!-- Next Page -->
+                            <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                                <button class="page-link" @onclick="@(() => GoToPageAsync(currentPage + 1))" disabled="@(currentPage >= totalPages)">
+                                    @Localizer["Common.Next"] <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <!-- Page Info -->
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            @Localizer["Pagination.Page"] @currentPage @Localizer["Pagination.Of"] @totalPages (@fragments.Count @Localizer["Pagination.TotalFragments"])
+                        </small>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Fragment> fragments = new();
+    private int currentPage = 1;
+    private int pageSize = 6; // 2x3 grid layout
+    private int totalPages = 1;
+    private bool isLoading = true;
+    private bool hasError = false;
+    private Guid? expandedFragmentId = null;
+    private bool isSearchMode = false;
+    private bool isFilterMode = false;
+    private int totalFragmentsCount = 0;
+    private FragmentTypeFilter? typeFilterRef;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFragmentsAsync();
+    }
+
+    private async Task LoadFragmentsAsync()
+    {
+        try
+        {
+            isLoading = true;
+            hasError = false;
+            StateHasChanged();
+
+            // Get fragments for current page (prototype - no total count endpoint yet)
+            fragments = await FragmentService.GetFragmentsAsync(currentPage, pageSize);
+
+            // Simple pagination calculation for prototype
+            totalPages = fragments.Count < pageSize ? currentPage : currentPage + 1;
+            totalFragmentsCount = fragments.Count; // Approximation for now
+
+            Logger.LogInformation("Loaded {FragmentCount} fragments for page {Page}", fragments.Count, currentPage);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading fragments");
+            hasError = true;
+            fragments = new List<Fragment>();
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task GoToPageAsync(int page)
+    {
+        if (page < 1 || page == currentPage)
+            return;
+
+        // Collapse any expanded cards when navigating to a new page
+        expandedFragmentId = null;
+        currentPage = page;
+        await LoadFragmentsAsync();
+    }
+
+    private async Task HandleVibeClicked(Fragment fragment)
+    {
+        try
+        {
+            var success = await FragmentService.AddVibeAsync(fragment.Id);
+            if (success)
+            {
+                // Increment the local count for immediate UI feedback
+                fragment.VibeCount++;
+                StateHasChanged();
+                Logger.LogInformation("Vibed with fragment {Title}!", fragment.Title);
+            }
+            else
+            {
+                Logger.LogWarning("Failed to add vibe to fragment {FragmentId}", fragment.Id);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error adding vibe to fragment {FragmentId}", fragment.Id);
+        }
+    }
+
+    private async Task HandleExpandClicked(Fragment fragment)
+    {
+        expandedFragmentId = fragment.Id;
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    private async Task HandleCollapseClicked(Fragment fragment)
+    {
+        expandedFragmentId = null;
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    private async Task HandleSearchResults(List<Fragment> searchResults)
+    {
+        isSearchMode = true;
+        isFilterMode = false;
+        fragments = searchResults;
+        expandedFragmentId = null;
+        currentPage = 1;
+        totalPages = 1; // Search results don't have pagination
+        typeFilterRef?.ResetFilter();
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    private async Task HandleClearSearch()
+    {
+        isSearchMode = false;
+        isFilterMode = false;
+        expandedFragmentId = null;
+        currentPage = 1;
+        await LoadFragmentsAsync();
+    }
+
+    private async Task HandleFilterResults(List<Fragment> filterResults)
+    {
+        isFilterMode = true;
+        isSearchMode = false;
+        fragments = filterResults;
+        expandedFragmentId = null;
+        currentPage = 1;
+        totalPages = 1; // Filter results don't have pagination
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    private async Task HandleShowAll()
+    {
+        isFilterMode = false;
+        isSearchMode = false;
+        expandedFragmentId = null;
+        currentPage = 1;
+        await LoadFragmentsAsync();
+    }
+}

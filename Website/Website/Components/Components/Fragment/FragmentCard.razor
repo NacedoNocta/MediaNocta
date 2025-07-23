@@ -1,0 +1,187 @@
+@using FragmentLibrary
+@using FragmentLibrary.Interfaces
+@using Humanizer
+@using SharedLibrary
+@using Markdig
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.Extensions.Localization
+@using Website.Resources
+@inject Website.Services.CultureService CultureService
+@inject IStringLocalizer<Localization> Localizer
+@rendermode InteractiveServer
+
+<div class="col-12 col-lg-6 mb-3">
+    <div class="card border-@GetTypeColor() bg-@GetTypeColor()-subtle h-100 @(IsExpanded ? "shadow-lg" : "")">
+        @if (!string.IsNullOrEmpty(fragment.AttachmentUrl) && fragment.AttachmentType == "image")
+        {
+            <img src="@fragment.AttachmentUrl" class="card-img border border-1 border-@GetTypeColor()" alt="Fragment image" style="width: auto; object-fit: cover; aspect-ratio: 2 / 1; height: 100%;">
+        }
+        <div class="card-body d-flex flex-column">
+            <!-- Header section - consistent across both views -->
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <h5 class="card-title mb-0">@GetLocalizedTitle()</h5>
+                <div class="d-flex align-items-center">
+                    @if (!string.IsNullOrEmpty(fragment.TypeTag))
+                    {
+                        <span class="badge bg-@GetTypeColor() me-2">@fragment.TypeTag</span>
+                    }
+                </div>
+            </div>
+
+            <!-- Date section - consistent positioning -->
+            <div class="text-muted small mb-3">@fragment.CreatedAt.Humanize().Transform(To.SentenceCase)</div>
+            
+            @if (IsExpanded)
+            {
+                <!-- Expanded view with full content -->
+                @if (!string.IsNullOrEmpty(GetLocalizedSummaryTruncated()))
+                {
+                    <p class="card-text flex-grow-1 text-primary-emphasis">
+                        @GetLocalizedSummaryTruncated()
+                    </p>
+                }
+                
+                @if (!string.IsNullOrEmpty(GetLocalizedContent()))
+                {
+                    <div class="mb-3 flex-grow-1">
+                        <h6 class="text-muted mb-2">@Localizer["Content.Content"]</h6>
+                        <div class="card-text border rounded p-3 bg-@GetTypeColor() markdown-content" style="max-height: 400px; overflow-y: auto;">
+                            @((MarkupString)RenderMarkdown(GetLocalizedContent()))
+                        </div>
+                    </div>
+                }
+                
+                @if (!string.IsNullOrEmpty(fragment.AttachmentUrl) && fragment.AttachmentType != "image")
+                {
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">@Localizer["Content.Attachment"]</h6>
+                        <a href="@fragment.AttachmentUrl" target="_blank" class="btn btn-outline-@GetTypeColor() btn-sm">
+                            <i class="fas fa-external-link-alt"></i> @Localizer["Content.Open"] @fragment.AttachmentType
+                        </a>
+                    </div>
+                }
+                
+                <!-- Action buttons - consistent styling -->
+                <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                    <button class="btn btn-outline-@GetTypeColor() btn-sm" @onclick="@(() => HandleVibeClick())" @onclick:stopPropagation="true">
+                        <i class="fas fa-heart"></i> @fragment.VibeCount
+                    </button>
+                    <button class="btn btn-outline-@GetTypeColor() btn-sm" @onclick="@(() => HandleCollapseClick())">
+                        <i class="fas fa-compress-alt"></i> @Localizer["Content.Collapse"]
+                    </button>
+                </div>
+            }
+            else
+            {
+                <!-- Collapsed view with summary -->
+                <p class="card-text flex-grow-1 text-primary-emphasis">
+                    @GetLocalizedSummaryTruncated()
+                </p>
+                
+                <!-- Action buttons - consistent styling and position -->
+                <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                    <button class="btn btn-outline-@GetTypeColor() btn-sm" @onclick="@(() => HandleVibeClick())" @onclick:stopPropagation="true">
+                        <i class="fas fa-heart"></i> @fragment.VibeCount
+                    </button>
+                    <button class="btn btn-outline-@GetTypeColor() btn-sm" @onclick="@(() => HandleExpandClick())">
+                        <i class="fas fa-expand-alt"></i> @Localizer["Content.View"]
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public Fragment fragment { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback<Fragment> OnVibeClicked { get; set; }
+
+    [Parameter]
+    public bool IsExpanded { get; set; } = false;
+
+    [Parameter]
+    public EventCallback<Fragment> OnExpandClicked { get; set; }
+
+    [Parameter]
+    public EventCallback<Fragment> OnCollapseClicked { get; set; }
+
+    private async Task HandleVibeClick()
+    {
+        if (OnVibeClicked.HasDelegate)
+        {
+            await OnVibeClicked.InvokeAsync(fragment);
+        }
+    }
+
+    private async Task HandleExpandClick()
+    {
+        if (OnExpandClicked.HasDelegate)
+        {
+            await OnExpandClicked.InvokeAsync(fragment);
+        }
+    }
+
+    private async Task HandleCollapseClick()
+    {
+        if (OnCollapseClicked.HasDelegate)
+        {
+            await OnCollapseClicked.InvokeAsync(fragment);
+        }
+    }
+
+    private string GetTypeColor()
+    {
+        if (string.IsNullOrEmpty(fragment.TypeTag))
+            return TextKeys.fragmentThemeColor;
+
+        // Map fragment types to Bootstrap colors based on the specification
+        return fragment.TypeTag.ToLower() switch
+        {
+            "idea" => "warning",     // Yellow
+            "code" => "info",        // Blue
+            "quote" => "secondary",  // Gray
+            "glitch" => "danger",    // Red
+            "dream" => "primary",    // Purple
+            "fragment" => "success", // Green
+            "fiction" => "dark",     // Dark
+            _ => TextKeys.fragmentThemeColor
+        };
+    }
+
+    private string RenderMarkdown(string markdown)
+    {
+        if (string.IsNullOrEmpty(markdown))
+            return string.Empty;
+
+        var pipeline = new MarkdownPipelineBuilder()
+            .UseAdvancedExtensions()
+            .Build();
+
+        return Markdown.ToHtml(markdown, pipeline);
+    }
+
+    private string GetLocalizedTitle()
+    {
+        if (fragment.Title == null) return "";
+        var currentLanguage = CultureService.GetCurrentCulture();
+        return fragment.Title.GetText(currentLanguage);
+    }
+
+    private string GetLocalizedSummaryTruncated()
+    {
+        if (fragment.Summary == null) return "";
+        var currentLanguage = CultureService.GetCurrentCulture();
+        var localizedSummary = fragment.Summary.GetText(currentLanguage);
+        return localizedSummary.Truncate(150);
+    }
+
+    private string GetLocalizedContent()
+    {
+        if (fragment.Content == null) return "";
+        var currentLanguage = CultureService.GetCurrentCulture();
+        return fragment.Content.GetText(currentLanguage);
+    }
+}

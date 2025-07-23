@@ -1,11 +1,68 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
+// PostgreSQL Database
+var postgres = builder.AddPostgres("postgres")
+    .WithDataVolume()
+    .WithPgAdmin();
+
+var postgresDb = postgres.AddDatabase("mainDatabase");
+
+// Keycloak Identity Provider
+var keycloak = builder.AddKeycloak("keycloak", port: 8080)
+    .WithDataVolume()
+    .WaitFor(postgresDb);
+
+// Database Manager
+var databaseManager = builder.AddProject<Projects.DatabaseManager>("databasemanager")
+    .WithReference(postgresDb)
+    .WaitFor(postgresDb)
+    .WithExplicitStart();
+
+var databaseSeeder = builder.AddProject<Projects.DatabaseSeeder>("databaseseeder")
+    .WithReference(postgresDb)
+    .WaitFor(postgresDb)
+    .WithExplicitStart();
+
 // Blog Api
-var blogapi = builder.AddProject<Projects.BlogApi>("blogapi");
+var blogApiProject = builder.AddProject<Projects.BlogApi>("blogapi")
+    .WithReference(postgresDb)
+    .WaitFor(postgresDb);
+
+// Activity Api
+var activityApiProject = builder.AddProject<Projects.ActivityAPI>("activityapi")
+    .WithReference(postgresDb)
+    .WaitFor(postgresDb);
+
+// Fragment Api
+var fragmentApiProject = builder.AddProject<Projects.FragmentAPI>("fragmentapi")
+    .WithReference(postgresDb)
+    .WaitFor(postgresDb);
+
+// Tech Api
+var techApiProject = builder.AddProject<Projects.TechAPI>("techapi")
+    .WithReference(postgresDb)
+    .WaitFor(postgresDb);
+
+// API Gateway
+var apiGatewayProject = builder.AddProject<Projects.APIGateway>("gateway")
+    .WithReference(activityApiProject)
+    .WithReference(blogApiProject)
+    .WithReference(fragmentApiProject)
+    .WithReference(techApiProject)
+    .WithReference(keycloak)
+    .WaitFor(activityApiProject)
+    .WaitFor(blogApiProject)
+    .WaitFor(fragmentApiProject)
+    .WaitFor(techApiProject)
+    .WaitFor(keycloak)
+    .WithExternalHttpEndpoints();
 
 // Main Website
-var website = builder.AddProject<Projects.website>("website")
-    .WithExternalHttpEndpoints()
-    .WithReference(blogapi);
+var website = builder.AddProject<Projects.Website>("website")
+    .WithReference(apiGatewayProject)
+    .WithReference(keycloak)
+    .WaitFor(apiGatewayProject)
+    .WithExternalHttpEndpoints();
+
 
 builder.Build().Run();

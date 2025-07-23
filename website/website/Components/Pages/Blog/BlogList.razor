@@ -1,0 +1,185 @@
+@page "/blog"
+@using BlogLibrary
+@using Website.Services
+@using Website.Components.Components.Blog
+@using Microsoft.Extensions.Localization
+@using Website.Resources
+@inject BlogService BlogService
+@inject ILogger<BlogList> Logger
+@inject NavigationManager Navigation
+@inject IStringLocalizer<Localization> Localizer
+@rendermode InteractiveServer
+
+
+    <div class="row">
+        <div class="col-12">
+            <div class="mb-4 text-center">
+                <h1 class="display-4 text-@(SharedLibrary.TextKeys.blogThemeColor)">@Localizer["Page.BlogAndArticles"]</h1>
+                <p class="lead text-body-tertiary">@Localizer["Page.BlogDescription"]</p>
+            </div>
+            
+            @if (_isLoading)
+            {
+                <div class="d-flex justify-content-center my-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">@Localizer["Common.Loading"]</span>
+                    </div>
+                </div>
+            }
+            else if (_hasError)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">@Localizer["Error.LoadingPosts"]</h4>
+                    <p>@Localizer["Error.LoadingPostsMessage"]</p>
+                    <button class="btn btn-outline-danger" @onclick="@(LoadPostsAsync)">
+                        <i class="bi bi-arrow-clockwise"></i> @Localizer["Common.Retry"]
+                    </button>
+                </div>
+            }
+            else if (!_blogs.Any())
+            {
+                <div class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">@Localizer["Empty.NoPostsFound"]</h4>
+                    <p>@Localizer["Empty.NoPostsMessage"]</p>
+                </div>
+            }
+            else
+            {
+                <!-- Blog Posts List -->
+                <div class="row">
+                    @foreach (var blog in _blogs)
+                    {
+                        <BlogListCard blog="@blog" />
+                    }
+                </div>
+
+                <!-- Pagination Controls -->
+                @if (_totalPages > 1)
+                {
+                    <nav aria-label="Blog pagination" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <!-- Previous Page -->
+                            <li class="page-item @(_currentPage <= 1 ? "disabled" : "")">
+                                <button class="page-link" @onclick="@(() => GoToPageAsync(_currentPage - 1))" disabled="@(_currentPage <= 1)">
+                                    <i class="bi bi-chevron-left"></i> @Localizer["Common.Previous"]
+                                </button>
+                            </li>
+
+                            <!-- First Page -->
+                            @if (_currentPage > 3)
+                            {
+                                <li class="page-item">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(1))">1</button>
+                                </li>
+                                @if (_currentPage > 4)
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                }
+                            }
+
+                            <!-- Page Numbers -->
+                            @{
+                                var startPage = Math.Max(1, (int)_currentPage - 2);
+                                var endPage = Math.Min((int)_totalPages, (int)_currentPage + 2);
+                            }
+                            @for (int page = startPage; page <= endPage; page++)
+                            {
+                                var pageNumber = (uint)page;
+                                <li class="page-item @(pageNumber == _currentPage ? "active" : "")">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(pageNumber))">
+                                        @(page)
+                                    </button>
+                                </li>
+                            }
+
+                            <!-- Last Page -->
+                            @if (_currentPage < _totalPages - 2)
+                            {
+                                @if (_currentPage < _totalPages - 3)
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                }
+                                <li class="page-item">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(_totalPages))">@_totalPages</button>
+                                </li>
+                            }
+
+                            <!-- Next Page -->
+                            <li class="page-item @(_currentPage >= _totalPages ? "disabled" : "")">
+                                <button class="page-link" @onclick="@(() => GoToPageAsync(_currentPage + 1))" disabled="@(_currentPage >= _totalPages)">
+                                    @Localizer["Common.Next"] <i class="bi bi-chevron-right"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <!-- Page Info -->
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            @Localizer["Pagination.Page"] @_currentPage @Localizer["Pagination.Of"] @_totalPages (@_totalPosts @Localizer["Pagination.TotalPosts"])
+                        </small>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+@code {
+    private List<Blog> _blogs = new();
+    private uint _currentPage = 1;
+    private readonly uint _pageSize = 6; // 3x3 grid layout
+    private uint _totalPosts = 0;
+    private uint _totalPages = 0;
+    private bool _isLoading = true;
+    private bool _hasError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPostsAsync();
+    }
+
+    private async Task LoadPostsAsync()
+    {
+        try
+        {
+            _isLoading = true;
+            _hasError = false;
+            StateHasChanged();
+
+            // Get the total count first
+            _totalPosts = await BlogService.GetPostCountAsync();
+            _totalPages = _totalPosts > 0 ? (uint)Math.Ceiling((double)_totalPosts / _pageSize) : 0;
+
+            // Get posts for the current page
+            _blogs = await BlogService.GetPostListAsync(_currentPage, _pageSize);
+
+            Logger.LogInformation("Loaded {PostCount} posts for page {Page}", _blogs.Count, _currentPage);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading blog posts");
+            _hasError = true;
+            _blogs = new List<Blog>();
+        }
+        finally
+        {
+            _isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task GoToPageAsync(uint page)
+    {
+        if (page < 1 || page > _totalPages || page == _currentPage)
+            return;
+
+        _currentPage = page;
+        await LoadPostsAsync();
+        Navigation.NavigateTo($"{Navigation.Uri.Split('#')[0]}#contentTop", forceLoad:false);
+    }
+    
+}

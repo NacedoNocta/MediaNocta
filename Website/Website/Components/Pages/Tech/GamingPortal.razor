@@ -1,0 +1,64 @@
+@page "/tech/gaming-portal"
+@using SharedLibrary
+@using TechLibrary
+@using Microsoft.Extensions.Localization
+@using Website.Resources
+@using Website.Components.Components.Tech
+@inject IStringLocalizer<Localization> Localizer
+
+<div class="row">
+    <div class="col-12">
+        <div class="mb-4">
+            
+            <div class="text-center mb-5">
+                <h1 class="display-4 text-@(TextKeys.techThemeColor)">Gaming Portal</h1>
+                <p class="lead text-body-tertiary">Community-driven gaming platform</p>
+            </div>
+        </div>
+
+        <!-- Project Overview -->
+        <div class="row mb-5">
+            <div class="col-md-8">
+                <div class="card border-info">
+                    <div class="card-body">
+                        <h3 class="card-title text-@(TextKeys.techThemeColor)">Project Overview</h3>
+                        <p class="card-text">
+                            A comprehensive gaming community platform with game reviews, tournament management, 
+                            social features, and streaming integration.
+                        </p>
+                        
+                        <h4 class="mt-4">Key Features</h4>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Game reviews and ratings</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Tournament management</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Social gaming features</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Live streaming integration</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> Leaderboards and achievements</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-info">
+                    <div class="card-body">
+                        <h5 class="card-title">Project Details</h5>
+                        <table class="table table-sm">
+                            <tr><td><strong>Technology:</strong></td><td>ASP.NET Core</td></tr>
+                            <tr><td><strong>Database:</strong></td><td>PostgreSQL</td></tr>
+                            <tr><td><strong>Frontend:</strong></td><td>Blazor Server</td></tr>
+                            <tr><td><strong>Status:</strong></td><td><span class="badge bg-info">Planning</span></td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="row">
+            <div class="col-12">
+                <h3 class="mb-4 text-@(TextKeys.techThemeColor)">Project Updates</h3>
+                <ProjectActivity ProjectId="@ProjectKeys.GamingPortal.ToSlug()" />
+            </div>
+        </div>
+    </div>
+</div>

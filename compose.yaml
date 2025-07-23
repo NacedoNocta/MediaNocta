@@ -1,0 +1,25 @@
+﻿services:
+  apigateway:
+    image: apigateway
+    build:
+      context: .
+      dockerfile: APIGateway/Dockerfile
+
+  kingdomdemo:
+    image: kingdomdemo
+    build:
+      context: .
+      dockerfile: KingdomDemo/KingdomDemo/Dockerfile
+
+  kingdomdemo.client:
+    image: kingdomdemo.client
+    build:
+      context: .
+      dockerfile: KingdomDemo/KingdomDemo.Client/Dockerfile
+
+  fragmentapi:
+    image: fragmentapi
+    build:
+      context: .
+      dockerfile: FragmentAPI/Dockerfile
+

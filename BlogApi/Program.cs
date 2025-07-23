@@ -1,8 +1,26 @@
+using BlogApi.Interfaces;
+using BlogApi.Services;
+using BlogLibrary.Interfaces;
+using BlogAPI.Repositories;
+using DatabaseManager;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
+// Add Entity Framework
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("mainDatabase");
+    options.UseNpgsql(connectionString);
+});
+
 // Add services to the container.
+builder.Services.AddScoped<IBlogRepository, EfBlogRepository>();
+builder.Services.AddScoped<IAuthorRepository, EfAuthorRepository>();
+builder.Services.AddScoped<ITagRepository, EfTagRepository>();
+builder.Services.AddScoped<IBlogService, BlogService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

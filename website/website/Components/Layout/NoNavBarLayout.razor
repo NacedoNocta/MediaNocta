@@ -1,0 +1,21 @@
+@using Website.Components.Components.Main
+@inherits LayoutComponentBase
+
+
+<header>
+    <NavMenu />
+</header>
+
+<div>
+    <Breadcrumb />
+</div>
+
+<div class="my-4" style="min-height: 80vh">
+    <div class="row justify-content-evenly">
+        <div id="contentTop"></div>
+        <div class="col col-12 pt-3">
+            @Body
+        </div>
+    </div>
+</div>
+<Footer></Footer>

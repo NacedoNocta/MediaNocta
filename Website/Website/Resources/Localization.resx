@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Navigation -->
+  <data name="Navigation.Menu" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="Navigation.Homepage" xml:space="preserve">
+    <value>Homepage</value>
+  </data>
+  <data name="Navigation.BlogAndArticles" xml:space="preserve">
+    <value>Blog and Articles</value>
+  </data>
+  <data name="Navigation.TechProjects" xml:space="preserve">
+    <value>Tech Projects</value>
+  </data>
+  <data name="Navigation.Fragments" xml:space="preserve">
+    <value>Fragments</value>
+  </data>
+  <data name="Navigation.LearnAndAct" xml:space="preserve">
+    <value>Learn &amp; Act</value>
+  </data>
+  <data name="Navigation.AboutMe" xml:space="preserve">
+    <value>About me</value>
+  </data>
+  
+  <!-- Header -->
+  <data name="Header.Title" xml:space="preserve">
+    <value>MEDIA NOCTA</value>
+  </data>
+  <data name="Header.Subtitle" xml:space="preserve">
+    <value>by Nacedo NOCTA</value>
+  </data>
+  <data name="Header.Description" xml:space="preserve">
+    <value>The Moon is the symbol of Secrets, of Intuition, and of the travel toward Truth.</value>
+  </data>
+  
+  <!-- Common -->
+  <data name="Common.Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Common.Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Common.SeeMore" xml:space="preserve">
+    <value>See more</value>
+  </data>
+  <data name="Common.Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="Common.Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Common.Retry" xml:space="preserve">
+    <value>Retry</value>
+  </data>
+  <data name="Common.ViewProject" xml:space="preserve">
+    <value>View Project</value>
+  </data>
+  
+  <!-- Tech -->
+  <data name="Tech.NoActivity" xml:space="preserve">
+    <value>No recent activity</value>
+  </data>
+  
+  <!-- Error -->
+  <data name="Error.LoadingUpdates" xml:space="preserve">
+    <value>Error loading updates</value>
+  </data>
+  <data name="Error.LoadingUpdatesMessage" xml:space="preserve">
+    <value>Unable to load project updates. Please try again.</value>
+  </data>
+  
+  <!-- Empty -->
+  <data name="Empty.NoUpdatesFound" xml:space="preserve">
+    <value>No updates found</value>
+  </data>
+  <data name="Empty.NoUpdatesMessage" xml:space="preserve">
+    <value>There are no updates for this project yet.</value>
+  </data>
+  
+  <!-- Pagination -->
+  <data name="Pagination.TotalUpdates" xml:space="preserve">
+    <value>total updates</value>
+  </data>
+  
+  <!-- Authentication -->
+  <data name="Auth.Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Auth.Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  
+  <!-- Home Page -->
+  <data name="Home.RecentActivities" xml:space="preserve">
+    <value>Recent activities :</value>
+  </data>
+  
+  <!-- Search -->
+  <data name="Search.Placeholder" xml:space="preserve">
+    <value>Search article or project...</value>
+  </data>
+  <data name="Search.Discover" xml:space="preserve">
+    <value>Discover: </value>
+  </data>
+  <data name="Search.Random" xml:space="preserve">
+    <value>Random</value>
+  </data>
+  
+  <!-- Footer -->
+  <data name="Footer.BackToTop" xml:space="preserve">
+    <value>Back to top</value>
+  </data>
+  <data name="Footer.HomePage" xml:space="preserve">
+    <value>Home page</value>
+  </data>
+  <data name="Footer.AboutMe" xml:space="preserve">
+    <value>About me</value>
+  </data>
+  <data name="Footer.TermsAndPrivacy" xml:space="preserve">
+    <value>Terms &amp; confidentiality</value>
+  </data>
+  <data name="Footer.Description" xml:space="preserve">
+    <value>Media Nocta is a digital space dedicated to exploring the intersection of technology, creativity, and innovation. Through articles, projects, and fragments of thought, we journey together toward understanding and innovation.</value>
+  </data>
+  <data name="Footer.Copyright" xml:space="preserve">
+    <value>© 2023-2025 Copyright: Media Nocta</value>
+  </data>
+  
+  <!-- Error Messages -->
+  <data name="Error.Title" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Error.Occurred" xml:space="preserve">
+    <value>An error occurred while processing your request.</value>
+  </data>
+  <data name="Error.LoadingPosts" xml:space="preserve">
+    <value>Error Loading Posts</value>
+  </data>
+  <data name="Error.LoadingPostsMessage" xml:space="preserve">
+    <value>We encountered an issue while loading the blog posts. Please try again later.</value>
+  </data>
+  <data name="Error.LoadingFragments" xml:space="preserve">
+    <value>Error Loading Fragments</value>
+  </data>
+  <data name="Error.LoadingFragmentsMessage" xml:space="preserve">
+    <value>We encountered an issue while loading the fragments. Please try again later.</value>
+  </data>
+  
+  <!-- Empty States -->
+  <data name="Empty.NoPostsFound" xml:space="preserve">
+    <value>No Posts Found</value>
+  </data>
+  <data name="Empty.NoPostsMessage" xml:space="preserve">
+    <value>There are currently no blog posts to display.</value>
+  </data>
+  <data name="Empty.NoFragmentsFound" xml:space="preserve">
+    <value>No Fragments Found</value>
+  </data>
+  <data name="Empty.NoFragmentsMessage" xml:space="preserve">
+    <value>There are currently no fragments to display.</value>
+  </data>
+  
+  <!-- Pagination -->
+  <data name="Pagination.Page" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="Pagination.Of" xml:space="preserve">
+    <value>of</value>
+  </data>
+  <data name="Pagination.TotalPosts" xml:space="preserve">
+    <value>total posts</value>
+  </data>
+  <data name="Pagination.TotalFragments" xml:space="preserve">
+    <value>fragments on this page</value>
+  </data>
+  
+  <!-- Forms -->
+  <data name="Form.Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Form.AllTypes" xml:space="preserve">
+    <value>All Types</value>
+  </data>
+  <data name="Form.FilterByType" xml:space="preserve">
+    <value>Filter by Type</value>
+  </data>
+  
+  <!-- Content -->
+  <data name="Content.Content" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="Content.Attachment" xml:space="preserve">
+    <value>Attachment</value>
+  </data>
+  <data name="Content.View" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="Content.Collapse" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
+  <data name="Content.Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+
+  <!-- Pages -->
+  <data name="Page.AboutMe" xml:space="preserve">
+    <value>About Me</value>
+  </data>
+  <data name="Page.BlogAndArticles" xml:space="preserve">
+    <value>Blog and Articles</value>
+  </data>
+  <data name="Page.BlogDescription" xml:space="preserve">
+    <value>Read written content about programming, medias, and ideas.</value>
+  </data>
+  <data name="Page.Fragments" xml:space="preserve">
+    <value>Fragments</value>
+  </data>
+  <data name="Page.FragmentsDescription" xml:space="preserve">
+    <value>Discover thoughts, ideas, code snippets, and creative fragments.</value>
+  </data>
+  <data name="Page.TechProjects" xml:space="preserve">
+    <value>Tech Projects</value>
+  </data>
+  <data name="Page.TechProjectsDescription" xml:space="preserve">
+    <value>Explore technical projects and development updates.</value>
+  </data>
+
+  <!-- Blog -->
+  <data name="Blog.By" xml:space="preserve">
+    <value>By</value>
+  </data>
+  <data name="Blog.Published" xml:space="preserve">
+    <value>Published</value>
+  </data>
+  <data name="Blog.Created" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="Blog.Updated" xml:space="preserve">
+    <value>Updated</value>
+  </data>
+  <data name="Blog.MinRead" xml:space="preserve">
+    <value>min read</value>
+  </data>
+  <data name="Blog.Views" xml:space="preserve">
+    <value>views</value>
+  </data>
+  <data name="Blog.Featured" xml:space="preserve">
+    <value>Featured</value>
+  </data>
+  <data name="Blog.AdditionalResources" xml:space="preserve">
+    <value>Additional Resources:</value>
+  </data>
+  <data name="Blog.AboutTheAuthor" xml:space="preserve">
+    <value>About the Author</value>
+  </data>
+  <data name="Blog.Website" xml:space="preserve">
+    <value>Website</value>
+  </data>
+  <data name="Blog.Twitter" xml:space="preserve">
+    <value>Twitter</value>
+  </data>
+  <data name="Blog.LinkedIn" xml:space="preserve">
+    <value>LinkedIn</value>
+  </data>
+  <data name="Blog.GitHub" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="Blog.NotFound" xml:space="preserve">
+    <value>Blog Post Not Found</value>
+  </data>
+  <data name="Blog.NotFoundMessage" xml:space="preserve">
+    <value>We couldn't find the blog post you're looking for. It may have been removed or the link is incorrect.</value>
+  </data>
+  <data name="Blog.ReturnToList" xml:space="preserve">
+    <value>Return to Blog List</value>
+  </data>
+  <data name="Blog.MoreTags" xml:space="preserve">
+    <value>more</value>
+  </data>
+
+  <!-- Fragments -->
+  <data name="Fragment.SearchPlaceholder" xml:space="preserve">
+    <value>Search fragments...</value>
+  </data>
+  <data name="Fragment.Searching" xml:space="preserve">
+    <value>Searching fragments...</value>
+  </data>
+  <data name="Fragment.SearchResults" xml:space="preserve">
+    <value>Found {0} fragment(s) for "{1}"</value>
+  </data>
+  <data name="Fragment.Filtering" xml:space="preserve">
+    <value>Filtering fragments...</value>
+  </data>
+
+  <!-- About Me -->
+  <data name="AboutMe.MeNacedo" xml:space="preserve">
+    <value>Me, Nacedo NOCTA</value>
+  </data>
+  <data name="AboutMe.MyPlatform" xml:space="preserve">
+    <value>My platform, Media Nocta</value>
+  </data>
+  <data name="AboutMe.ResumeLink" xml:space="preserve">
+    <value>For recruiters, my virtual resume 👆</value>
+  </data>
+  <data name="AboutMe.ProfileDescription" xml:space="preserve">
+    <value>A true passionate about arts and sciences, and explorer at heart, I am constantly seeking new experiences, and I pride myself on demonstrating expertise in each of my works. Today, at 23 years old, I take advantage of each of my experiences to forge my path and my way of working.</value>
+  </data>
+
+  <!-- General -->
+  <data name="General.PinnedArticles" xml:space="preserve">
+    <value>Pinned articles</value>
+  </data>
+</root>

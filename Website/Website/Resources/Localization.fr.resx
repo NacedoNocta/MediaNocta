@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Navigation -->
+  <data name="Navigation.Menu" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="Navigation.Homepage" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="Navigation.BlogAndArticles" xml:space="preserve">
+    <value>Blog et Articles</value>
+  </data>
+  <data name="Navigation.TechProjects" xml:space="preserve">
+    <value>Projets Tech</value>
+  </data>
+  <data name="Navigation.Fragments" xml:space="preserve">
+    <value>Fragments</value>
+  </data>
+  <data name="Navigation.LearnAndAct" xml:space="preserve">
+    <value>Apprendre</value>
+  </data>
+  <data name="Navigation.AboutMe" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  
+  <!-- Header -->
+  <data name="Header.Title" xml:space="preserve">
+    <value>MEDIA NOCTA</value>
+  </data>
+  <data name="Header.Subtitle" xml:space="preserve">
+    <value>par Nacedo NOCTA</value>
+  </data>
+  <data name="Header.Description" xml:space="preserve">
+    <value>La Lune est le symbole des Secrets, de l'Intuition, et du voyage vers la Vérité.</value>
+  </data>
+  
+  <!-- Common -->
+  <data name="Common.Loading" xml:space="preserve">
+    <value>Chargement...</value>
+  </data>
+  <data name="Common.Search" xml:space="preserve">
+    <value>Rechercher</value>
+  </data>
+  <data name="Common.SeeMore" xml:space="preserve">
+    <value>Voir plus</value>
+  </data>
+  <data name="Common.Previous" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="Common.Next" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
+  <data name="Common.Retry" xml:space="preserve">
+    <value>Réessayer</value>
+  </data>
+  
+  <!-- Authentication -->
+  <data name="Auth.Login" xml:space="preserve">
+    <value>Connexion</value>
+  </data>
+  <data name="Auth.Logout" xml:space="preserve">
+    <value>Déconnexion</value>
+  </data>
+  
+  <!-- Home Page -->
+  <data name="Home.RecentActivities" xml:space="preserve">
+    <value>Activités récentes :</value>
+  </data>
+  
+  <!-- Search -->
+  <data name="Search.Placeholder" xml:space="preserve">
+    <value>Rechercher un article ou projet...</value>
+  </data>
+  <data name="Search.Discover" xml:space="preserve">
+    <value>Découvrir : </value>
+  </data>
+  <data name="Search.Random" xml:space="preserve">
+    <value>Aléatoire</value>
+  </data>
+  
+  <!-- Footer -->
+  <data name="Footer.BackToTop" xml:space="preserve">
+    <value>Retour en haut</value>
+  </data>
+  <data name="Footer.HomePage" xml:space="preserve">
+    <value>Page d'accueil</value>
+  </data>
+  <data name="Footer.AboutMe" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  <data name="Footer.TermsAndPrivacy" xml:space="preserve">
+    <value>Conditions et confidentialité</value>
+  </data>
+  <data name="Footer.Description" xml:space="preserve">
+    <value>Media Nocta est un espace numérique dédié à l'exploration de l'intersection entre technologie, créativité et innovation. À travers des articles, projets et fragments de pensée, nous voyageons ensemble vers la compréhension et l'innovation.</value>
+  </data>
+  <data name="Footer.Copyright" xml:space="preserve">
+    <value>© 2023-2025 Copyright : Media Nocta</value>
+  </data>
+  
+  <!-- Error Messages -->
+  <data name="Error.Title" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="Error.Occurred" xml:space="preserve">
+    <value>Une erreur s'est produite lors du traitement de votre demande.</value>
+  </data>
+  <data name="Error.LoadingPosts" xml:space="preserve">
+    <value>Erreur de chargement des articles</value>
+  </data>
+  <data name="Error.LoadingPostsMessage" xml:space="preserve">
+    <value>Nous avons rencontré un problème lors du chargement des articles de blog. Veuillez réessayer plus tard.</value>
+  </data>
+  <data name="Error.LoadingFragments" xml:space="preserve">
+    <value>Erreur de chargement des fragments</value>
+  </data>
+  <data name="Error.LoadingFragmentsMessage" xml:space="preserve">
+    <value>Nous avons rencontré un problème lors du chargement des fragments. Veuillez réessayer plus tard.</value>
+  </data>
+  
+  <!-- Empty States -->
+  <data name="Empty.NoPostsFound" xml:space="preserve">
+    <value>Aucun article trouvé</value>
+  </data>
+  <data name="Empty.NoPostsMessage" xml:space="preserve">
+    <value>Il n'y a actuellement aucun article de blog à afficher.</value>
+  </data>
+  <data name="Empty.NoFragmentsFound" xml:space="preserve">
+    <value>Aucun fragment trouvé</value>
+  </data>
+  <data name="Empty.NoFragmentsMessage" xml:space="preserve">
+    <value>Il n'y a actuellement aucun fragment à afficher.</value>
+  </data>
+  
+  <!-- Pagination -->
+  <data name="Pagination.Page" xml:space="preserve">
+    <value>Page</value>
+  </data>
+  <data name="Pagination.Of" xml:space="preserve">
+    <value>sur</value>
+  </data>
+  <data name="Pagination.TotalPosts" xml:space="preserve">
+    <value>articles au total</value>
+  </data>
+  <data name="Pagination.TotalFragments" xml:space="preserve">
+    <value>fragments sur cette page</value>
+  </data>
+  
+  <!-- Forms -->
+  <data name="Form.Clear" xml:space="preserve">
+    <value>Effacer</value>
+  </data>
+  <data name="Form.AllTypes" xml:space="preserve">
+    <value>Tous les types</value>
+  </data>
+  <data name="Form.FilterByType" xml:space="preserve">
+    <value>Filtrer par type</value>
+  </data>
+  
+  <!-- Content -->
+  <data name="Content.Content" xml:space="preserve">
+    <value>Contenu</value>
+  </data>
+  <data name="Content.Attachment" xml:space="preserve">
+    <value>Pièce jointe</value>
+  </data>
+  <data name="Content.View" xml:space="preserve">
+    <value>Voir</value>
+  </data>
+  <data name="Content.Collapse" xml:space="preserve">
+    <value>Réduire</value>
+  </data>
+  <data name="Content.Open" xml:space="preserve">
+    <value>Ouvrir</value>
+  </data>
+
+  <!-- Pages -->
+  <data name="Page.AboutMe" xml:space="preserve">
+    <value>À propos de moi</value>
+  </data>
+  <data name="Page.BlogAndArticles" xml:space="preserve">
+    <value>Blog et Articles</value>
+  </data>
+  <data name="Page.BlogDescription" xml:space="preserve">
+    <value>Lire du contenu écrit sur la programmation, les médias et les idées.</value>
+  </data>
+  <data name="Page.Fragments" xml:space="preserve">
+    <value>Fragments</value>
+  </data>
+  <data name="Page.FragmentsDescription" xml:space="preserve">
+    <value>Découvrez des pensées, des idées, des extraits de code et des fragments créatifs.</value>
+  </data>
+
+  <!-- Blog -->
+  <data name="Blog.By" xml:space="preserve">
+    <value>Par</value>
+  </data>
+  <data name="Blog.Published" xml:space="preserve">
+    <value>Publié</value>
+  </data>
+  <data name="Blog.Created" xml:space="preserve">
+    <value>Créé</value>
+  </data>
+  <data name="Blog.Updated" xml:space="preserve">
+    <value>Mis à jour</value>
+  </data>
+  <data name="Blog.MinRead" xml:space="preserve">
+    <value>min de lecture</value>
+  </data>
+  <data name="Blog.Views" xml:space="preserve">
+    <value>vues</value>
+  </data>
+  <data name="Blog.Featured" xml:space="preserve">
+    <value>Épinglé</value>
+  </data>
+  <data name="Blog.AdditionalResources" xml:space="preserve">
+    <value>Ressources supplémentaires :</value>
+  </data>
+  <data name="Blog.AboutTheAuthor" xml:space="preserve">
+    <value>À propos de l'auteur</value>
+  </data>
+  <data name="Blog.Website" xml:space="preserve">
+    <value>Site web</value>
+  </data>
+  <data name="Blog.Twitter" xml:space="preserve">
+    <value>Twitter</value>
+  </data>
+  <data name="Blog.LinkedIn" xml:space="preserve">
+    <value>LinkedIn</value>
+  </data>
+  <data name="Blog.GitHub" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="Blog.NotFound" xml:space="preserve">
+    <value>Article de blog introuvable</value>
+  </data>
+  <data name="Blog.NotFoundMessage" xml:space="preserve">
+    <value>Nous n'avons pas pu trouver l'article de blog que vous recherchez. Il a peut-être été supprimé ou le lien est incorrect.</value>
+  </data>
+  <data name="Blog.ReturnToList" xml:space="preserve">
+    <value>Retour à la liste des articles</value>
+  </data>
+  <data name="Blog.MoreTags" xml:space="preserve">
+    <value>de plus</value>
+  </data>
+
+  <!-- Fragments -->
+  <data name="Fragment.SearchPlaceholder" xml:space="preserve">
+    <value>Rechercher des fragments...</value>
+  </data>
+  <data name="Fragment.Searching" xml:space="preserve">
+    <value>Recherche de fragments...</value>
+  </data>
+  <data name="Fragment.SearchResults" xml:space="preserve">
+    <value>Trouvé {0} fragment(s) pour "{1}"</value>
+  </data>
+  <data name="Fragment.Filtering" xml:space="preserve">
+    <value>Filtrage des fragments...</value>
+  </data>
+
+  <!-- About Me -->
+  <data name="AboutMe.MeNacedo" xml:space="preserve">
+    <value>Moi, Nacedo NOCTA</value>
+  </data>
+  <data name="AboutMe.MyPlatform" xml:space="preserve">
+    <value>Ma plateforme, Media Nocta</value>
+  </data>
+  <data name="AboutMe.ResumeLink" xml:space="preserve">
+    <value>Pour les recruteurs, mon CV virtuel 👆</value>
+  </data>
+  <data name="AboutMe.ProfileDescription" xml:space="preserve">
+    <value>Véritable passionné des arts et des sciences, et explorateur dans l'âme, je suis constamment à la recherche de nouvelles expériences, et je mets un point d'honneur à faire preuve d'expertise lors de chacun de mes travaux. Aujourd'hui, à 23 ans, je profite de chacune de mes expériences pour forger ma voie et ma manière de travailler.</value>
+  </data>
+
+  <!-- General -->
+  <data name="General.PinnedArticles" xml:space="preserve">
+    <value>Articles épinglés</value>
+  </data>
+</root>
