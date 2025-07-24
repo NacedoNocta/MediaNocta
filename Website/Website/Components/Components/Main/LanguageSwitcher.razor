@@ -7,14 +7,14 @@
 @rendermode InteractiveServer
 
 <div class="dropdown">
-    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="fas fa-globe me-1"></i>@GetCurrentLanguageName()
     </button>
     <ul class="dropdown-menu">
         @foreach (var culture in SupportedCultures)
         {
             <li>
-                <button class="dropdown-item @(culture.Code == CurrentCulture ? "active" : "")" 
+                <button class="dropdown-item @(culture.Code == CurrentCulture ? "active bg-primary" : "")" 
                         type="button" 
                         @onclick="() => OnLanguageChanged(culture.Code)">
                     @culture.Name
