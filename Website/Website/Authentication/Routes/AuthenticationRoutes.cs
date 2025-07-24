@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
+using Website.Authentication.Interfaces;
 
 namespace Website.Authentication.Routes;
 
@@ -9,12 +10,28 @@ public static class AuthenticationRoutes
     public const string AuthStatusPath = "/auth/status";
     public const string DebugTokenPath = "/debug/token";
     
+    private static string GetSafeReturnUrl(string? returnUrl)
+    {
+        if (string.IsNullOrEmpty(returnUrl) || !returnUrl.StartsWith("/"))
+        {
+            return "/";
+        }
+        
+        // Additional security: ensure URL doesn't contain protocol schemes
+        if (returnUrl.Contains("://"))
+        {
+            return "/";
+        }
+        
+        return returnUrl;
+    }
+    
     public static void MapAuthenticationEndpoints(this WebApplication app)
     {
         // Login endpoint
         app.MapGet(LoginPath, (HttpContext context) =>
         {
-            var returnUrl = context.Request.Query["ReturnUrl"].ToString() ?? "/";
+            var returnUrl = GetSafeReturnUrl(context.Request.Query["ReturnUrl"].ToString());
             
             // If already authenticated, redirect to home immediately
             if (context.User.Identity?.IsAuthenticated == true)
@@ -25,7 +42,7 @@ public static class AuthenticationRoutes
             // Store the return URL for after authentication
             var authProperties = new AuthenticationProperties 
             { 
-                RedirectUri = "/",
+                RedirectUri = returnUrl,
                 IsPersistent = true
             };
 
@@ -35,9 +52,15 @@ public static class AuthenticationRoutes
         .WithDisplayName("User Login");
 
         // Logout endpoint
-        app.MapGet(LogoutPath, async (HttpContext context) =>
+        app.MapGet(LogoutPath, async (HttpContext context, ISessionManager sessionManager) =>
         {
+            // Clear local session first
+            await sessionManager.ClearSessionAsync();
+            
+            // Sign out from local cookie
             await context.SignOutAsync("Cookies");
+            
+            // Sign out from Keycloak
             await context.SignOutAsync("OpenIdConnect", new AuthenticationProperties
             {
                 RedirectUri = "/"
@@ -47,22 +70,27 @@ public static class AuthenticationRoutes
         .WithDisplayName("User Logout");
 
         // Debug endpoint to check authentication state and tokens
-        app.MapGet(DebugTokenPath, async (HttpContext context) =>
+        app.MapGet(DebugTokenPath, async (HttpContext context, ISessionManager sessionManager) =>
         {
-            if (context.User.Identity?.IsAuthenticated == true)
+            var session = await sessionManager.GetCurrentSessionAsync();
+            
+            if (session != null)
             {
-                var accessToken = await context.GetTokenAsync("access_token");
-                var idToken = await context.GetTokenAsync("id_token");
-                
                 return Results.Json(new
                 {
                     IsAuthenticated = true,
-                    UserName = context.User.Identity.Name,
-                    Claims = context.User.Claims.Select(c => new { c.Type, c.Value }).ToList(),
-                    HasAccessToken = !string.IsNullOrEmpty(accessToken),
-                    HasIdToken = !string.IsNullOrEmpty(idToken),
-                    AccessTokenPreview = !string.IsNullOrEmpty(accessToken) 
-                        ? accessToken.Substring(0, Math.Min(100, accessToken.Length)) + "..." 
+                    UserName = session.UserName,
+                    Email = session.Email,
+                    UserId = session.UserId,
+                    Roles = session.Roles,
+                    SessionCreated = session.SessionCreated,
+                    LastActivity = session.LastActivity,
+                    AccessTokenExpiration = session.AccessTokenExpiration,
+                    RefreshTokenExpiration = session.RefreshTokenExpiration,
+                    IsAccessTokenExpired = session.IsAccessTokenExpired,
+                    IsRefreshTokenExpired = session.IsRefreshTokenExpired,
+                    AccessTokenPreview = !string.IsNullOrEmpty(session.AccessToken) 
+                        ? session.AccessToken.Substring(0, Math.Min(100, session.AccessToken.Length)) + "..." 
                         : null
                 });
             }
@@ -92,7 +120,8 @@ public static class AuthenticationRoutes
             // After successful authentication, redirect to home
             if (context.User.Identity?.IsAuthenticated == true)
             {
-                return Results.Redirect("/");
+                var returnUrl = GetSafeReturnUrl(context.Request.Query["ReturnUrl"].ToString());
+                return Results.Redirect(returnUrl);
             }
             return Results.Redirect(LoginPath);
         })

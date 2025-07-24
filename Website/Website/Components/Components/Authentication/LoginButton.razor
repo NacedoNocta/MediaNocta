@@ -1,9 +1,11 @@
 @using Website.Authentication.Routes
 @using Website.Authentication.Interfaces
+@using Website.Authentication.Models
 @using Microsoft.Extensions.Localization
 @using Website.Resources
 @inject NavigationManager Navigation
 @inject IAuthenticationService AuthService
+@inject ISessionManager SessionManager
 @inject IStringLocalizer<Localization> Localizer
 @rendermode InteractiveServer
 @implements IDisposable
@@ -11,13 +13,29 @@
 <div class="auth-button">
     @if (isAuthenticated)
     {
-        <button class="mx-4 btn btn-outline-danger px-4 py-3" @onclick="HandleLogout">
-            @Localizer["Auth.Logout"]
-        </button>
+        <div class="d-flex align-items-center">
+            @if (session != null)
+            {
+                <div class="me-3">
+                    <small class="text-muted">Welcome, @session.UserName</small>
+                    @if (session.IsKeycloakSessionExpired)
+                    {
+                        <span class="badge bg-danger ms-1">Session Expired</span>
+                    }
+                    else if (!session.IsValid)
+                    {
+                        <span class="badge bg-warning ms-1">Session Expiring</span>
+                    }
+                </div>
+            }
+            <button class="btn btn-outline-danger px-4 py-3" @onclick="HandleLogout">
+                @Localizer["Auth.Logout"]
+            </button>
+        </div>
     }
     else
     {
-        <button class="mx-4 btn btn-outline-primary px-4 py-3" @onclick="HandleLogin">
+        <button class="btn btn-outline-primary px-4 py-3" @onclick="HandleLogin">
             @Localizer["Auth.Login"]
         </button>
     }
@@ -25,26 +43,26 @@
 
 @code {
     private bool isAuthenticated = false;
-    private Timer? refreshTimer;
+    private UserSession? session;
 
     protected override async Task OnInitializedAsync()
     {
+        SessionManager.SessionChanged += OnSessionChanged;
         await RefreshAuthenticationState();
-        
-        // Set up a timer to periodically check authentication state
-        refreshTimer = new Timer(async _ => 
-        {
-            await InvokeAsync(async () =>
-            {
-                await RefreshAuthenticationState();
-                StateHasChanged();
-            });
-        }, null, TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5));
     }
 
     private async Task RefreshAuthenticationState()
     {
-        isAuthenticated = await AuthService.IsAuthenticatedAsync();
+        session = await SessionManager.GetCurrentSessionAsync();
+        isAuthenticated = session != null && !session.IsKeycloakSessionExpired;
+        StateHasChanged();
+    }
+
+    private void OnSessionChanged(object? sender, UserSession? updatedSession)
+    {
+        session = updatedSession;
+        isAuthenticated = session != null && !session.IsKeycloakSessionExpired;
+        InvokeAsync(StateHasChanged);
     }
 
     private async Task HandleLogin()
@@ -66,6 +84,6 @@
 
     public void Dispose()
     {
-        refreshTimer?.Dispose();
+        SessionManager.SessionChanged -= OnSessionChanged;
     }
 }

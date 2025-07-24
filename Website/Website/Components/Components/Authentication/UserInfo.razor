@@ -1,40 +1,132 @@
-@using System.Security.Claims
+@using Humanizer
 @using Website.Authentication.Interfaces
-@inject IAuthenticationService AuthService
+@using Website.Authentication.Models
+@inject ISessionManager SessionManager
+@inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-@if (isAuthenticated && user != null)
+@if (session != null)
 {
     <div class="user-info">
         <div class="card">
-            <div class="card-header">
-                <h5>User Information</h5>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">User Information</h5>
+                <a href="/Account/Profile" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-user me-1"></i>View Profile
+                </a>
             </div>
             <div class="card-body">
-                <p><strong>Name:</strong> @(user.Identity?.Name ?? "N/A")</p>
-                <p><strong>Email:</strong> @(user.FindFirst("email")?.Value ?? "N/A")</p>
-                <p><strong>Roles:</strong> @string.Join(", ", user.FindAll("roles").Select(c => c.Value))</p>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="me-3">
+                        <i class="fas fa-user-circle fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1">@session.UserName</h6>
+                        <small class="text-muted">@session.Email</small>
+                    </div>
+                </div>
+                
+                <div class="mb-2">
+                    <strong>Roles:</strong>
+                    <div class="mt-1">
+                        @if (session.Roles.Any())
+                        {
+                            @foreach (var role in session.Roles)
+                            {
+                                <span class="badge bg-secondary me-1">@role</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted small">No roles assigned</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="mb-2">
+                    <strong>Session Status:</strong>
+                    @if (session.IsKeycloakSessionExpired)
+                    {
+                        <span class="badge bg-danger ms-1">Expired</span>
+                    }
+                    else if (session.IsValid)
+                    {
+                        <span class="badge bg-success ms-1">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning ms-1">Expiring</span>
+                    }
+                </div>
+                
+                <div class="mb-2">
+                    <strong>Last Activity:</strong>
+                    <small class="text-muted ms-1">@session.LastActivity.Humanize()</small>
+                </div>
+                
+                @if (session.IsKeycloakSessionExpired)
+                {
+                    <div class="alert alert-danger alert-sm mt-2 mb-0">
+                        <i class="fas fa-times-circle me-1"></i>
+                        <small>Keycloak session expired, please log in again</small>
+                        <div class="mt-1">
+                            <a href="/Account/Login" class="btn btn-sm btn-danger">Login Again</a>
+                        </div>
+                    </div>
+                }
+                else if (session.IsAccessTokenExpired && !session.IsRefreshTokenExpired)
+                {
+                    <div class="alert alert-warning alert-sm mt-2 mb-0">
+                        <i class="fas fa-exclamation-triangle me-1"></i>
+                        <small>Access token expired, refreshing automatically...</small>
+                    </div>
+                }
+                else if (session.IsRefreshTokenExpired)
+                {
+                    <div class="alert alert-danger alert-sm mt-2 mb-0">
+                        <i class="fas fa-times-circle me-1"></i>
+                        <small>Session expired, please log in again</small>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="user-info">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                <small class="text-muted">Loading user information...</small>
             </div>
         </div>
     </div>
 }
 
 @code {
-    private bool isAuthenticated = false;
-    private ClaimsPrincipal? user;
+    private UserSession? session;
 
     protected override async Task OnInitializedAsync()
     {
+        SessionManager.SessionChanged += OnSessionChanged;
         await RefreshUserInfo();
     }
 
     private async Task RefreshUserInfo()
     {
-        isAuthenticated = await AuthService.IsAuthenticatedAsync();
-        if (isAuthenticated)
-        {
-            user = await AuthService.GetUserAsync();
-        }
+        session = await SessionManager.GetCurrentSessionAsync();
         StateHasChanged();
+    }
+
+    private void OnSessionChanged(object? sender, UserSession? updatedSession)
+    {
+        session = updatedSession;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        SessionManager.SessionChanged -= OnSessionChanged;
     }
 }

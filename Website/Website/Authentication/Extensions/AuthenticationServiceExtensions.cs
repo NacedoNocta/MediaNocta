@@ -60,11 +60,21 @@ public static class AuthenticationServiceExtensions
                     context.HandleResponse();
                     return Task.CompletedTask;
                 },
-                OnTokenValidated = context =>
+                OnTokenValidated = async context =>
                 {
+                    // Create session when tokens are validated
+                    var sessionManager = context.HttpContext.RequestServices.GetRequiredService<ISessionManager>();
+                    var accessToken = context.TokenEndpointResponse?.AccessToken ?? string.Empty;
+                    var refreshToken = context.TokenEndpointResponse?.RefreshToken ?? string.Empty;
+                    var idToken = context.TokenEndpointResponse?.IdToken ?? string.Empty;
+                    
+                    if (!string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
+                    {
+                        await sessionManager.CreateSessionAsync(context.Principal!, accessToken, refreshToken, idToken);
+                    }
+                    
                     // Successful authentication - force redirect to home page
                     context.Properties.RedirectUri = "/";
-                    return Task.CompletedTask;
                 }
             };
         });
@@ -72,8 +82,19 @@ public static class AuthenticationServiceExtensions
         // Add authorization
         services.AddAuthorization();
 
+        // Configure HTTP client for token refresh service
+        services.AddHttpClient<ITokenRefreshService, TokenRefreshService>();
+        
         // Register authentication services
         services.AddScoped<ICustomAuthenticationService, Website.Authentication.Services.AuthenticationService>();
+        services.AddScoped<ISessionManager, SessionManager>();
+        services.AddScoped<ITokenRefreshService, TokenRefreshService>();
+        services.AddSingleton<TokenUpdateQueue>();
+        services.AddSingleton<SessionStore>();
+
+        // Configure authentication options
+        services.Configure<CustomAuthenticationOptions>(
+            configuration.GetSection(CustomAuthenticationOptions.SectionName));
 
         return services;
     }

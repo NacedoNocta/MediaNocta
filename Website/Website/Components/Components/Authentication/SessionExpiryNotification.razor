@@ -1,0 +1,80 @@
+@using Website.Authentication.Interfaces
+@using Website.Authentication.Models
+@inject ISessionManager SessionManager
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+@implements IDisposable
+
+@if (showNotification && session != null)
+{
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        <div class="toast show" role="alert">
+            <div class="toast-header bg-danger text-white">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong class="me-auto">Session Expired</strong>
+                <button type="button" class="btn-close btn-close-white" @onclick="DismissNotification"></button>
+            </div>
+            <div class="toast-body">
+                <p class="mb-2">Your Keycloak session has expired. Please log in again to continue.</p>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary btn-sm" @onclick="RedirectToLogin">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login Again
+                    </button>
+                    <button class="btn btn-secondary btn-sm" @onclick="DismissNotification">
+                        Dismiss
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private UserSession? session;
+    private bool showNotification = false;
+    private bool wasKeycloakExpired = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        SessionManager.SessionChanged += OnSessionChanged;
+        session = await SessionManager.GetCurrentSessionAsync();
+        CheckForExpiry();
+    }
+
+    private void OnSessionChanged(object? sender, UserSession? updatedSession)
+    {
+        session = updatedSession;
+        CheckForExpiry();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void CheckForExpiry()
+    {
+        if (session?.IsKeycloakSessionExpired == true && !wasKeycloakExpired)
+        {
+            showNotification = true;
+            wasKeycloakExpired = true;
+        }
+        else if (session?.IsKeycloakSessionExpired != true)
+        {
+            wasKeycloakExpired = false;
+            showNotification = false;
+        }
+    }
+
+    private void DismissNotification()
+    {
+        showNotification = false;
+        StateHasChanged();
+    }
+
+    private void RedirectToLogin()
+    {
+        Navigation.NavigateTo("/Account/Login", forceLoad: true);
+    }
+
+    public void Dispose()
+    {
+        SessionManager.SessionChanged -= OnSessionChanged;
+    }
+}

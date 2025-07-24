@@ -1,0 +1,316 @@
+@page "/Account/Profile"
+@using Humanizer
+@using Microsoft.AspNetCore.Authorization
+@using Website.Authentication.Interfaces
+@using Website.Authentication.Models
+@inject ISessionManager SessionManager
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+@attribute [Authorize]
+
+<PageTitle>User Profile - Media Nocta</PageTitle>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user me-2"></i>User Profile
+                    </h3>
+                    <button class="btn btn-outline-primary btn-sm" @onclick="RefreshProfile">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                </div>
+
+                @if (session != null)
+                {
+                    <div class="card-body">
+                        <!-- User Information -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>Personal Information
+                                </h5>
+                                <div class="mb-2">
+                                    <strong>User ID:</strong>
+                                    <span class="ms-2 text-muted">@session.UserId</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Username:</strong>
+                                    <span class="ms-2">@session.UserName</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Email:</strong>
+                                    <span class="ms-2">@session.Email</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Roles:</strong>
+                                    <div class="ms-2 mt-1">
+                                        @if (session.Roles.Any())
+                                        {
+                                            @foreach (var role in session.Roles)
+                                            {
+                                                <span class="badge bg-secondary me-1">@role</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No roles assigned</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-clock me-2"></i>Session Information
+                                </h5>
+                                <div class="mb-2">
+                                    <strong>Session Created:</strong>
+                                    <span class="ms-2 text-muted">@session.SessionCreated.ToString("yyyy-MM-dd HH:mm:ss") UTC</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Last Activity:</strong>
+                                    <span class="ms-2 text-muted">@session.LastActivity.Humanize()</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Session Status:</strong>
+                                    <span class="ms-2">
+                                        @if (session.IsValid)
+                                        {
+                                            <span class="badge bg-success">Valid</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Invalid</span>
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Token Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-key me-2"></i>Token Information
+                                </h5>
+                                
+                                <div class="alert alert-info mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Automatic Token Refresh:</strong> Expired access tokens are automatically refreshed on each page request.
+                                    If refresh fails, you'll be redirected to login.
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="border rounded p-3">
+                                            <h6 class="fw-bold">Access Token</h6>
+                                            <div class="mb-2">
+                                                <strong>Status:</strong>
+                                                @if (session.IsAccessTokenExpired)
+                                                {
+                                                    <span class="badge bg-danger ms-1">Expired</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-success ms-1">Valid</span>
+                                                }
+                                            </div>
+                                            <div class="mb-2">
+                                                <strong>Expires:</strong>
+                                                <span class="ms-1 text-muted">@session.AccessTokenExpiration.ToString("yyyy-MM-dd HH:mm:ss") UTC</span>
+                                            </div>
+                                            <div>
+                                                <strong>Time until expiry:</strong>
+                                                <span class="ms-1">
+                                                    @if (session.AccessTokenExpiration > DateTime.UtcNow)
+                                                    {
+                                                        <span class="text-success">@((session.AccessTokenExpiration - DateTime.UtcNow).Humanize())</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-danger">Expired @((DateTime.UtcNow - session.AccessTokenExpiration).Humanize()) ago</span>
+                                                    }
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <div class="border rounded p-3">
+                                            <h6 class="fw-bold">Refresh Token</h6>
+                                            <div class="mb-2">
+                                                <strong>Status:</strong>
+                                                @if (session.IsRefreshTokenExpired)
+                                                {
+                                                    <span class="badge bg-danger ms-1">Expired</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-success ms-1">Valid</span>
+                                                }
+                                            </div>
+                                            <div class="mb-2">
+                                                <strong>Expires:</strong>
+                                                <span class="ms-1 text-muted">@session.RefreshTokenExpiration.ToString("yyyy-MM-dd HH:mm:ss") UTC</span>
+                                            </div>
+                                            <div>
+                                                <strong>Time until expiry:</strong>
+                                                <span class="ms-1">
+                                                    @if (session.RefreshTokenExpiration > DateTime.UtcNow)
+                                                    {
+                                                        <span class="text-success">@((session.RefreshTokenExpiration - DateTime.UtcNow).Humanize())</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-danger">Expired @((DateTime.UtcNow - session.RefreshTokenExpiration).Humanize()) ago</span>
+                                                    }
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Token Actions -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-tools me-2"></i>Token Actions
+                                </h5>
+                                
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <button class="btn btn-outline-primary" @onclick="RefreshTokens" disabled="@isRefreshing">
+                                        @if (isRefreshing)
+                                        {
+                                            <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-sync-alt me-1"></i>
+                                        }
+                                        Refresh Tokens
+                                    </button>
+                                    
+                                    <button class="btn btn-outline-secondary" @onclick="ShowAccessToken">
+                                        <i class="fas fa-eye me-1"></i>View Access Token
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(statusMessage))
+                        {
+                            <div class="alert @(isError ? "alert-danger" : "alert-success") alert-dismissible fade show" role="alert">
+                                <i class="fas @(isError ? "fa-exclamation-triangle" : "fa-check-circle") me-2"></i>
+                                @statusMessage
+                                <button type="button" class="btn-close" @onclick="ClearStatusMessage"></button>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="card-body text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Loading profile information...</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private UserSession? session;
+    private bool isRefreshing = false;
+    private string statusMessage = string.Empty;
+    private bool isError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        SessionManager.SessionChanged += OnSessionChanged;
+        await LoadProfile();
+    }
+
+    private async Task LoadProfile()
+    {
+        session = await SessionManager.GetCurrentSessionAsync();
+        StateHasChanged();
+    }
+
+    private async Task RefreshProfile()
+    {
+        await LoadProfile();
+        SetStatusMessage("Profile refreshed successfully", false);
+    }
+
+    private async Task RefreshTokens()
+    {
+        if (isRefreshing) return;
+
+        isRefreshing = true;
+        SetStatusMessage("Refreshing tokens...", false);
+        StateHasChanged();
+
+        try
+        {
+            var result = await SessionManager.RefreshTokensAsync();
+            
+            if (result.Success)
+            {
+                await LoadProfile();
+                SetStatusMessage("Tokens refreshed successfully", false);
+            }
+            else
+            {
+                SetStatusMessage($"Token refresh failed: {result.ErrorMessage}", true);
+            }
+        }
+        catch (Exception ex)
+        {
+            SetStatusMessage($"Error refreshing tokens: {ex.Message}", true);
+        }
+        finally
+        {
+            isRefreshing = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task ShowAccessToken()
+    {
+        if (session?.AccessToken != null)
+        {
+            await JS.InvokeVoidAsync("alert", $"Access Token:\n{session.AccessToken}");
+        }
+    }
+
+    private void OnSessionChanged(object? sender, UserSession? updatedSession)
+    {
+        session = updatedSession;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void SetStatusMessage(string message, bool error)
+    {
+        statusMessage = message;
+        isError = error;
+    }
+
+    private void ClearStatusMessage()
+    {
+        statusMessage = string.Empty;
+        isError = false;
+    }
+
+    public void Dispose()
+    {
+        SessionManager.SessionChanged -= OnSessionChanged;
+    }
+}

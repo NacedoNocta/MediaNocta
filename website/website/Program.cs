@@ -2,6 +2,7 @@ using Website.Components;
 using Website.Services;
 using Website.Authentication.Routes;
 using Website.Authentication.Extensions;
+using Website.Authentication.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,6 +86,7 @@ app.UseHttpsRedirection();
 app.UseRequestLocalization();
 
 app.UseAuthentication();
+app.UseMiddleware<TokenUpdateMiddleware>();
 app.UseAuthorization();
 
 app.UseAntiforgery();
