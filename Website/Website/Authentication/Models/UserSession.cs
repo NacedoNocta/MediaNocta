@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Website.Authentication.Models;
 
@@ -27,7 +28,7 @@ public class UserSession
             UserId = user.FindFirst("sub")?.Value ?? user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty,
             UserName = user.Identity?.Name ?? string.Empty,
             Email = user.FindFirst("email")?.Value ?? user.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty,
-            Roles = user.FindAll("roles").Select(c => c.Value).ToList(),
+            Roles = ExtractRolesFromToken(accessToken),
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             IdToken = idToken,
@@ -46,7 +47,7 @@ public class UserSession
         UserId = user.FindFirst("sub")?.Value ?? user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? UserId;
         UserName = user.Identity?.Name ?? UserName;
         Email = user.FindFirst("email")?.Value ?? user.FindFirst(ClaimTypes.Email)?.Value ?? Email;
-        Roles = user.FindAll("roles").Select(c => c.Value).ToList();
+        Roles = ExtractRolesFromToken(AccessToken);
         LastActivity = DateTime.UtcNow;
     }
     
@@ -58,6 +59,10 @@ public class UserSession
         {
             IdToken = idToken;
         }
+        
+        // Update roles from the new access token
+        Roles = ExtractRolesFromToken(accessToken);
+        
         LastActivity = DateTime.UtcNow;
         ParseTokenExpirations();
     }
@@ -98,5 +103,48 @@ public class UserSession
         }
         
         return null;
+    }
+    
+    private static List<string> ExtractRolesFromToken(string token)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(token)) return new List<string>();
+            
+            var parts = token.Split('.');
+            if (parts.Length != 3) return new List<string>();
+            
+            var payload = parts[1];
+            // Add padding if needed
+            while (payload.Length % 4 != 0)
+                payload += "=";
+                
+            var json = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(payload));
+            var jsonDoc = JsonDocument.Parse(json);
+            
+            var roles = new List<string>();
+            
+            // Extract realm_access roles
+            if (jsonDoc.RootElement.TryGetProperty("realm_access", out var realmAccess) &&
+                realmAccess.TryGetProperty("roles", out var realmRoles) &&
+                realmRoles.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var role in realmRoles.EnumerateArray())
+                {
+                    var roleValue = role.GetString();
+                    if (!string.IsNullOrEmpty(roleValue))
+                    {
+                        roles.Add(roleValue);
+                    }
+                }
+            }
+            
+            return roles;
+        }
+        catch
+        {
+            // Return empty list on parsing errors
+            return new List<string>();
+        }
     }
 }

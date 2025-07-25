@@ -14,20 +14,6 @@
     @if (isAuthenticated)
     {
         <div class="d-flex align-items-center">
-            @if (session != null)
-            {
-                <div class="me-3">
-                    <small class="text-muted">Welcome, @session.UserName</small>
-                    @if (session.IsKeycloakSessionExpired)
-                    {
-                        <span class="badge bg-danger ms-1">Session Expired</span>
-                    }
-                    else if (!session.IsValid)
-                    {
-                        <span class="badge bg-warning ms-1">Session Expiring</span>
-                    }
-                </div>
-            }
             <button class="btn btn-outline-danger px-4 py-3" @onclick="HandleLogout">
                 @Localizer["Auth.Logout"]
             </button>
