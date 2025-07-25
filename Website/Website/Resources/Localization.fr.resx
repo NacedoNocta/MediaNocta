@@ -335,4 +335,20 @@
   <data name="General.PinnedArticles" xml:space="preserve">
     <value>Articles épinglés</value>
   </data>
+
+  <!-- Authorization Errors -->
+  <data name="Error.Unauthorized.Title" xml:space="preserve">
+    <value>Accès refusé</value>
+  </data>
+  <data name="Error.Unauthorized.Message" xml:space="preserve">
+    <value>Vous devez être authentifié pour accéder à cette page.</value>
+  </data>
+  <data name="Error.Unauthorized.Help" xml:space="preserve">
+    <value>Si vous pensez qu'il s'agit d'une erreur, veuillez contacter le support.</value>
+  </data>
+  
+  <!-- Navigation -->
+  <data name="Navigation.Home" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
 </root>

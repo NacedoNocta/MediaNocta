@@ -60,12 +60,16 @@
             return;
         }
         
-        Navigation.NavigateTo(AuthenticationRoutes.LoginPath, forceLoad: true);
+        var currentUrl = Navigation.Uri;
+        var returnUrl = Uri.EscapeDataString(new Uri(currentUrl).PathAndQuery);
+        Navigation.NavigateTo($"{AuthenticationRoutes.LoginPath}?ReturnUrl={returnUrl}", forceLoad: true);
     }
 
     private void HandleLogout()
     {
-        Navigation.NavigateTo(AuthenticationRoutes.LogoutPath, forceLoad: true);
+        var currentUrl = Navigation.Uri;
+        var returnUrl = Uri.EscapeDataString(new Uri(currentUrl).PathAndQuery);
+        Navigation.NavigateTo($"{AuthenticationRoutes.LogoutPath}?ReturnUrl={returnUrl}", forceLoad: true);
     }
 
     public void Dispose()

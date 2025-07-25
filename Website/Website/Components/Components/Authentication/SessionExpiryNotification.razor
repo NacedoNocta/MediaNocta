@@ -70,7 +70,9 @@
 
     private void RedirectToLogin()
     {
-        Navigation.NavigateTo("/Account/Login", forceLoad: true);
+        var currentUrl = Navigation.Uri;
+        var returnUrl = Uri.EscapeDataString(new Uri(currentUrl).PathAndQuery);
+        Navigation.NavigateTo($"/Account/Login?ReturnUrl={returnUrl}", forceLoad: true);
     }
 
     public void Dispose()

@@ -27,6 +27,21 @@ public static class AuthenticationServiceExtensions
             options.LoginPath = authOptions.Cookies.LoginPath;
             options.LogoutPath = authOptions.Cookies.LogoutPath;
             options.AccessDeniedPath = authOptions.Cookies.AccessDeniedPath;
+            
+            // Custom event handlers to redirect to our error page
+            options.Events.OnRedirectToLogin = context =>
+            {
+                // Instead of redirecting to login page, redirect to our unauthorized page
+                context.Response.Redirect("/Unauthorized");
+                return Task.CompletedTask;
+            };
+            
+            options.Events.OnRedirectToAccessDenied = context =>
+            {
+                // Redirect to our unauthorized page for access denied scenarios
+                context.Response.Redirect("/Unauthorized");
+                return Task.CompletedTask;
+            };
         })
         .AddKeycloakOpenIdConnect("keycloak", authOptions.Keycloak.Realm, "OpenIdConnect", options =>
         {
@@ -73,8 +88,12 @@ public static class AuthenticationServiceExtensions
                         await sessionManager.CreateSessionAsync(context.Principal!, accessToken, refreshToken, idToken);
                     }
                     
-                    // Successful authentication - force redirect to home page
-                    context.Properties.RedirectUri = "/";
+                    // Use the return URL from the original authentication request if available
+                    // Otherwise, redirect to home page
+                    if (string.IsNullOrEmpty(context.Properties.RedirectUri))
+                    {
+                        context.Properties.RedirectUri = "/";
+                    }
                 }
             };
         });

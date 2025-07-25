@@ -27,5 +27,5 @@ public class CookieOptions
 {
     public string LoginPath { get; set; } = "/Account/Login";
     public string LogoutPath { get; set; } = "/Account/Logout";
-    public string AccessDeniedPath { get; set; } = "/Account/AccessDenied";
+    public string AccessDeniedPath { get; set; } = "/Unauthorized";
 }

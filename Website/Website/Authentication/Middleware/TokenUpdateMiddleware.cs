@@ -154,8 +154,9 @@ public class TokenUpdateMiddleware
             // Sign out from local cookie
             await context.SignOutAsync("Cookies");
             
-            // Redirect to login page for re-authentication
-            context.Response.Redirect("/Account/Login");
+            // Instead of forcing redirect, let the request continue
+            // The authorization will be handled by [Authorize] attributes and proper error pages
+            _logger.LogDebug("Session terminated, allowing request to continue for proper error handling");
         }
         catch (Exception ex)
         {

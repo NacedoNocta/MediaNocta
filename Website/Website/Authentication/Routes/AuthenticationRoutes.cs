@@ -54,6 +54,8 @@ public static class AuthenticationRoutes
         // Logout endpoint
         app.MapGet(LogoutPath, async (HttpContext context, ISessionManager sessionManager) =>
         {
+            var returnUrl = GetSafeReturnUrl(context.Request.Query["ReturnUrl"].ToString());
+            
             // Clear local session first
             await sessionManager.ClearSessionAsync();
             
@@ -63,7 +65,7 @@ public static class AuthenticationRoutes
             // Sign out from Keycloak
             await context.SignOutAsync("OpenIdConnect", new AuthenticationProperties
             {
-                RedirectUri = "/"
+                RedirectUri = returnUrl
             });
         })
         .WithName("Logout")
