@@ -64,6 +64,13 @@
                         <li class="nav-item pt-0">
                             <LoginButton />
                         </li>
+                        <!-- Debug/Test endpoints - only show in development -->
+                        @if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                        {
+                            <li class="nav-item pt-0">
+                                <NavLink href="/test-endpoints" class="mx-4 btn btn-outline-warning px-4 py-3" role="button" ActiveClass="bg-warning">🧪 Test Endpoints</NavLink>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

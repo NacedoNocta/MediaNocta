@@ -1,5 +1,7 @@
 ﻿using TechAPI.Interfaces;
 using TechLibrary.Interfaces;
+using TechLibrary;
+using SharedLibrary;
 using Microsoft.AspNetCore.Mvc;
 
 namespace TechAPI.Controllers
@@ -110,5 +112,121 @@ namespace TechAPI.Controllers
                 return StatusCode(500, "An error occurred while retrieving last activity dates");
             }
         }
+
+        [Route("tech-updates")]
+        [HttpPost(Name = "CreateTechUpdate")]
+        public async Task<ActionResult<ITechUpdate>> CreateTechUpdate([FromBody] CreateTechUpdateRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var techUpdate = new TechUpdate(
+                    request.Title,
+                    request.Summary,
+                    request.Content,
+                    request.ProjectId,
+                    request.UpdateType ?? "",
+                    request.ImageUrl,
+                    request.Links
+                );
+
+                var created = await _techUpdateService.CreateTechUpdateAsync(techUpdate);
+                return CreatedAtAction(nameof(GetTechUpdateById), new { id = created.Id }, created);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating tech update");
+                return StatusCode(500, "An error occurred while creating the tech update");
+            }
+        }
+
+        [Route("tech-updates/{id:guid}")]
+        [HttpPut(Name = "UpdateTechUpdate")]
+        public async Task<ActionResult<ITechUpdate>> UpdateTechUpdate(Guid id, [FromBody] UpdateTechUpdateRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var existingUpdate = await _techUpdateService.GetTechUpdateByIdAsync(id);
+                if (existingUpdate == null)
+                {
+                    return NotFound($"Tech update with ID {id} not found");
+                }
+
+                var techUpdate = new TechUpdate(
+                    request.Title,
+                    request.Summary,
+                    request.Content,
+                    request.ProjectId,
+                    request.UpdateType ?? "",
+                    request.ImageUrl,
+                    request.Links
+                ) { Id = id };
+
+                var updated = await _techUpdateService.UpdateTechUpdateAsync(techUpdate);
+                if (updated == null)
+                {
+                    return NotFound($"Tech update with ID {id} not found");
+                }
+
+                return Ok(updated);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating tech update with ID {Id}", id);
+                return StatusCode(500, "An error occurred while updating the tech update");
+            }
+        }
+
+        [Route("tech-updates/{id:guid}")]
+        [HttpDelete(Name = "DeleteTechUpdate")]
+        public async Task<ActionResult> DeleteTechUpdate(Guid id)
+        {
+            try
+            {
+                var deleted = await _techUpdateService.DeleteTechUpdateAsync(id);
+                if (!deleted)
+                {
+                    return NotFound($"Tech update with ID {id} not found");
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting tech update with ID {Id}", id);
+                return StatusCode(500, "An error occurred while deleting the tech update");
+            }
+        }
+    }
+
+    public class CreateTechUpdateRequest
+    {
+        public required string Title { get; set; }
+        public required string Summary { get; set; }
+        public required string Content { get; set; }
+        public required string ProjectId { get; set; }
+        public string? UpdateType { get; set; }
+        public string? ImageUrl { get; set; }
+        public List<string>? Links { get; set; }
+    }
+
+    public class UpdateTechUpdateRequest
+    {
+        public required string Title { get; set; }
+        public required string Summary { get; set; }
+        public required string Content { get; set; }
+        public required string ProjectId { get; set; }
+        public string? UpdateType { get; set; }
+        public string? ImageUrl { get; set; }
+        public List<string>? Links { get; set; }
     }
 }

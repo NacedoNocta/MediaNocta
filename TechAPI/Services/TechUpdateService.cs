@@ -91,5 +91,44 @@ namespace TechAPI.Services
                 throw;
             }
         }
+
+        public async Task<ITechUpdate> CreateTechUpdateAsync(ITechUpdate techUpdate)
+        {
+            try
+            {
+                return await _repository.CreateTechUpdateAsync(techUpdate);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in service creating tech update");
+                throw;
+            }
+        }
+
+        public async Task<ITechUpdate?> UpdateTechUpdateAsync(ITechUpdate techUpdate)
+        {
+            try
+            {
+                return await _repository.UpdateTechUpdateAsync(techUpdate);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in service updating tech update with ID {Id}", techUpdate.Id);
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteTechUpdateAsync(Guid id)
+        {
+            try
+            {
+                return await _repository.DeleteTechUpdateAsync(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in service deleting tech update with ID {Id}", id);
+                throw;
+            }
+        }
     }
 }

@@ -13,7 +13,13 @@
 <div class="auth-button">
     @if (isAuthenticated)
     {
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center gap-2">
+            @if (isWebsiteAdmin)
+            {
+                <NavLink href="/admin" class="btn btn-outline-warning px-3 py-3" ActiveClass="bg-warning">
+                    <i class="fas fa-cog me-2"></i>Admin
+                </NavLink>
+            }
             <button class="btn btn-outline-danger px-4 py-3" @onclick="HandleLogout">
                 @Localizer["Auth.Logout"]
             </button>
@@ -29,6 +35,7 @@
 
 @code {
     private bool isAuthenticated = false;
+    private bool isWebsiteAdmin = false;
     private UserSession? session;
 
     protected override async Task OnInitializedAsync()
@@ -41,6 +48,7 @@
     {
         session = await SessionManager.GetCurrentSessionAsync();
         isAuthenticated = session != null && !session.IsKeycloakSessionExpired;
+        isWebsiteAdmin = session?.Roles?.Contains("website-admin") == true;
         StateHasChanged();
     }
 
@@ -48,6 +56,7 @@
     {
         session = updatedSession;
         isAuthenticated = session != null && !session.IsKeycloakSessionExpired;
+        isWebsiteAdmin = session?.Roles?.Contains("website-admin") == true;
         InvokeAsync(StateHasChanged);
     }
 

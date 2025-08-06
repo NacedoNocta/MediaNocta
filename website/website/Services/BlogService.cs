@@ -15,13 +15,13 @@ namespace Website.Services
 
     public class BlogService : IBlogService
     {
-        private readonly HttpClient _httpClient;
+        private readonly IAuthenticatedHttpClient _authenticatedHttpClient;
         private readonly ILogger<BlogService> _logger;
-        private const string ApiEndpoint = "SimpleBlogs";
+        private const string ApiEndpoint = "/api/blog/SimpleBlogs";
 
-        public BlogService(HttpClient httpClient, ILogger<BlogService> logger)
+        public BlogService(IAuthenticatedHttpClient authenticatedHttpClient, ILogger<BlogService> logger)
         {
-            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _authenticatedHttpClient = authenticatedHttpClient ?? throw new ArgumentNullException(nameof(authenticatedHttpClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -31,7 +31,7 @@ namespace Website.Services
             {
                 _logger.LogInformation("Fetching blog posts for page {Page} with page size {PageSize}", page, pageSize);
 
-                var response = await _httpClient.GetAsync($"{ApiEndpoint}?page={page}&pageSize={pageSize}");
+                var response = await _authenticatedHttpClient.GetAsync($"{ApiEndpoint}/?page={page}&pageSize={pageSize}");
                 response.EnsureSuccessStatusCode();
 
                 var posts = await response.Content.ReadFromJsonAsync(BlogLibraryJsonContext.Default.ListBlog);
@@ -55,7 +55,7 @@ namespace Website.Services
             {
                 _logger.LogInformation("Fetching total blog post count");
 
-                var response = await _httpClient.GetAsync($"{ApiEndpoint}/count");
+                var response = await _authenticatedHttpClient.GetAsync($"{ApiEndpoint}/count");
                 
                 response.EnsureSuccessStatusCode();
 
@@ -80,7 +80,7 @@ namespace Website.Services
             {
                 _logger.LogInformation("Fetching blog post with ID {Id}", id);
 
-                var response = await _httpClient.GetAsync($"{ApiEndpoint}/{id}");
+                var response = await _authenticatedHttpClient.GetAsync($"{ApiEndpoint}/{id}");
                 response.EnsureSuccessStatusCode();
 
                 var post = await response.Content.ReadFromJsonAsync(BlogLibraryJsonContext.Default.Blog);

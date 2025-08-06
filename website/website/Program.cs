@@ -2,6 +2,7 @@ using Website.Components;
 using Website.Services;
 using Website.Authentication.Routes;
 using Website.Authentication.Extensions;
+using Website.Authentication.Interfaces;
 using Website.Authentication.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,31 +39,27 @@ builder.Services.AddControllers();
 // Single Gateway endpoint for all API services
 var gatewayUrl = builder.Configuration["GatewayEndpoint"] ?? throw new InvalidOperationException("GatewayEndpoint is not set");
 
-// Configure service-specific clients with proper API paths
-builder.Services.AddHttpClient<BlogService>(c =>
-{
-    c.BaseAddress = new Uri($"{gatewayUrl}/api/blog/");
-});
-
-builder.Services.AddHttpClient<ActivityService>(c =>
-{
-    c.BaseAddress = new Uri($"{gatewayUrl}/api/activity/");
-});
-
-builder.Services.AddHttpClient<FragmentService>(c =>
-{
-    c.BaseAddress = new Uri($"{gatewayUrl}/");
-});
-
-builder.Services.AddHttpClient<TechUpdateService>(c =>
-{
-    c.BaseAddress = new Uri($"{gatewayUrl}/");
-});
+// Register all services with IAuthenticatedHttpClient - no need for individual HttpClient configs
+builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<IActivityService, ActivityService>();
+builder.Services.AddScoped<IFragmentService, FragmentService>();
+builder.Services.AddScoped<ITechUpdateService, TechUpdateService>();
 
 // Add a named HttpClient for authorized requests to the gateway
 builder.Services.AddHttpClient("AuthorizedGateway", c =>
 {
     c.BaseAddress = new Uri(gatewayUrl);
+});
+
+// Add authenticated HTTP client service
+builder.Services.AddScoped<IAuthenticatedHttpClient, AuthenticatedHttpClient>(serviceProvider =>
+{
+    var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+    var httpClient = httpClientFactory.CreateClient("AuthorizedGateway");
+    var sessionManager = serviceProvider.GetRequiredService<ISessionManager>();
+    var logger = serviceProvider.GetRequiredService<ILogger<AuthenticatedHttpClient>>();
+    
+    return new AuthenticatedHttpClient(httpClient, sessionManager, logger);
 });
 
 var app = builder.Build();
@@ -105,3 +102,6 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(Website.Client._Imports).Assembly);
 
 app.Run();
+
+// Make the implicit Program class available for testing
+public partial class Program { }

@@ -1,18 +1,16 @@
+using APIGateway;
+
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure services
 builder.Services
     .AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
     .AddServiceDiscoveryDestinationResolver();
 
-builder.Services.AddAuthentication()
-    .AddKeycloakJwtBearer("keycloak", realm: "medianocta", options =>
-    {
-        options.Audience = "medianocta-api";
-        options.RequireHttpsMetadata = false; // For development only
-    });
-
-builder.Services.AddAuthorization();
+// Add Keycloak authentication and authorization
+builder.Services.AddKeycloakAuthentication(builder.Configuration);
+builder.Services.AddKeycloakAuthorization();
 
 builder.Services.AddCors(options =>
 {
@@ -28,15 +26,16 @@ builder.AddServiceDefaults();
 
 var app = builder.Build();
 
+// Configure middleware pipeline
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Add user context headers for downstream services
+app.UseUserContextHeaders();
+
+// Configure routing
 app.MapReverseProxy();
-
-app.MapGet("/", () => "Hello World!");
-
-app.MapGet("/api/test/protected", () => "Protected endpoint accessed successfully!")
-    .RequireAuthorization();
+app.MapTestEndpoints();
 
 app.Run();

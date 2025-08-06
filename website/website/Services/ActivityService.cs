@@ -4,17 +4,26 @@ using Website.Utils;
 
 namespace Website.Services
 {
-    public class ActivityService
+    public interface IActivityService
     {
-        HttpClient httpClient;
-        public ActivityService(HttpClient httpClient)
+        Task<List<IActivity>> GetRecent();
+        Task<List<IActivity>> GetPinned();
+    }
+
+    public class ActivityService : IActivityService
+    {
+        private readonly IAuthenticatedHttpClient _authenticatedHttpClient;
+        private const string ApiEndpoint = "/api/activity";
+        
+        
+        public ActivityService(IAuthenticatedHttpClient authenticatedHttpClient)
         {
-            this.httpClient = httpClient;
+            _authenticatedHttpClient = authenticatedHttpClient ?? throw new ArgumentNullException(nameof(authenticatedHttpClient));
         }
         public async Task<List<IActivity>> GetRecent()
         {
             List<IActivity>? recent = null;
-            var response = await httpClient.GetAsync("recent");
+            var response = await _authenticatedHttpClient.GetAsync($"{ApiEndpoint}/recent");
             if (response.IsSuccessStatusCode)
             {
                 recent = await ActivityJsonReader.ReadActivitiesAsync(response.Content);
@@ -22,10 +31,11 @@ namespace Website.Services
 
             return recent ?? new List<IActivity>();
         }
+        
         public async Task<List<IActivity>> GetPinned()
         {
             List<IActivity>? pinned = null;
-            var response = await httpClient.GetAsync("pinned");
+            var response = await _authenticatedHttpClient.GetAsync($"{ApiEndpoint}/pinned");
             if (response.IsSuccessStatusCode)
             {
                 pinned = await ActivityJsonReader.ReadActivitiesAsync(response.Content);

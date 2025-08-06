@@ -1,0 +1,183 @@
+@page "/test-endpoints"
+@using Website.Services
+@inject IFragmentService FragmentService
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<PageTitle>API Test Endpoints</PageTitle>
+
+<div class="container-fluid mt-4">
+    <h1 class="mb-4">API Test Endpoints</h1>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Test Endpoints</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success" @onclick="@(() => CallEndpoint("/"))">
+                            🏠 Root Endpoint
+                        </button>
+                        
+                        <button class="btn btn-primary" @onclick="@(() => CallEndpoint("/api/test/public"))">
+                            🌐 Public Endpoint
+                        </button>
+                        
+                        <button class="btn btn-warning" @onclick="@(() => CallEndpoint("/api/test/authenticated"))">
+                            🔐 Authenticated Endpoint
+                        </button>
+                        
+                        <button class="btn btn-danger" @onclick="@(() => CallEndpoint("/api/test/admin"))">
+                            👑 Admin Endpoint
+                        </button>
+                        
+                        <button class="btn btn-info" @onclick="@(() => CallEndpoint("/api/test/userinfo"))">
+                            ℹ️ User Info Endpoint
+                        </button>
+                        
+                        <button class="btn btn-secondary" @onclick="@(() => CallEndpoint("/api/test/auth-details"))">
+                            🔍 Auth Details Endpoint
+                        </button>
+                        
+                        <button class="btn btn-dark" @onclick="@(() => CallEndpoint("/api/test/config"))">
+                            ⚙️ Config Endpoint
+                        </button>
+                    </div>
+                    
+                    <hr class="my-3">
+                    
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-success" @onclick="ClearResponse">
+                            🗑️ Clear Response
+                        </button>
+                        
+                        <button class="btn btn-outline-primary" @onclick="CopyToClipboard">
+                            📋 Copy Response
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6>Request Status</h6>
+                </div>
+                <div class="card-body">
+                    @if (isLoading)
+                    {
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-border spinner-border-sm me-2" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <span>Making request to: <code>@currentEndpoint</code></span>
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(lastEndpoint))
+                    {
+                        <div class="text-muted">
+                            <small>Last request: <code>@lastEndpoint</code></small>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>API Response</h5>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary" @onclick="ToggleWordWrap">
+                            @(wordWrap ? "📄 Disable Word Wrap" : "📝 Enable Word Wrap")
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <textarea 
+                        class="form-control border-0 rounded-0 font-monospace" 
+                        style="height: 600px; resize: vertical; @(wordWrap ? "white-space: pre-wrap;" : "white-space: pre; overflow-x: auto;")"
+                        readonly
+                        @bind="responseText"
+                        placeholder="Click a button above to test an API endpoint. The response will appear here...">
+                    </textarea>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">
+                        @if (!string.IsNullOrEmpty(responseText))
+                        {
+                            <span>Response length: @responseText.Length characters</span>
+                        }
+                        else
+                        {
+                            <span>No response yet. Click a test button to make a request.</span>
+                        }
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string responseText = string.Empty;
+    private bool isLoading = false;
+    private string currentEndpoint = string.Empty;
+    private string lastEndpoint = string.Empty;
+    private bool wordWrap = true;
+
+    private async Task CallEndpoint(string endpoint)
+    {
+        try
+        {
+            isLoading = true;
+            currentEndpoint = endpoint;
+            responseText = "Loading...";
+            StateHasChanged();
+
+            var response = await FragmentService.CallTestEndpointAsync(endpoint);
+            responseText = response;
+            lastEndpoint = endpoint;
+        }
+        catch (Exception ex)
+        {
+            responseText = $"Error calling endpoint: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+            currentEndpoint = string.Empty;
+            StateHasChanged();
+        }
+    }
+
+    private void ClearResponse()
+    {
+        responseText = string.Empty;
+        lastEndpoint = string.Empty;
+        StateHasChanged();
+    }
+
+    private async Task CopyToClipboard()
+    {
+        if (!string.IsNullOrEmpty(responseText))
+        {
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", responseText);
+                // You could add a toast notification here if needed
+            }
+            catch
+            {
+                // Fallback for older browsers - could implement a different copy method
+            }
+        }
+    }
+
+    private void ToggleWordWrap()
+    {
+        wordWrap = !wordWrap;
+        StateHasChanged();
+    }
+}
