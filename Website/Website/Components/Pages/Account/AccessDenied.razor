@@ -1,0 +1,53 @@
+@page "/Account/AccessDenied"
+@inject NavigationManager Navigation
+
+<PageTitle>Access Denied</PageTitle>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Access Denied
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h4 class="alert-heading">403 - Forbidden</h4>
+                        <p>You do not have permission to access this page.</p>
+                        <hr>
+                        <p class="mb-0">
+                            This page requires specific roles or permissions that your account does not have.
+                            If you believe this is an error, please contact an administrator.
+                        </p>
+                    </div>
+
+                    <div class="d-flex gap-3 justify-content-center mt-4">
+                        <button class="btn btn-primary" @onclick="GoHome">
+                            <i class="bi bi-house me-2"></i>
+                            Go to Homepage
+                        </button>
+                        <button class="btn btn-secondary" @onclick="GoBack">
+                            <i class="bi bi-arrow-left me-2"></i>
+                            Go Back
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void GoHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+    }
+}

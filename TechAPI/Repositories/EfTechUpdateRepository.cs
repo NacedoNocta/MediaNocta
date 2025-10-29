@@ -2,6 +2,7 @@
 using TechLibrary;
 using TechLibrary.Interfaces;
 using DatabaseManager;
+using DatabaseManager.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace TechAPI.Repositories

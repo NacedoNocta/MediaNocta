@@ -56,15 +56,65 @@ public static class AuthenticationServiceExtensions
             {
                 OnAuthenticationFailed = context =>
                 {
+                    var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
+                    var logger = loggerFactory.CreateLogger("Authentication");
+                    logger.LogError("Authentication failed: {Error}", context.Exception?.Message);
                     context.Response.Redirect("/");
                     context.HandleResponse();
                     return Task.CompletedTask;
                 },
-                OnTokenValidated = context =>
+                OnTokenValidated = async context =>
                 {
-                    // Successful authentication - force redirect to home page
-                    context.Properties.RedirectUri = "/";
-                    return Task.CompletedTask;
+                    var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
+                    var logger = loggerFactory.CreateLogger("Authentication");
+
+                    try
+                    {
+                        logger.LogInformation("Token validated, processing account and session creation");
+
+                        // Get required services
+                        var accountService = context.HttpContext.RequestServices.GetRequiredService<AccountManagementService>();
+                        var sessionService = context.HttpContext.RequestServices.GetRequiredService<SessionManagementService>();
+
+                        // Extract tokens from context
+                        var accessToken = context.TokenEndpointResponse?.AccessToken
+                            ?? throw new InvalidOperationException("No access token in response");
+                        var refreshToken = context.TokenEndpointResponse?.RefreshToken
+                            ?? throw new InvalidOperationException("No refresh token in response");
+                        var idToken = context.TokenEndpointResponse?.IdToken
+                            ?? throw new InvalidOperationException("No ID token in response");
+
+                        // Get or create local account and social account
+                        var localAccount = await accountService.GetOrCreateAccountAsync(context.Principal!, idToken);
+
+                        // Sync roles from token
+                        await accountService.SyncRolesAsync(localAccount, context.Principal!, accessToken);
+
+                        // Clean up expired sessions (basic cleanup for prototype)
+                        await sessionService.CleanupExpiredSessionsAsync();
+
+                        // Create new session (will delete existing session for single session enforcement)
+                        var session = await sessionService.CreateSessionAsync(
+                            localAccount,
+                            accessToken,
+                            refreshToken,
+                            idToken);
+
+                        // Store session ID in claims for later retrieval
+                        var identity = context.Principal!.Identity as System.Security.Claims.ClaimsIdentity;
+                        identity?.AddClaim(new System.Security.Claims.Claim("session_id", session.Id.ToString()));
+                        identity?.AddClaim(new System.Security.Claims.Claim("account_id", localAccount.Id.ToString()));
+
+                        logger.LogInformation("Successfully created session for user {Username}", localAccount.Username);
+
+                        // Successful authentication - force redirect to home page
+                        context.Properties.RedirectUri = "/";
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "Error processing authentication callback");
+                        throw;
+                    }
                 }
             };
         });
@@ -72,8 +122,16 @@ public static class AuthenticationServiceExtensions
         // Add authorization
         services.AddAuthorization();
 
+        // Configure Data Protection for token encryption
+        // For prototype: using default configuration (stores keys in-memory)
+        // For V1: configure persistent key storage with environment variable paths
+        services.AddDataProtection();
+
         // Register authentication services
         services.AddScoped<ICustomAuthenticationService, Website.Authentication.Services.AuthenticationService>();
+        services.AddScoped<TokenEncryptionService>();
+        services.AddScoped<AccountManagementService>();
+        services.AddScoped<SessionManagementService>();
 
         return services;
     }

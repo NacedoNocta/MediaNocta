@@ -2,6 +2,7 @@ using BlogApi.Interfaces;
 using BlogLibrary;
 using BlogLibrary.Interfaces;
 using DatabaseManager;
+using DatabaseManager.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogAPI.Repositories;

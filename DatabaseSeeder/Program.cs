@@ -1,5 +1,6 @@
 using DatabaseSeeder;
 using DatabaseManager;
+using DatabaseManager.DbContexts;
 
 var builder = Host.CreateApplicationBuilder(args);
 

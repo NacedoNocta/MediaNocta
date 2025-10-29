@@ -37,6 +37,17 @@ public static class AuthenticationRoutes
         // Logout endpoint
         app.MapGet(LogoutPath, async (HttpContext context) =>
         {
+            // Delete local session if exists
+            if (context.User.Identity?.IsAuthenticated == true)
+            {
+                var accountIdClaim = context.User.FindFirst("account_id")?.Value;
+                if (!string.IsNullOrEmpty(accountIdClaim) && Guid.TryParse(accountIdClaim, out var accountId))
+                {
+                    var sessionService = context.RequestServices.GetRequiredService<Website.Authentication.Services.SessionManagementService>();
+                    await sessionService.DeleteSessionByAccountIdAsync(accountId);
+                }
+            }
+
             await context.SignOutAsync("Cookies");
             await context.SignOutAsync("OpenIdConnect", new AuthenticationProperties
             {

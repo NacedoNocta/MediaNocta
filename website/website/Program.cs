@@ -2,16 +2,36 @@ using Website.Components;
 using Website.Services;
 using Website.Authentication.Routes;
 using Website.Authentication.Extensions;
+using Website.Authentication.Middleware;
+using Website.Authentication.Handlers;
+using Website.Authentication.Providers;
+using DatabaseManager;
+using DatabaseManager.DbContexts;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
+// Add auth database context (using websiteDatabase - separate from APIs)
+builder.AddNpgsqlDbContext<AuthDbContext>("websiteDatabase");
+
 // Add authentication services
 builder.Services.AddCustomAuthentication(builder.Configuration);
 
+// Register custom authentication state provider
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+builder.Services.AddScoped<ServerAuthenticationStateProvider>(sp =>
+    sp.GetRequiredService<AuthenticationStateProvider>() as ServerAuthenticationStateProvider
+    ?? throw new InvalidOperationException("AuthenticationStateProvider is not a ServerAuthenticationStateProvider"));
+
 // Add HTTP context accessor
 builder.Services.AddHttpContextAccessor();
+
+// Register authenticated HTTP client handler
+builder.Services.AddTransient<AuthenticatedHttpClientHandler>();
 
 // Add localization services
 builder.Services.AddLocalization();
@@ -26,6 +46,9 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 // Add culture service
 builder.Services.AddScoped<CultureService>();
 
+// Add cascading authentication state for all components
+builder.Services.AddCascadingAuthenticationState();
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
@@ -37,32 +60,37 @@ builder.Services.AddControllers();
 // Single Gateway endpoint for all API services
 var gatewayUrl = builder.Configuration["GatewayEndpoint"] ?? throw new InvalidOperationException("GatewayEndpoint is not set");
 
-// Configure service-specific clients with proper API paths
+// Configure service-specific clients with proper API paths and authenticated handler
 builder.Services.AddHttpClient<BlogService>(c =>
 {
     c.BaseAddress = new Uri($"{gatewayUrl}/api/blog/");
-});
+})
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
 
 builder.Services.AddHttpClient<ActivityService>(c =>
 {
     c.BaseAddress = new Uri($"{gatewayUrl}/api/activity/");
-});
+})
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
 
 builder.Services.AddHttpClient<FragmentService>(c =>
 {
     c.BaseAddress = new Uri($"{gatewayUrl}/");
-});
+})
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
 
 builder.Services.AddHttpClient<TechUpdateService>(c =>
 {
     c.BaseAddress = new Uri($"{gatewayUrl}/");
-});
+})
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
 
 // Add a named HttpClient for authorized requests to the gateway
 builder.Services.AddHttpClient("AuthorizedGateway", c =>
 {
     c.BaseAddress = new Uri(gatewayUrl);
-});
+})
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
 
 var app = builder.Build();
 
@@ -85,6 +113,7 @@ app.UseHttpsRedirection();
 app.UseRequestLocalization();
 
 app.UseAuthentication();
+app.UseTokenRefresh(); // Add token refresh middleware after authentication
 app.UseAuthorization();
 
 app.UseAntiforgery();

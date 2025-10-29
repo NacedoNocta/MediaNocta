@@ -1,0 +1,217 @@
+@page "/test/authenticated"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Website.Authentication.Services
+@attribute [Authorize]
+@inject AuthenticationStateProvider AuthStateProvider
+@inject SessionManagementService SessionService
+@rendermode InteractiveServer
+
+<PageTitle>Authenticated Test</PageTitle>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="alert alert-success">
+                <h4 class="alert-heading">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Authentication Successful!
+                </h4>
+                <p>
+                    You are viewing this page because you are authenticated.
+                    This page requires any authenticated user to access.
+                </p>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Authenticated User Test Page</h4>
+                </div>
+                <div class="card-body">
+                    <AuthorizeView>
+                        <Authorized>
+                            <h5>Your Authentication Details:</h5>
+                            <ul class="list-group mt-3">
+                                <li class="list-group-item">
+                                    <strong>Username:</strong> @GetUsername(context.User)
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Email:</strong> @GetEmail(context.User)
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Roles:</strong>
+                                    @foreach (var role in GetRoles(context.User))
+                                    {
+                                        <span class="badge bg-info me-1">@role</span>
+                                    }
+                                    @if (!GetRoles(context.User).Any())
+                                    {
+                                        <span class="text-muted">No roles assigned</span>
+                                    }
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Authentication Type:</strong> @(context.User.Identity?.AuthenticationType ?? "None")
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Is Authenticated:</strong>
+                                    <span class="badge bg-success">Yes</span>
+                                </li>
+                            </ul>
+
+                            <div class="mt-4">
+                                <h5>All Claims:</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var claim in context.User.Claims.Take(20))
+                                            {
+                                                <tr>
+                                                    <td><code>@claim.Type</code></td>
+                                                    <td>@claim.Value</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <h5>Session Tokens:</h5>
+                                @if (!string.IsNullOrEmpty(accessToken))
+                                {
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Access Token:</label>
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <small class="text-muted">JWT Token</small>
+                                                    <button class="btn btn-sm btn-outline-secondary" @onclick="() => showAccessToken = !showAccessToken">
+                                                        @(showAccessToken ? "Hide" : "Show")
+                                                    </button>
+                                                </div>
+                                                @if (showAccessToken)
+                                                {
+                                                    <pre class="bg-light p-2 rounded" style="font-size: 0.75rem; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">@accessToken</pre>
+                                                }
+                                                else
+                                                {
+                                                    <p class="text-muted mb-0"><em>Token hidden (click Show to reveal)</em></p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Refresh Token:</label>
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <small class="text-muted">Opaque Token</small>
+                                                    <button class="btn btn-sm btn-outline-secondary" @onclick="() => showRefreshToken = !showRefreshToken">
+                                                        @(showRefreshToken ? "Hide" : "Show")
+                                                    </button>
+                                                </div>
+                                                @if (showRefreshToken)
+                                                {
+                                                    <pre class="bg-light p-2 rounded" style="font-size: 0.75rem; overflow-x: auto; word-wrap: break-word; white-space: pre-wrap;">@refreshToken</pre>
+                                                }
+                                                else
+                                                {
+                                                    <p class="text-muted mb-0"><em>Token hidden (click Show to reveal)</em></p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @if (!string.IsNullOrEmpty(tokenExpiry))
+                                    {
+                                        <div class="alert alert-info">
+                                            <small><strong>Token Expiry:</strong> @tokenExpiry</small>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="alert alert-warning">
+                                        <p class="mb-0">No session tokens found</p>
+                                    </div>
+                                }
+                            </div>
+                        </Authorized>
+                    </AuthorizeView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string? accessToken;
+    private string? refreshToken;
+    private string? tokenExpiry;
+    private bool showAccessToken = false;
+    private bool showRefreshToken = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            // Get session ID from claims
+            var sessionIdClaim = user.FindFirst("session_id")?.Value;
+
+            if (!string.IsNullOrEmpty(sessionIdClaim) && Guid.TryParse(sessionIdClaim, out var sessionId))
+            {
+                try
+                {
+                    var session = await SessionService.GetSessionByIdAsync(sessionId);
+
+                    if (session != null)
+                    {
+                        // Get decrypted tokens
+                        accessToken = SessionService.GetAccessToken(session);
+                        refreshToken = SessionService.GetRefreshToken(session);
+                        tokenExpiry = session.AccessTokenExpiration.ToString("yyyy-MM-dd HH:mm:ss UTC");
+                    }
+                }
+                catch
+                {
+                    // Log or handle error
+                    accessToken = null;
+                    refreshToken = null;
+                }
+            }
+        }
+    }
+
+    private string GetUsername(System.Security.Claims.ClaimsPrincipal user)
+    {
+        return user.FindFirst("username")?.Value
+            ?? user.FindFirst("preferred_username")?.Value
+            ?? user.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value
+            ?? user.Identity?.Name
+            ?? "Unknown";
+    }
+
+    private string GetEmail(System.Security.Claims.ClaimsPrincipal user)
+    {
+        return user.FindFirst("email")?.Value
+            ?? user.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
+            ?? "Not available";
+    }
+
+    private List<string> GetRoles(System.Security.Claims.ClaimsPrincipal user)
+    {
+        return user.FindAll(System.Security.Claims.ClaimTypes.Role)
+            .Select(c => c.Value)
+            .ToList();
+    }
+}

@@ -1,5 +1,6 @@
 using ActivityAPI.Repositories;
 using DatabaseManager;
+using DatabaseManager.DbContexts;
 using SharedLibrary.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,0 +1,115 @@
+@page "/test/admin"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize(Roles = "admin")]
+@inject AuthenticationStateProvider AuthStateProvider
+@rendermode InteractiveServer
+
+<PageTitle>Admin Test</PageTitle>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="alert alert-danger">
+                <h4 class="alert-heading">
+                    <i class="bi bi-shield-lock me-2"></i>
+                    Admin Access Granted!
+                </h4>
+                <p>
+                    You are viewing this page because you have the <strong>admin</strong> role.
+                    This page is restricted to administrators only.
+                </p>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Administrator Test Page</h4>
+                </div>
+                <div class="card-body">
+                    <AuthorizeView Roles="admin">
+                        <Authorized>
+                            <h5>Admin Panel Access</h5>
+                            <p>
+                                This is a protected admin-only page. Only users with the <code>admin</code> role
+                                can access this content.
+                            </p>
+
+                            <div class="alert alert-warning mt-4">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <strong>Security Note:</strong> Authorization is enforced both at the page level
+                                (via <code>[Authorize(Roles = "admin")]</code>) and at the component level
+                                (via <code>&lt;AuthorizeView Roles="admin"&gt;</code>).
+                            </div>
+
+                            <h5 class="mt-4">Your Admin Details:</h5>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <strong>Username:</strong> @GetUsername(context.User)
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Email:</strong> @GetEmail(context.User)
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Roles:</strong>
+                                    @foreach (var role in GetRoles(context.User))
+                                    {
+                                        <span class="badge bg-danger me-1">@role</span>
+                                    }
+                                </li>
+                            </ul>
+
+                            <div class="mt-4">
+                                <h5>Example Admin Actions:</h5>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-outline-danger" disabled>
+                                        <i class="bi bi-pencil me-2"></i>Manage Users
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger" disabled>
+                                        <i class="bi bi-gear me-2"></i>System Settings
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger" disabled>
+                                        <i class="bi bi-bar-chart me-2"></i>View Analytics
+                                    </button>
+                                </div>
+                                <p class="text-muted mt-2 small">
+                                    <i class="bi bi-info-circle"></i> These are placeholder buttons for prototype demonstration.
+                                </p>
+                            </div>
+                        </Authorized>
+                        <NotAuthorized>
+                            <div class="alert alert-danger">
+                                <h5>Access Denied</h5>
+                                <p>You do not have the required admin role to view this content.</p>
+                            </div>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string GetUsername(System.Security.Claims.ClaimsPrincipal user)
+    {
+        return user.FindFirst("username")?.Value
+            ?? user.FindFirst("preferred_username")?.Value
+            ?? user.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value
+            ?? user.Identity?.Name
+            ?? "Unknown";
+    }
+
+    private string GetEmail(System.Security.Claims.ClaimsPrincipal user)
+    {
+        return user.FindFirst("email")?.Value
+            ?? user.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
+            ?? "Not available";
+    }
+
+    private List<string> GetRoles(System.Security.Claims.ClaimsPrincipal user)
+    {
+        return user.FindAll(System.Security.Claims.ClaimTypes.Role)
+            .Select(c => c.Value)
+            .ToList();
+    }
+}

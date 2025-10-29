@@ -1,15 +1,20 @@
 ﻿using BlogLibrary;
-using FragmentLibrary;
-using TechLibrary;
 using DatabaseManager.Configurations;
+using FragmentLibrary;
 using Microsoft.EntityFrameworkCore;
+using TechLibrary;
 
-namespace DatabaseManager
+namespace DatabaseManager.DbContexts
 {
+    /// <summary>
+    /// Database context for content entities (blogs, fragments, tech updates, etc.).
+    /// Used by APIs with mainDatabase.
+    /// Authentication entities are in AuthDbContext (websiteDatabase).
+    /// </summary>
     public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-        
+
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Author> Authors { get; set; }

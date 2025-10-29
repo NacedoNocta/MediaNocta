@@ -3,6 +3,7 @@ using BlogApi.Services;
 using BlogLibrary.Interfaces;
 using BlogAPI.Repositories;
 using DatabaseManager;
+using DatabaseManager.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

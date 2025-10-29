@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuthLibrary\AuthLibrary.csproj" />
     <ProjectReference Include="..\BlogLibrary\BlogLibrary.csproj" />
     <ProjectReference Include="..\FragmentLibrary\FragmentLibrary.csproj" />
     <ProjectReference Include="..\TechLibrary\TechLibrary.csproj" />
