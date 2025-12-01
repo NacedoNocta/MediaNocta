@@ -370,4 +370,178 @@
   <data name="General.PinnedArticles" xml:space="preserve">
     <value>Pinned articles</value>
   </data>
+
+  <!-- Authorization Errors -->
+  <data name="Error.Unauthorized.Title" xml:space="preserve">
+    <value>Access Denied</value>
+  </data>
+  <data name="Error.Unauthorized.Message" xml:space="preserve">
+    <value>You need to be authenticated to access this page.</value>
+  </data>
+  <data name="Error.Unauthorized.Help" xml:space="preserve">
+    <value>If you believe this is an error, please contact support.</value>
+  </data>
+  
+  <!-- Navigation -->
+  <data name="Navigation.Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+
+  <!-- Resume -->
+  <data name="Resume.Name" xml:space="preserve">
+    <value>Nacedo SAMPER</value>
+  </data>
+  <data name="Resume.Company" xml:space="preserve">
+    <value>Media Nocta</value>
+  </data>
+  <data name="Resume.Age" xml:space="preserve">
+    <value>23 yo</value>
+  </data>
+  <data name="Resume.Title" xml:space="preserve">
+    <value>IT Engineer</value>
+  </data>
+  <data name="Resume.Subtitle" xml:space="preserve">
+    <value>Software Designer | Developer</value>
+  </data>
+  <data name="Resume.Email" xml:space="preserve">
+    <value>nacedo@medianocta.com</value>
+  </data>
+  <data name="Resume.Phone" xml:space="preserve">
+    <value>06 21 34 10 64</value>
+  </data>
+  <data name="Resume.Address" xml:space="preserve">
+    <value>13 Esplanade de l'Europe, 34000 Montpellier</value>
+  </data>
+  <data name="Resume.Website" xml:space="preserve">
+    <value>https://medianocta.com/</value>
+  </data>
+  <data name="Resume.PhotoAlt" xml:space="preserve">
+    <value>That's me!</value>
+  </data>
+  <data name="Resume.InFewWords" xml:space="preserve">
+    <value>In a few words...</value>
+  </data>
+  <data name="Resume.Description" xml:space="preserve">
+    <value>As a recent computer science graduate with three years of work-study experience, I combine adaptability, professionalism, and sense of innovation and creativity. Passionate about both sciences and the arts, I make it a point of honor to demonstrate expertise in all of my work. Curious and open-minded, I take advantage of each of my experiences to forge my path and my way of working.</value>
+  </data>
+  <data name="Resume.Degrees" xml:space="preserve">
+    <value>Degrees</value>
+  </data>
+  <data name="Resume.EISI" xml:space="preserve">
+    <value>Expert in Computer Science and Info. Systems </value>
+  </data>
+  <data name="Resume.EISILevel" xml:space="preserve">
+    <value>equiv. RNCP+7</value>
+  </data>
+  <data name="Resume.CDA" xml:space="preserve">
+    <value>Bachelor Software Designer-Developer</value>
+  </data>
+  <data name="Resume.CDALevel" xml:space="preserve">
+    <value>equival. RNCP+6</value>
+  </data>
+  <data name="Resume.BTS" xml:space="preserve">
+    <value>BTS SIO Option DEV</value>
+  </data>
+  <data name="Resume.BTSLevel" xml:space="preserve">
+    <value>eqv. RNCP+5</value>
+  </data>
+  <data name="Resume.Bac" xml:space="preserve">
+    <value>Scientific Baccalaureate (HS), Math. major, Biology track</value>
+  </data>
+  <data name="Resume.BacLevel" xml:space="preserve">
+    <value>With Honors</value>
+  </data>
+  <data name="Resume.PET" xml:space="preserve">
+    <value>Cambridge PET</value>
+  </data>
+  <data name="Resume.PETLevel" xml:space="preserve">
+    <value>equival English B2</value>
+  </data>
+  <data name="Resume.Skills" xml:space="preserve">
+    <value>Skills</value>
+  </data>
+  <data name="Resume.Development" xml:space="preserve">
+    <value>Development</value>
+  </data>
+  <data name="Resume.DevelopmentSkills" xml:space="preserve">
+    <value>Python (Django, Flask), C# (.NET Frmwk), PHP (Laravel, Symfony), HTML/CSS/JS (Bootstrap), MySQL, PostgreSQL</value>
+  </data>
+  <data name="Resume.Design" xml:space="preserve">
+    <value>Design</value>
+  </data>
+  <data name="Resume.DesignSkills" xml:space="preserve">
+    <value>UML, Merise, Algorithmics, Technical and functional specifications</value>
+  </data>
+  <data name="Resume.ProjectManagement" xml:space="preserve">
+    <value>Project / Team Management</value>
+  </data>
+  <data name="Resume.ProjectManagementSkills" xml:space="preserve">
+    <value>Agile Methods, PMBOK (Non-PMI)</value>
+  </data>
+  <data name="Resume.SoftSkills" xml:space="preserve">
+    <value>Soft-skills</value>
+  </data>
+  <data name="Resume.SoftSkillsList" xml:space="preserve">
+    <value>Problem solving, Tech watch</value>
+  </data>
+  <data name="Resume.Experience" xml:space="preserve">
+    <value>Experience</value>
+  </data>
+  <data name="Resume.FullstackDeveloper" xml:space="preserve">
+    <value>• Fullstack Developer in Apprenticeship</value>
+  </data>
+  <data name="Resume.Peoplespheres" xml:space="preserve">
+    <value>Peoplespheres SAS (HRIS)</value>
+  </data>
+  <data name="Resume.PeoplespheresDate" xml:space="preserve">
+    <value> | 2021 - 2024, 3 years</value>
+  </data>
+  <data name="Resume.PeoplespheresDescription" xml:space="preserve">
+    <value>Development of back-office tools to automate internal processes: Creation of several softwares, from needs specification to deployment, and their consolidation into a microservice-based web application.</value>
+  </data>
+  <data name="Resume.PeoplespheresStack" xml:space="preserve">
+    <value>Technical stack: Python Django, PHP Laravel, HTML/CSS/JS + Bootstrap, PostgreSQL, Docker, UML, Wireframes (UX mockups), Working in Agile</value>
+  </data>
+  <data name="Resume.ETLDeveloper" xml:space="preserve">
+    <value>• ETL Developer Internship</value>
+  </data>
+  <data name="Resume.WEDA" xml:space="preserve">
+    <value>WEDA SAS (medical softwares)</value>
+  </data>
+  <data name="Resume.WEDADate" xml:space="preserve">
+    <value> | May 2020 - August 2020, 4 months</value>
+  </data>
+  <data name="Resume.WEDADescription" xml:space="preserve">
+    <value>Data recovery: Importing medical data from new clients into the software, using a customized ETL. Development/adaptation of ETL modules according to the client file.</value>
+  </data>
+  <data name="Resume.WEDAStack" xml:space="preserve">
+    <value>Technical stack: C# .NET Framework, MySQL, Working in Agile organization</value>
+  </data>
+  <data name="Resume.Education" xml:space="preserve">
+    <value>Education</value>
+  </data>
+  <data name="Resume.EPSI" xml:space="preserve">
+    <value>Professional School of Computer Sciences (EPSI)</value>
+  </data>
+  <data name="Resume.EPSIDate" xml:space="preserve">
+    <value>Montpellier | 2019 - 2024, 5 years</value>
+  </data>
+  <data name="Resume.Workshop2022" xml:space="preserve">
+    <value>• Workshop 2022: Conceptualization and development of an AI designed to improve well-being at work through decision support.</value>
+  </data>
+  <data name="Resume.Workshop2022Role" xml:space="preserve">
+    <value>Project Manager // Lead Technical Designer.</value>
+  </data>
+  <data name="Resume.Workshop2022Result" xml:space="preserve">
+    <value>1st place, national </value>
+  </data>
+  <data name="Resume.Workshop2020" xml:space="preserve">
+    <value>• Workshop 2020: Conceptualization, development and building of a prototype for ecological, connected device.</value>
+  </data>
+  <data name="Resume.Workshop2020Role" xml:space="preserve">
+    <value>Project Manager // Lead Technical Designer.</value>
+  </data>
+  <data name="Resume.Workshop2020Result" xml:space="preserve">
+    <value>1st place, national</value>
+  </data>
 </root>

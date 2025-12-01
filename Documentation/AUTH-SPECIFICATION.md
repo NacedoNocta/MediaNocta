@@ -16,7 +16,7 @@ Media Nocta will implement a secure authentication system using Keycloak as the 
   - Authentication flows (login, logout)
   - Session management and token issuance
   - OAuth2/OIDC protocol implementation
-  - Roles: `user` and `admin` (defined as realm roles)
+  - Roles: `website-user` and `website-admin` (defined as realm roles)
 
 ### 2. API Gateway (YARP)
 - **Purpose**: Request routing with endpoint-specific token validation
@@ -43,7 +43,7 @@ Media Nocta will implement a secure authentication system using Keycloak as the 
   - Auto-create local accounts on first Keycloak login
   - Manage Keycloak social account → local account mapping (one-to-one)
   - Handle token refresh and session expiration via authentication middleware
-  - Sync roles (`user`, `admin`) from Keycloak `realm_access.roles` claim to local database
+  - Sync roles (`website-user`, `website-admin`) from Keycloak `realm_access.roles` claim to local database
   - Use cookies for session persistence (session ID only, no expiration - validated against database)
   - Store tokens encrypted in database using ASP.NET Data Protection API with environment variable keys
   - Provide authentication state to Blazor components via extended AuthenticationStateProvider
@@ -67,7 +67,7 @@ Media Nocta will implement a secure authentication system using Keycloak as the 
    - If not, auto-create LocalAccount with username/email from token
    - Create/update SocialAccount record linking Keycloak user to LocalAccount
    - Sync roles from token to local database:
-     - Add `user` and `admin` roles if present in token
+     - Add `website-user` and `website-admin` roles if present in token
      - Remove roles from local account if not present in token
 7. **Session Creation**:
    - Check for existing active session for this user
@@ -134,7 +134,7 @@ Media Nocta will implement a secure authentication system using Keycloak as the 
 - `Description` (String)
 - `CreatedAt` (DateTime)
 
-**Note**: Only two roles for prototype: `user` and `admin`. Synced from Keycloak realm roles.
+**Note**: Only two roles for prototype: `website-user` and `website-admin`. Synced from Keycloak realm roles.
 
 #### LocalAccountRole Table (Junction)
 - `LocalAccountId` (Foreign Key → LocalAccount)
@@ -404,7 +404,7 @@ Media Nocta will implement a secure authentication system using Keycloak as the 
 5. **Token Refresh**: Reactive (prototype) → Proactive (V1, threshold TBD)
 6. **Gateway Auth**: Endpoint-specific JWT validation (not global middleware)
 7. **Backend APIs**: Trust Gateway validation (no independent validation)
-8. **Role Management**: Two roles (`user`, `admin`), synced from `realm_access.roles` claim
+8. **Role Management**: Two roles (`website-user`, `website-admin`), synced from `realm_access.roles` claim
 9. **Authorization**: Public pages (no auth), authenticated pages, role-specific pages (e.g., admin-only)
 10. **User Registration**: Use existing test accounts (self-registration disabled for prototype)
 11. **Account Linking**: One-to-one Keycloak → LocalAccount (Keycloak handles multi-provider)
