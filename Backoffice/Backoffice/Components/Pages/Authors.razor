@@ -1,0 +1,229 @@
+@page "/authors"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "backoffice-admin")]
+@using BlogLibrary
+@using Backoffice.Services
+@inject IAuthorManagementService AuthorService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Authors Management - Media Nocta Backoffice</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5">Authors</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Biography</th>
+                                    <th>Social Links</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (authors == null)
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else if (!authors.Any())
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-muted">
+                                            No authors found.
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var author in authors)
+                                    {
+                                        <tr>
+                                            <td>@author.Id.ToString().Substring(0, 8)</td>
+                                            <td>
+                                                <strong>@author.Name</strong>
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(author.Email))
+                                                {
+                                                    <span>@author.Email</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted fst-italic">No email</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (author.Biography != null && !string.IsNullOrEmpty(author.Biography.English))
+                                                {
+                                                    <span>@TruncateText(author.Biography.English, 50)</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted fst-italic">No bio</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-1">
+                                                    @if (!string.IsNullOrEmpty(author.Website))
+                                                    {
+                                                        <span class="badge bg-info" title="Website">
+                                                            <i class="bi bi-globe"></i>
+                                                        </span>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(author.Twitter))
+                                                    {
+                                                        <span class="badge bg-info" title="Twitter">
+                                                            <i class="bi bi-twitter"></i>
+                                                        </span>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(author.LinkedIn))
+                                                    {
+                                                        <span class="badge bg-info" title="LinkedIn">
+                                                            <i class="bi bi-linkedin"></i>
+                                                        </span>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(author.GitHub))
+                                                    {
+                                                        <span class="badge bg-info" title="GitHub">
+                                                            <i class="bi bi-github"></i>
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <button class="btn btn-outline-danger" @onclick="() => Delete(author.Id)">
+                                                        <i class="bi bi-trash-fill"></i> Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+@if (showDeleteModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this author?</p>
+                    @if (authorToDelete != null)
+                    {
+                        <div class="alert alert-warning">
+                            <strong>Name:</strong> @authorToDelete.Name
+                        </div>
+                    }
+                    <p class="text-danger fw-bold">This action cannot be undone!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CancelDelete" disabled="@isDeleting">Cancel</button>
+                    <button type="button" class="btn btn-danger" @onclick="ConfirmDelete" disabled="@isDeleting">
+                        @if (isDeleting)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            <text>Deleting...</text>
+                        }
+                        else
+                        {
+                            <i class="bi bi-trash-fill me-2"></i>
+                            <text>Delete</text>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<BlogLibrary.Author>? authors;
+    private bool showDeleteModal = false;
+    private BlogLibrary.Author? authorToDelete = null;
+    private bool isDeleting = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAuthors();
+    }
+
+    private async Task LoadAuthors()
+    {
+        authors = await AuthorService.GetAllAuthorsAsync();
+    }
+
+    private void Delete(Guid id)
+    {
+        authorToDelete = authors?.FirstOrDefault(a => a.Id == id);
+        showDeleteModal = true;
+    }
+
+    private void CancelDelete()
+    {
+        showDeleteModal = false;
+        authorToDelete = null;
+        isDeleting = false;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (authorToDelete == null) return;
+
+        isDeleting = true;
+
+        try
+        {
+            var success = await AuthorService.DeleteAuthorAsync(authorToDelete.Id);
+            if (success)
+            {
+                await LoadAuthors();
+                showDeleteModal = false;
+                authorToDelete = null;
+            }
+        }
+        finally
+        {
+            isDeleting = false;
+        }
+    }
+
+    private string TruncateText(string text, int maxLength)
+    {
+        if (string.IsNullOrEmpty(text) || text.Length <= maxLength)
+            return text;
+
+        return text.Substring(0, maxLength) + "...";
+    }
+}

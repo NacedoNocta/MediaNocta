@@ -9,6 +9,7 @@ var postgres = builder.AddPostgres("postgres")
 var mainDatabase = postgres.AddDatabase("mainDatabase");
 var keycloakDatabase = postgres.AddDatabase("keycloakDatabase");
 var websiteDatabase = postgres.AddDatabase("websiteDatabase");
+var backofficeDatabase = postgres.AddDatabase("backofficeDatabase");
 
 // Keycloak Identity Provider
 var keycloak = builder.AddKeycloak("keycloak", port: 8080)
@@ -16,12 +17,14 @@ var keycloak = builder.AddKeycloak("keycloak", port: 8080)
     .WaitFor(keycloakDatabase);
 
 // Database Manager
-// Handles migrations for both mainDatabase (content) and websiteDatabase (auth)
+// Handles migrations for mainDatabase (content), websiteDatabase (auth), and backofficeDatabase (auth)
 var databaseManager = builder.AddProject<Projects.DatabaseManager>("databasemanager")
     .WithReference(mainDatabase)
     .WithReference(websiteDatabase)
+    .WithReference(backofficeDatabase)
     .WaitFor(mainDatabase)
     .WaitFor(websiteDatabase)
+    .WaitFor(backofficeDatabase)
     .WithExplicitStart();
 
 var databaseSeeder = builder.AddProject<Projects.DatabaseSeeder>("databaseseeder")
@@ -73,5 +76,14 @@ var website = builder.AddProject<Projects.Website>("website")
     .WaitFor(websiteDatabase)
     .WithExternalHttpEndpoints();
 
+// Backoffice
+// Uses backofficeDatabase for auth entities (separate from Website)
+var backoffice = builder.AddProject<Projects.Backoffice>("backoffice")
+    .WithReference(apiGatewayProject)
+    .WithReference(backofficeDatabase)
+    .WithReference(keycloak)
+    .WaitFor(apiGatewayProject)
+    .WaitFor(backofficeDatabase)
+    .WithExternalHttpEndpoints();
 
 builder.Build().Run();

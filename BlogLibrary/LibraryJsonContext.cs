@@ -9,5 +9,6 @@ namespace BlogLibrary;
 [JsonSerializable(typeof(Tag))]
 [JsonSerializable(typeof(ContentType))]
 [JsonSerializable(typeof(BlogState))]
+[JsonSerializable(typeof(List<Author>))]
 [JsonSerializable(typeof(List<Blog>))]
 public partial class BlogLibraryJsonContext : JsonSerializerContext;
