@@ -360,7 +360,7 @@
     <value>Media Nocta</value>
   </data>
   <data name="Resume.Age" xml:space="preserve">
-    <value>23 ans</value>
+    <value>24 ans</value>
   </data>
   <data name="Resume.Title" xml:space="preserve">
     <value>Ingénieur IT</value>
@@ -387,7 +387,7 @@
     <value>En quelques mots...</value>
   </data>
   <data name="Resume.Description" xml:space="preserve">
-    <value>Récemment diplômé en informatique et avec trois ans d'expérience en alternance, je fais preuve d'adaptabilité, innovation, créativité et professionnalisme. Passionné des sciences et des arts, je mets un point d'honneur à faire preuve d'expertise dans chacun mes travaux. Curieux et ouvert d'esprit, profite de chacune de mes expériences pour forger ma voie et ma manière de travailler.</value>
+    <value>Véritable passionné des arts et des sciences, et explorateur dans l'âme, je suis constamment à la recherche de nouvelles connaissances, et je mets un point d'honneur à faire preuve d'expertise lors de chacun de mes travaux. Je suis polyvalent dans mes compétences, minitieux et ouvert d'esprit dans mon approche des problèmes, et je fais preuve d'initiative et d'humilité dans mes ouvrages.</value>
   </data>
   <data name="Resume.Degrees" xml:space="preserve">
     <value>Diplômes</value>
@@ -453,13 +453,13 @@
     <value>Expérience</value>
   </data>
   <data name="Resume.FullstackDeveloper" xml:space="preserve">
-    <value>• Développeur Fullstack en Alternance</value>
+    <value>• Développeur Fullstack (3 ans)</value>
   </data>
   <data name="Resume.Peoplespheres" xml:space="preserve">
     <value>Peoplespheres SAS (SIRH)</value>
   </data>
   <data name="Resume.PeoplespheresDate" xml:space="preserve">
-    <value> | 2021 - 2024, 3 ans</value>
+    <value> | 2021 - 2024 (Alternance)</value>
   </data>
   <data name="Resume.PeoplespheresDescription" xml:space="preserve">
     <value>Développement d'outils backoffice afin d'automatiser les processus internes : Création, depuis la collecte du besoin utilisateur jusqu'à la mise en service, de plusieurs logiciels, et leur regroupement dans une Webapp avec microservices.</value>
@@ -468,13 +468,13 @@
     <value>Stack technique : Python Django, PHP Laravel, HTML/CSS/JS + Bootstrap, PostgreSQL, Docker, UML, Wireframes (maquettes UX), Travail en orga. Agile</value>
   </data>
   <data name="Resume.ETLDeveloper" xml:space="preserve">
-    <value>• Stage Développeur ETL</value>
+    <value>• Développeur ETL (4 mois)</value>
   </data>
   <data name="Resume.WEDA" xml:space="preserve">
     <value>WEDA SAS (Santé)</value>
   </data>
   <data name="Resume.WEDADate" xml:space="preserve">
-    <value> | mai 2020 - août 2020, 4 mois</value>
+    <value> | mai 2020 - août 2020 (stage)</value>
   </data>
   <data name="Resume.WEDADescription" xml:space="preserve">
     <value>Reprise de données : Importation de données médicales des nouveaux clients dans le logiciel, grâce à un ETL customisé. Développement/adaptation des modules de l'ETL en fonction du fichier client.</value>

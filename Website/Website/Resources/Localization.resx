@@ -395,7 +395,7 @@
     <value>Media Nocta</value>
   </data>
   <data name="Resume.Age" xml:space="preserve">
-    <value>23 yo</value>
+    <value>24 yo</value>
   </data>
   <data name="Resume.Title" xml:space="preserve">
     <value>IT Engineer</value>
@@ -422,7 +422,7 @@
     <value>In a few words...</value>
   </data>
   <data name="Resume.Description" xml:space="preserve">
-    <value>As a recent computer science graduate with three years of work-study experience, I combine adaptability, professionalism, and sense of innovation and creativity. Passionate about both sciences and the arts, I make it a point of honor to demonstrate expertise in all of my work. Curious and open-minded, I take advantage of each of my experiences to forge my path and my way of working.</value>
+    <value>Passionate about sciences and the arts, and an explorer at heart, I am constantly seeking new knowledge, and I make it a point of honour to demonstrate expertise in all my work. I am versatile in my skills, meticulous and open-minded in my approach to problems, and demonstrate initiative and humility in my work. I am not feared of challenges or unknown domains, and I am in a constant search of improvement, both personnal and professional. </value>
   </data>
   <data name="Resume.Degrees" xml:space="preserve">
     <value>Degrees</value>
@@ -488,13 +488,13 @@
     <value>Experience</value>
   </data>
   <data name="Resume.FullstackDeveloper" xml:space="preserve">
-    <value>• Fullstack Developer in Apprenticeship</value>
+    <value>• Fullstack Developer (3y)</value>
   </data>
   <data name="Resume.Peoplespheres" xml:space="preserve">
     <value>Peoplespheres SAS (HRIS)</value>
   </data>
   <data name="Resume.PeoplespheresDate" xml:space="preserve">
-    <value> | 2021 - 2024, 3 years</value>
+    <value> | 2021 - 2024 (Apprenticeship)</value>
   </data>
   <data name="Resume.PeoplespheresDescription" xml:space="preserve">
     <value>Development of back-office tools to automate internal processes: Creation of several softwares, from needs specification to deployment, and their consolidation into a microservice-based web application.</value>
@@ -503,13 +503,13 @@
     <value>Technical stack: Python Django, PHP Laravel, HTML/CSS/JS + Bootstrap, PostgreSQL, Docker, UML, Wireframes (UX mockups), Working in Agile</value>
   </data>
   <data name="Resume.ETLDeveloper" xml:space="preserve">
-    <value>• ETL Developer Internship</value>
+    <value>• ETL Developer (4 months)</value>
   </data>
   <data name="Resume.WEDA" xml:space="preserve">
     <value>WEDA SAS (medical softwares)</value>
   </data>
   <data name="Resume.WEDADate" xml:space="preserve">
-    <value> | May 2020 - August 2020, 4 months</value>
+    <value> | May 2020 - August 2020 (internship)</value>
   </data>
   <data name="Resume.WEDADescription" xml:space="preserve">
     <value>Data recovery: Importing medical data from new clients into the software, using a customized ETL. Development/adaptation of ETL modules according to the client file.</value>
