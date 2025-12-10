@@ -5,7 +5,7 @@
 @inject IStringLocalizer<Localization> Localizer
 
 <div class="bg-dark-subtle" role="navigation">
-    <div class="p-3">
+    <div class="p-3 header-glitch-container">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-2 d-none d-lg-block border border-dark">
@@ -95,4 +95,302 @@
             height: auto;
         }
     }
+
+    /* Glitch effect container */
+    .header-glitch-container {
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Glitch slice - horizontal distortion band */
+    .glitch-slice {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        pointer-events: none;
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.02);
+        border-top: 1px solid rgba(255, 0, 0, 0.3);
+        border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        opacity: 0;
+    }
+
+    /* RGB split effect */
+    .glitch-rgb {
+        position: absolute;
+        pointer-events: none;
+        z-index: 10;
+        opacity: 0;
+    }
+
+    .glitch-rgb-red {
+        background: rgba(255, 0, 0, 0.5);
+        mix-blend-mode: screen;
+    }
+
+    .glitch-rgb-cyan {
+        background: rgba(0, 255, 255, 0.4);
+        mix-blend-mode: screen;
+    }
+
+    /* Static noise block */
+    .glitch-static {
+        position: absolute;
+        pointer-events: none;
+        z-index: 10;
+        background-repeat: repeat;
+        background-size: 100px 100px;
+        opacity: 0;
+        mix-blend-mode: overlay;
+    }
+
+    /* Scan line effect */
+    .glitch-scanline {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        pointer-events: none;
+        z-index: 10;
+        opacity: 0;
+        box-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Fast back-and-forth scan line */
+    .glitch-scanline-fast {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: rgba(100, 200, 255, 0.15);
+        pointer-events: none;
+        z-index: 10;
+        opacity: 0;
+        box-shadow: 0 0 3px rgba(100, 200, 255, 0.4);
+    }
+
+    /* Glitch animations */
+    @@keyframes glitch-slice-anim {
+        0% { opacity: 0; transform: translateX(0); }
+        1% { opacity: 1; transform: translateX(-8px); }
+        10% { opacity: 1; transform: translateX(5px); }
+        20% { opacity: 1; transform: translateX(-3px); }
+        30% { opacity: 1; transform: translateX(6px); }
+        40% { opacity: 1; transform: translateX(-4px); }
+        50% { opacity: 1; transform: translateX(2px); }
+        60% { opacity: 1; transform: translateX(-2px); }
+        70% { opacity: 1; transform: translateX(1px); }
+        99% { opacity: 1; transform: translateX(0); }
+        100% { opacity: 0; transform: translateX(0); }
+    }
+
+    @@keyframes glitch-rgb-anim {
+        0% { opacity: 0; }
+        1% { opacity: 0.9; }
+        20% { opacity: 0.8; }
+        40% { opacity: 0.9; }
+        60% { opacity: 0.7; }
+        80% { opacity: 0.9; }
+        99% { opacity: 0.8; }
+        100% { opacity: 0; }
+    }
+
+    @@keyframes glitch-static-anim {
+        0% { opacity: 0; background-position: 0 0; }
+        1% { opacity: 0.3; background-position: -5px 0; }
+        15% { opacity: 0.25; background-position: 5px -5px; }
+        30% { opacity: 0.3; background-position: -3px 5px; }
+        45% { opacity: 0.25; background-position: 3px -3px; }
+        60% { opacity: 0.3; background-position: -2px 2px; }
+        75% { opacity: 0.25; background-position: 4px -4px; }
+        90% { opacity: 0.3; background-position: -4px 3px; }
+        99% { opacity: 0.25; background-position: 2px -2px; }
+        100% { opacity: 0; background-position: 0 0; }
+    }
+
+    @@keyframes glitch-scanline-anim {
+        0% { opacity: 0; top: 0%; }
+        1% { opacity: 0.8; }
+        99% { opacity: 0.8; top: 100%; }
+        100% { opacity: 0; top: 100%; }
+    }
+
+    @@keyframes glitch-scanline-fast-anim {
+        0% { opacity: 0; top: 0%; }
+        1% { opacity: 0.9; }
+        49% { opacity: 0.9; top: 100%; }
+        50% { opacity: 0.9; top: 100%; }
+        99% { opacity: 0.9; top: 0%; }
+        100% { opacity: 0; top: 0%; }
+    }
 </style>
+
+<script>
+    // Digital glitch effect controller
+    (() => {
+        const container = document.querySelector('.header-glitch-container');
+        if (!container) return;
+
+        // Generate static noise pattern
+        function generateStaticPattern() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 100;
+            canvas.height = 100;
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.createImageData(100, 100);
+
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                const noise = Math.random() * 255;
+                imageData.data[i] = noise;
+                imageData.data[i + 1] = noise;
+                imageData.data[i + 2] = noise;
+                imageData.data[i + 3] = 255;
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            return canvas.toDataURL();
+        }
+
+        const staticPattern = generateStaticPattern();
+
+        // Create horizontal slice glitch
+        function createSliceGlitch() {
+            const slice = document.createElement('div');
+            slice.className = 'glitch-slice';
+
+            const height = 2 + Math.random() * 6; // 2-8px height
+            const top = Math.random() * container.offsetHeight;
+
+            slice.style.height = `${height}px`;
+            slice.style.top = `${top}px`;
+            slice.style.animation = `glitch-slice-anim ${200 + Math.random() * 300}ms ease-out`;
+
+            container.appendChild(slice);
+
+            setTimeout(() => slice.remove(), 500);
+        }
+
+        // Create RGB channel separation glitch
+        function createRGBGlitch() {
+            const width = 40 + Math.random() * 100;
+            const height = 20 + Math.random() * 60;
+            const top = Math.random() * (container.offsetHeight - height);
+            const left = Math.random() * (container.offsetWidth - width);
+
+            // Red channel
+            const red = document.createElement('div');
+            red.className = 'glitch-rgb glitch-rgb-red';
+            red.style.width = `${width}px`;
+            red.style.height = `${height}px`;
+            red.style.top = `${top}px`;
+            red.style.left = `${left - 3}px`;
+            red.style.animation = `glitch-rgb-anim ${400 + Math.random() * 400}ms ease-in-out`;
+
+            // Cyan channel
+            const cyan = document.createElement('div');
+            cyan.className = 'glitch-rgb glitch-rgb-cyan';
+            cyan.style.width = `${width}px`;
+            cyan.style.height = `${height}px`;
+            cyan.style.top = `${top}px`;
+            cyan.style.left = `${left + 3}px`;
+            cyan.style.animation = `glitch-rgb-anim ${400 + Math.random() * 400}ms ease-in-out`;
+
+            container.appendChild(red);
+            container.appendChild(cyan);
+
+            setTimeout(() => {
+                red.remove();
+                cyan.remove();
+            }, 1000);
+        }
+
+        // Create static noise block
+        function createStaticGlitch() {
+            const block = document.createElement('div');
+            block.className = 'glitch-static';
+
+            const width = 60 + Math.random() * 120;
+            const height = 40 + Math.random() * 80;
+            const top = Math.random() * (container.offsetHeight - height);
+            const left = Math.random() * (container.offsetWidth - width);
+
+            block.style.width = `${width}px`;
+            block.style.height = `${height}px`;
+            block.style.top = `${top}px`;
+            block.style.left = `${left}px`;
+            block.style.backgroundImage = `url(${staticPattern})`;
+            block.style.animation = `glitch-static-anim ${500 + Math.random() * 500}ms linear`;
+
+            container.appendChild(block);
+
+            setTimeout(() => block.remove(), 1200);
+        }
+
+        // Create scan line
+        function createScanline() {
+            const line = document.createElement('div');
+            line.className = 'glitch-scanline';
+            line.style.animation = `glitch-scanline-anim ${800 + Math.random() * 400}ms linear`;
+
+            container.appendChild(line);
+
+            setTimeout(() => line.remove(), 1500);
+        }
+
+        // Create fast back-and-forth scan line
+        function createFastScanline() {
+            const line = document.createElement('div');
+            line.className = 'glitch-scanline-fast';
+            line.style.animation = `glitch-scanline-fast-anim ${400 + Math.random() * 200}ms linear`;
+
+            container.appendChild(line);
+
+            setTimeout(() => line.remove(), 800);
+        }
+
+        // Random glitch trigger
+        function triggerRandomGlitch() {
+            const rand = Math.random();
+
+            if (rand < 0.35) {
+                // Horizontal slice (most common)
+                createSliceGlitch();
+                // Sometimes create multiple slices
+                if (Math.random() > 0.6) {
+                    setTimeout(createSliceGlitch, 50 + Math.random() * 100);
+                }
+            } else if (rand < 0.6) {
+                // RGB separation
+                createRGBGlitch();
+            } else if (rand < 0.8) {
+                // Static noise
+                createStaticGlitch();
+            } else if (rand < 0.9) {
+                // Fast back-and-forth scan line
+                createFastScanline();
+            } else {
+                // Regular scan line (rarest)
+                createScanline();
+            }
+        }
+
+        // Start glitch effect with variable timing
+        function startGlitchLoop() {
+            triggerRandomGlitch();
+
+            // Random interval between 250ms and 700ms
+            const nextInterval = 250 + Math.random() * 450;
+            setTimeout(startGlitchLoop, nextInterval);
+        }
+
+        // Initialize
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(startGlitchLoop, 500);
+            });
+        } else {
+            setTimeout(startGlitchLoop, 500);
+        }
+    })();
+</script>
