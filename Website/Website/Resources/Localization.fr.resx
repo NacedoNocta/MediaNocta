@@ -249,6 +249,18 @@
   <data name="Page.FragmentsDescription" xml:space="preserve">
     <value>Découvrez des pensées, des idées, des extraits de code et des fragments créatifs.</value>
   </data>
+  <data name="Page.TechProjects" xml:space="preserve">
+    <value>Projets Techniques</value>
+  </data>
+  <data name="Page.TechProjectsDescription" xml:space="preserve">
+    <value>Explorez les projets techniques et les mises à jour de développement.</value>
+  </data>
+  <data name="Page.LearnAndAct" xml:space="preserve">
+    <value>Apprendre &amp; Pratiquer</value>
+  </data>
+  <data name="Page.LearnDescription" xml:space="preserve">
+    <value>Ressources pédagogiques, cours et défis pratiques pour améliorer vos compétences.</value>
+  </data>
 
   <!-- Blog -->
   <data name="Blog.By" xml:space="preserve">
@@ -508,5 +520,82 @@
   </data>
   <data name="Resume.Workshop2020Result" xml:space="preserve">
     <value>1ère place nationale</value>
+  </data>
+
+  <!-- Learn & Act -->
+  <data name="Learn.UnderConstruction" xml:space="preserve">
+    <value>En Construction</value>
+  </data>
+  <data name="Learn.UnderConstructionDescription" xml:space="preserve">
+    <value>Cette section est actuellement en développement. Le contenu sera ajouté progressivement au fur et à mesure qu'il deviendra disponible.</value>
+  </data>
+  <data name="Learn.StayTuned" xml:space="preserve">
+    <value>Restez à l'écoute pour le contenu éducatif et les défis pratiques à venir !</value>
+  </data>
+
+  <!-- Learn Book -->
+  <data name="Learn.Book.Title" xml:space="preserve">
+    <value>Livre de Programmation</value>
+  </data>
+  <data name="Learn.Book.Description" xml:space="preserve">
+    <value>J'écris actuellement un livre complet sur la programmation, avec un accent particulier sur l'architecture logicielle et les principes de conception de haut niveau.</value>
+  </data>
+  <data name="Learn.Book.Topic1" xml:space="preserve">
+    <value>Patterns d'architecture logicielle et bonnes pratiques</value>
+  </data>
+  <data name="Learn.Book.Topic2" xml:space="preserve">
+    <value>Conception de systèmes de haut niveau et scalabilité</value>
+  </data>
+  <data name="Learn.Book.Topic3" xml:space="preserve">
+    <value>Décisions architecturales réelles et compromis</value>
+  </data>
+
+  <!-- Learn Courses -->
+  <data name="Learn.Courses.Title" xml:space="preserve">
+    <value>Cours en Ligne</value>
+  </data>
+  <data name="Learn.Courses.Description" xml:space="preserve">
+    <value>Je développe une série deformations en ligne couvrant différents aspects de la programmation et du développement logiciel.</value>
+  </data>
+  <data name="Learn.Courses.Topic1" xml:space="preserve">
+    <value>Fondamentaux de l'architecture logicielle</value>
+  </data>
+  <data name="Learn.Courses.Topic2" xml:space="preserve">
+    <value>Design patterns et organisation du code</value>
+  </data>
+  <data name="Learn.Courses.Topic3" xml:space="preserve">
+    <value>Construction de systèmes scalables et maintenables</value>
+  </data>
+
+  <!-- Learn Challenges -->
+  <data name="Learn.Challenges.Title" xml:space="preserve">
+    <value>Défis Pratiques</value>
+  </data>
+  <data name="Learn.Challenges.Description" xml:space="preserve">
+    <value>Apprennez par l'exemple grâce à une dissection de mes solutions à des challenges publics. Comparez les avec vos propres solutions !</value>
+  </data>
+  <data name="Learn.Challenges.Kaggle" xml:space="preserve">
+    <value>Compétitions Kaggle</value>
+  </data>
+  <data name="Learn.Challenges.KaggleDescription" xml:space="preserve">
+    <value>Défis de data science et de machine learning</value>
+  </data>
+  <data name="Learn.Challenges.Gamejams" xml:space="preserve">
+    <value>Game Jams</value>
+  </data>
+  <data name="Learn.Challenges.GamejamsDescription" xml:space="preserve">
+    <value>Compétitions publiques de développement de jeux et coding créatif</value>
+  </data>
+  <data name="Learn.Challenges.CTF" xml:space="preserve">
+    <value>Capture The Flag</value>
+  </data>
+  <data name="Learn.Challenges.CTFDescription" xml:space="preserve">
+    <value>Défis de cybersécurité et évaluations de vulnérabilités</value>
+  </data>
+  <data name="Learn.Challenges.Custom" xml:space="preserve">
+    <value>Défis Personnalisés</value>
+  </data>
+  <data name="Learn.Challenges.CustomDescription" xml:space="preserve">
+    <value>Défis de programmation uniques conçus pour tester des compétences spécifiques</value>
   </data>
 </root>
