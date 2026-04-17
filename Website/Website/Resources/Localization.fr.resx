@@ -375,10 +375,10 @@
     <value>24 ans</value>
   </data>
   <data name="Resume.Title" xml:space="preserve">
-    <value>Ingénieur IT</value>
+    <value>Développeur Fullstack</value>
   </data>
   <data name="Resume.Subtitle" xml:space="preserve">
-    <value>Concepteur | Développeur d'Applications</value>
+    <value>Ingénieur | Concepteur d'Applications</value>
   </data>
   <data name="Resume.Email" xml:space="preserve">
     <value>nacedo@medianocta.com</value>
@@ -390,7 +390,7 @@
     <value>13 Esplanade de l'Europe, 34000 Montpellier</value>
   </data>
   <data name="Resume.Website" xml:space="preserve">
-    <value>https://medianocta.com/</value>
+    <value>Disponible immédiatement</value>
   </data>
   <data name="Resume.PhotoAlt" xml:space="preserve">
     <value>C'est moi !</value>
