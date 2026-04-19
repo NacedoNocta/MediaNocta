@@ -1,0 +1,96 @@
+@page "/Account/Profile"
+@attribute [Authorize]
+@inject AuthenticationStateProvider AuthStateProvider
+@rendermode InteractiveServer
+
+<PageTitle>Profile</PageTitle>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-person-circle me-2"></i>
+                        User Profile
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <AuthorizeView>
+                        <Authorized>
+                            <div class="mb-4">
+                                <h5>Account Information</h5>
+                                <hr />
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <strong>Username:</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    @GetUsername(context.User)
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <strong>Email:</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    @GetEmail(context.User)
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <strong>Roles:</strong>
+                                </div>
+                                <div class="col-md-8">
+                                    @foreach (var role in GetRoles(context.User))
+                                    {
+                                        <span class="badge bg-info me-1">@role</span>
+                                    }
+                                    @if (!GetRoles(context.User).Any())
+                                    {
+                                        <span class="text-muted">No roles assigned</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info mt-4">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <strong>Note:</strong> This is a placeholder profile page for the prototype.
+                                Full profile editing functionality will be added in Version 1.
+                            </div>
+                        </Authorized>
+                    </AuthorizeView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string GetUsername(System.Security.Claims.ClaimsPrincipal user)
+    {
+        return user.FindFirst("username")?.Value
+            ?? user.FindFirst("preferred_username")?.Value
+            ?? user.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value
+            ?? user.Identity?.Name
+            ?? "Unknown";
+    }
+
+    private string GetEmail(System.Security.Claims.ClaimsPrincipal user)
+    {
+        return user.FindFirst("email")?.Value
+            ?? user.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
+            ?? "Not available";
+    }
+
+    private List<string> GetRoles(System.Security.Claims.ClaimsPrincipal user)
+    {
+        return user.FindAll(System.Security.Claims.ClaimTypes.Role)
+            .Select(c => c.Value)
+            .ToList();
+    }
+}

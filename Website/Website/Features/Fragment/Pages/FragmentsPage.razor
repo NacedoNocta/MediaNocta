@@ -1,0 +1,135 @@
+@page "/fragments"
+@inject FragmentService FragmentService
+@inject ILogger<FragmentsPage> Logger
+@inject NavigationManager Navigation
+@inject IStringLocalizer<Localization> Localizer
+@rendermode InteractiveServer
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="mb-4 text-center">
+                <h1 class="display-4 text-@(SharedLibrary.TextKeys.fragmentThemeColor)">@Localizer["Page.Fragments"]</h1>
+                <p class="lead text-body-tertiary">@Localizer["Page.FragmentsDescription"]</p>
+            </div>
+
+            <!-- Search and Filter Section -->
+            <div class="row p-3 mb-4 bg-primary-subtle border border-1 border-@(SharedLibrary.TextKeys.fragmentThemeColor) rounded">
+                <div class="col-lg-8 align-content-center">
+                    <FragmentSearch OnSearchResults="HandleSearchResults" OnClearSearch="HandleClearSearch" />
+                </div>
+                <div class="col-lg-4">
+                    <FragmentTypeFilter OnFilterResults="HandleFilterResults" 
+                                       OnShowAll="HandleShowAll" 
+                                       AllFragmentsCount="@totalFragmentsCount" 
+                                       @ref="typeFilterRef" />
+                </div>
+            </div>
+
+            @if (isLoading)
+            {
+                <LoadingSpinner Label="@Localizer["Common.Loading"]"
+                                Color="@SharedLibrary.TextKeys.fragmentThemeColor"
+                                Class="my-5" />
+            }
+            else if (hasError)
+            {
+                <ErrorAlert Title="@Localizer["Error.LoadingFragments"]"
+                            Message="@Localizer["Error.LoadingFragmentsMessage"]"
+                            RetryLabel="@Localizer["Common.Retry"]"
+                            OnRetry="LoadFragmentsAsync" />
+            }
+            else if (!fragments.Any())
+            {
+                <EmptyState Title="@Localizer["Empty.NoFragmentsFound"]"
+                            Message="@Localizer["Empty.NoFragmentsMessage"]" />
+            }
+            else
+            {
+                <!-- Fragments List -->
+                <div class="row">
+                    @foreach (var fragment in fragments)
+                    {
+                        <FragmentCard fragment="@fragment" 
+                                     IsExpanded="@(expandedFragmentId == fragment.Id)"
+                                     OnVibeClicked="@HandleVibeClicked" 
+                                     OnExpandClicked="@HandleExpandClicked"
+                                     OnCollapseClicked="@HandleCollapseClicked" />
+                    }
+                </div>
+
+                <!-- Pagination Controls - Hidden in search/filter mode -->
+                @if (totalPages > 1 && !isSearchMode && !isFilterMode)
+                {
+                    <nav aria-label="Fragment pagination" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <!-- Previous Page -->
+                            <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                                <button class="page-link" @onclick="@(() => GoToPageAsync(currentPage - 1))" disabled="@(currentPage <= 1)">
+                                    <i class="fas fa-chevron-left"></i> @Localizer["Common.Previous"]
+                                </button>
+                            </li>
+
+                            <!-- First Page -->
+                            @if (currentPage > 3)
+                            {
+                                <li class="page-item">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(1))">1</button>
+                                </li>
+                                @if (currentPage > 4)
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                }
+                            }
+
+                            <!-- Page Numbers -->
+                            @{
+                                var startPage = Math.Max(1, currentPage - 2);
+                                var endPage = Math.Min(totalPages, currentPage + 2);
+                            }
+                            @for (int page = startPage; page <= endPage; page++)
+                            {
+                                <li class="page-item @(page == currentPage ? "active" : "")">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(page))">
+                                        @(page)
+                                    </button>
+                                </li>
+                            }
+
+                            <!-- Last Page -->
+                            @if (currentPage < totalPages - 2)
+                            {
+                                @if (currentPage < totalPages - 3)
+                                {
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                }
+                                <li class="page-item">
+                                    <button class="page-link" @onclick="@(() => GoToPageAsync(totalPages))">@totalPages</button>
+                                </li>
+                            }
+
+                            <!-- Next Page -->
+                            <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                                <button class="page-link" @onclick="@(() => GoToPageAsync(currentPage + 1))" disabled="@(currentPage >= totalPages)">
+                                    @Localizer["Common.Next"] <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <!-- Page Info -->
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            @Localizer["Pagination.Page"] @currentPage @Localizer["Pagination.Of"] @totalPages (@fragments.Count @Localizer["Pagination.TotalFragments"])
+                        </small>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+

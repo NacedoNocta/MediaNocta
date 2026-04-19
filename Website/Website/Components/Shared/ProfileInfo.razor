@@ -1,0 +1,62 @@
+@inject IStringLocalizer<Localization> Localizer
+
+<div class="text-center border rounded">
+    <img src="@ProfileImageUrl" alt="@ProfileName" class="rounded-circle mb-2 img-fluid border border-1 border-primary card mx-auto profile-image">
+    <h3 class="mb-1 mt-3 text-body-emphasis">@ProfileName</h3>
+    <blockquote>
+        <p class="text-body-secondary text-center my-4 profile-description">
+            @(string.IsNullOrEmpty(ProfileDescription) ? Localizer["AboutMe.ProfileDescription"] : ProfileDescription)
+        </p>
+    </blockquote>
+    <div class="row justify-content-center">
+        <a href="@LinkedInUrl" class="text-body-emphasis h1 col-4" target="_blank" rel="noopener noreferrer">
+            <i class="bi bi-linkedin"></i>
+        </a>
+        <a href="@GitHubUrl" class="text-body-emphasis h1 col-4" target="_blank" rel="noopener noreferrer">
+            <i class="bi bi-github"></i>
+        </a>
+        <a href="@EmailUrl" class="text-body-emphasis h1 col-4">
+            <i class="bi bi-envelope-fill"></i>
+        </a>
+        <a href="@DiscordUrl" class="text-body-emphasis h1 col-4" target="_blank" rel="noopener noreferrer">
+            <i class="bi bi-discord"></i>
+        </a>
+    </div>
+</div>
+
+<style>
+    .profile-image {
+        width: 5rem;
+        height: 5rem;
+        object-fit: cover;
+    }
+
+    .profile-description {
+        text-align: justify;
+    }
+
+    @@media (max-width: 768px) {
+        .profile-image {
+            width: 4rem;
+            height: 4rem;
+        }
+    }
+</style>
+
+@code {
+    [Parameter] public string ProfileName { get; set; } = "Nacedo NOCTA";
+    [Parameter] public string ProfileImageUrl { get; set; } = "";
+    [Parameter] public string ProfileDescription { get; set; } = "";
+    [Parameter] public string LinkedInUrl { get; set; } = "https://www.linkedin.com/in/nacedonocta/";
+    [Parameter] public string GitHubUrl { get; set; } = "https://github.com/NacedoNocta";
+    [Parameter] public string EmailUrl { get; set; } = "mailto:nacedo@medianocta.com";
+    [Parameter] public string DiscordUrl { get; set; } = "https://discord.com/invite/VnGMPGUs";
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(ProfileImageUrl))
+        {
+            ProfileImageUrl = Assets["img/me-icon.jpg"];
+        }
+    }
+}

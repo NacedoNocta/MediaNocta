@@ -1,0 +1,17 @@
+@namespace Website.Components.Shared
+
+<div class="d-flex justify-content-center align-items-center @Class" role="status" aria-live="polite">
+    <div class="spinner-border text-@Color" role="status">
+        <span class="visually-hidden">@Label</span>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <span class="ms-2">@Label</span>
+    }
+</div>
+
+@code {
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string Color { get; set; } = "primary";
+    [Parameter] public string? Class { get; set; }
+}

@@ -1,0 +1,21 @@
+@page "/tech"
+@inject IStringLocalizer<Localization> Localizer
+@inject ILogger<TechIndexPage> Logger
+
+<div class="row">
+    <div class="col-12">
+        <div class="mb-4 text-center">
+            <h1 class="display-4 text-@(TextKeys.techThemeColor)">@Localizer["Page.TechProjects"]</h1>
+            <p class="lead text-body-tertiary">@Localizer["Page.TechProjectsDescription"]</p>
+        </div>
+        
+        <!-- Project Banners Grid -->
+        <div class="row">
+            @foreach (var project in GetAllProjects())
+            {
+                <ProjectBanner Project="@project" />
+            }
+        </div>
+    </div>
+</div>
+

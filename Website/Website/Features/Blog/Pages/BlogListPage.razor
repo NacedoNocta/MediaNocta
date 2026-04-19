@@ -1,0 +1,55 @@
+@page "/blog"
+@inject BlogService BlogService
+@inject ILogger<BlogListPage> Logger
+@inject NavigationManager Navigation
+@inject IStringLocalizer<Localization> Localizer
+@rendermode InteractiveServer
+
+<div class="row">
+    <div class="col-12">
+        <div class="mb-4 text-center">
+            <h1 class="display-4 text-@(SharedLibrary.TextKeys.blogThemeColor)">@Localizer["Page.BlogAndArticles"]</h1>
+            <p class="lead text-body-tertiary">@Localizer["Page.BlogDescription"]</p>
+        </div>
+
+        @if (_isLoading)
+        {
+            <LoadingSpinner Label="@Localizer["Common.Loading"]" Class="my-5" />
+        }
+        else if (_hasError)
+        {
+            <ErrorAlert Title="@Localizer["Error.LoadingPosts"]"
+                        Message="@Localizer["Error.LoadingPostsMessage"]"
+                        RetryLabel="@Localizer["Common.Retry"]"
+                        OnRetry="LoadPostsAsync" />
+        }
+        else if (!_blogs.Any())
+        {
+            <EmptyState Title="@Localizer["Empty.NoPostsFound"]"
+                        Message="@Localizer["Empty.NoPostsMessage"]" />
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var blog in _blogs)
+                {
+                    <BlogListCard blog="@blog" />
+                }
+            </div>
+
+            <Pagination CurrentPage="(int)_currentPage"
+                        TotalPages="(int)_totalPages"
+                        OnPageChange="@(p => GoToPageAsync((uint)p))"
+                        AriaLabel="Blog pagination" />
+
+            @if (_totalPages > 1)
+            {
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        @Localizer["Pagination.Page"] @_currentPage @Localizer["Pagination.Of"] @_totalPages (@_totalPosts @Localizer["Pagination.TotalPosts"])
+                    </small>
+                </div>
+            }
+        }
+    </div>
+</div>
