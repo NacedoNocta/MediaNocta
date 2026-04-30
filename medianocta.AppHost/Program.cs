@@ -12,8 +12,11 @@ var websiteDatabase = postgres.AddDatabase("websiteDatabase");
 var backofficeDatabase = postgres.AddDatabase("backofficeDatabase");
 
 // Keycloak Identity Provider
+// Realm is imported from ./keycloak-realm on fresh starts (when the data volume is empty).
+// The realm export contains development client secrets — do not use this setup in production.
 var keycloak = builder.AddKeycloak("keycloak", port: 8080)
     .WithDataVolume()
+    .WithRealmImport("./keycloak-realm")
     .WaitFor(keycloakDatabase);
 
 // Database Manager
