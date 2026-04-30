@@ -31,6 +31,10 @@ builder.Services.AddHttpContextAccessor();
 // Register authenticated HTTP client handler
 builder.Services.AddTransient<AuthenticatedHttpClientHandler>();
 
+// FR-D5: Backoffice is exempt from caching entirely. Every outbound HttpClient call
+// gets X-Skip-Cache: true so origin and gateway caches see it as a bypass request.
+builder.Services.AddTransient<BackofficeBypassHandler>();
+
 // Add cascading authentication state for all components
 builder.Services.AddCascadingAuthenticationState();
 
@@ -42,37 +46,50 @@ builder.Services.AddRazorComponents()
 // Single Gateway endpoint for all API services
 var gatewayUrl = builder.Configuration["GatewayEndpoint"] ?? throw new InvalidOperationException("GatewayEndpoint is not set");
 
-// Configure service-specific clients with proper API paths and authenticated handler
+// Configure service-specific clients with proper API paths and authenticated handler.
+// BackofficeBypassHandler is wrapped outermost so X-Skip-Cache is set on every outbound call.
 builder.Services.AddHttpClient<IBlogManagementService, BlogManagementService>(c =>
 {
     c.BaseAddress = new Uri($"{gatewayUrl}/api/blog/");
 })
-.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
+.AddHttpMessageHandler<BackofficeBypassHandler>();
 
 builder.Services.AddHttpClient<ITechManagementService, TechManagementService>(c =>
 {
     c.BaseAddress = new Uri($"{gatewayUrl}/");
 })
-.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
+.AddHttpMessageHandler<BackofficeBypassHandler>();
 
 builder.Services.AddHttpClient<IFragmentManagementService, FragmentManagementService>(c =>
 {
     c.BaseAddress = new Uri($"{gatewayUrl}/");
 })
-.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
+.AddHttpMessageHandler<BackofficeBypassHandler>();
 
 builder.Services.AddHttpClient<IAuthorManagementService, AuthorManagementService>(c =>
 {
     c.BaseAddress = new Uri($"{gatewayUrl}/api/blog/");
 })
-.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
+.AddHttpMessageHandler<BackofficeBypassHandler>();
+
+builder.Services.AddHttpClient<ICacheAdminService, CacheAdminService>(c =>
+{
+    c.BaseAddress = new Uri($"{gatewayUrl}/api/cache-admin/");
+})
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
+.AddHttpMessageHandler<BackofficeBypassHandler>();
 
 // Add a named HttpClient for authorized requests to the gateway
 builder.Services.AddHttpClient("AuthorizedGateway", c =>
 {
     c.BaseAddress = new Uri(gatewayUrl);
 })
-.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
+.AddHttpMessageHandler<BackofficeBypassHandler>();
 
 var app = builder.Build();
 

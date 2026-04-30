@@ -209,6 +209,31 @@ or authentication, if and when appropriate.
 **Description:** Configuration library for YARP (Yet Another Reverse Proxy) 
 settings, supporting the APIGateway functionality.
 
+### **CacheLibrary**
+
+**Type:** Class Library
+
+**Description:** Cross-cutting cache primitives shared by every service that
+participates in the distributed cache. Owns the cache key naming convention
+(`mn:{namespace}:{producer}:{route}:{variance}`), the shared OutputCache tag
+taxonomy, the `X-Skip-Cache` bypass header constants, the `BypassHeaderPolicy`
+used as a base policy on every Aspire `AddRedisOutputCache`/`AddRedisDistributedCache`
+call, the `CachingOptions` runtime kill-switch, and the `MediaNocta.Cache` OTel
+meter + ActivitySource (`cache.hit`, `cache.miss`, `cache.evict`, `cache.bypass`).
+No domain-specific code lives here.
+
+### **CacheAdminApi**
+
+**Type:** ASP.NET Core Web API
+
+**Description:** Operator/admin control plane for the distributed cache. Exposes
+five `AdminPolicy`-gated endpoints under `/cache-admin/` for inspecting groups,
+listing entries with TTL metadata, evicting individual keys, evicting per-group
+prefixes, and flushing the entire cache (with literal-confirm guard). Reached from
+the Backoffice through the gateway, never directly. Operates against Redis via raw
+`IConnectionMultiplexer` (SCAN/DEL) using the shared key convention from
+`CacheLibrary` — never proxies through origin APIs.
+
 ### **DatabaseManager**
 
 **Type:** Utility/Worker Project
@@ -236,6 +261,39 @@ representative content.
 **Description:** .NET Aspire orchestration projects 
 for managing the distributed application architecture and service defaults.
 The AppHost wires up the dependency chain (Database → APIs → Gateway →
-Website/Backoffice) and the shared ServiceDefaults provide common
-telemetry, health checks, and resilience configuration to every service.
+Website/Backoffice) plus the Redis cache + Redis Insight management UI, and
+the shared ServiceDefaults provide common telemetry, health checks, resilience
+configuration, and the `MediaNocta.Cache` OTel meter binding to every service.
+
+## Caching
+
+The platform uses a Redis-backed distributed cache, declared as an Aspire-managed
+resource (`builder.AddRedis("cache").WithDataVolume().WithRedisInsight()`) and
+consumed at four layers:
+
+1. **Origin APIs** (Blog/Activity/Fragment/Tech) — ASP.NET Core OutputCaching
+   with named per-resource policies; default 24h TTL; tag-based eviction on writes.
+2. **APIGateway (YARP edge)** — Output cache wrapping safe-method routes only;
+   write routes never cached; bypass header honoured.
+3. **Website typed HttpClients** — `WebsiteCachingHandler` wraps each client with
+   opt-in caching via `HttpRequestOptionsKey<TimeSpan>`; per-method TTLs.
+4. **Backoffice** — exempt from caching entirely; `BackofficeBypassHandler`
+   unconditionally sets `X-Skip-Cache: true` on every outbound request.
+
+### Operator surface
+
+- **Aspire dashboard** — see Redis container + Redis Insight UI for raw key
+  inspection. Cache hit/miss/evict/bypass counters published under the
+  `MediaNocta.Cache` meter.
+- **Backoffice `/cache` page** — admin view of cached groups, drill-in to entries,
+  per-row/per-group evict, and "flush all" (requires typing `FLUSH`).
+- **Bypass header** — set `X-Skip-Cache: true` on any request to force a fresh
+  origin fetch. Useful for development and post-edit cache invalidation
+  ("I just edited content; refresh the cache for everyone").
+- **Kill-switch** — set `Caching:Enabled = false` in any service's configuration
+  to short-circuit every cache layer at runtime; reloads via `IOptionsMonitor`
+  without redeploy.
+
+The full feature spec, plan, and verification harness live in
+`specs/20260430-redis-caching/`.
 

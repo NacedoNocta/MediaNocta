@@ -5,6 +5,7 @@ using Website.Authentication.Extensions;
 using Website.Authentication.Middleware;
 using Website.Authentication.Handlers;
 using Website.Authentication.Providers;
+using CacheLibrary;
 using DatabaseManager;
 using DatabaseManager.DbContexts;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -33,6 +34,12 @@ builder.Services.AddHttpContextAccessor();
 // Register authenticated HTTP client handler
 builder.Services.AddTransient<AuthenticatedHttpClientHandler>();
 
+// Redis-backed distributed cache (FR-D1) and the per-method opt-in caching delegating handler.
+// Fail-fast SE.Redis config + 50ms hard wrapper in WebsiteCachingHandler = total ~50ms cache-down budget.
+builder.AddRedisDistributedCache("cache", configureOptions: CacheRedisDefaults.ApplyFailFast);
+builder.Services.AddCacheLibrary();
+builder.Services.AddTransient<WebsiteCachingHandler>();
+
 // Add localization services
 builder.Services.AddLocalization();
 builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -60,30 +67,36 @@ builder.Services.AddControllers();
 // Single Gateway endpoint for all API services
 var gatewayUrl = builder.Configuration["GatewayEndpoint"] ?? throw new InvalidOperationException("GatewayEndpoint is not set");
 
-// Configure service-specific clients with proper API paths and authenticated handler
+// Configure service-specific clients with proper API paths.
+// Order matters: AuthenticatedHttpClientHandler is innermost; WebsiteCachingHandler wraps it
+// so cached responses bypass the auth handler entirely on hits.
 builder.Services.AddHttpClient<BlogService>(c =>
 {
     c.BaseAddress = new Uri($"{gatewayUrl}/api/blog/");
 })
-.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
+.AddHttpMessageHandler<WebsiteCachingHandler>();
 
 builder.Services.AddHttpClient<ActivityService>(c =>
 {
     c.BaseAddress = new Uri($"{gatewayUrl}/api/activity/");
 })
-.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
+.AddHttpMessageHandler<WebsiteCachingHandler>();
 
 builder.Services.AddHttpClient<FragmentService>(c =>
 {
     c.BaseAddress = new Uri($"{gatewayUrl}/");
 })
-.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
+.AddHttpMessageHandler<WebsiteCachingHandler>();
 
 builder.Services.AddHttpClient<TechUpdateService>(c =>
 {
     c.BaseAddress = new Uri($"{gatewayUrl}/");
 })
-.AddHttpMessageHandler<AuthenticatedHttpClientHandler>();
+.AddHttpMessageHandler<AuthenticatedHttpClientHandler>()
+.AddHttpMessageHandler<WebsiteCachingHandler>();
 
 // Add a named HttpClient for authorized requests to the gateway
 builder.Services.AddHttpClient("AuthorizedGateway", c =>

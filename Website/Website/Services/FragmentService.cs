@@ -21,6 +21,9 @@ namespace Website.Services
         private readonly HttpClient _httpClient;
         private readonly ILogger<FragmentService> _logger;
         private const string ApiEndpoint = "api/Fragment";
+        private static readonly TimeSpan ListTtl = TimeSpan.FromDays(1);
+        private static readonly TimeSpan DetailTtl = TimeSpan.FromDays(1);
+        private static readonly TimeSpan SearchTtl = TimeSpan.FromMinutes(15);
 
         public FragmentService(HttpClient httpClient, ILogger<FragmentService> logger)
         {
@@ -34,7 +37,9 @@ namespace Website.Services
             {
                 _logger.LogInformation("Fetching fragments for page {Page} with page size {PageSize}", page, pageSize);
 
-                var response = await _httpClient.GetAsync($"{ApiEndpoint}?page={page}&pageSize={pageSize}");
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"{ApiEndpoint}?page={page}&pageSize={pageSize}");
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, ListTtl);
+                using var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
                 var fragments = await response.Content.ReadFromJsonAsync(FragmentLibraryJsonContext.Default.IEnumerableFragment);
@@ -58,7 +63,9 @@ namespace Website.Services
             {
                 _logger.LogInformation("Fetching fragment with ID {Id}", id);
 
-                var response = await _httpClient.GetAsync($"{ApiEndpoint}/{id}");
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"{ApiEndpoint}/{id}");
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, DetailTtl);
+                using var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
                 var fragment = await response.Content.ReadFromJsonAsync(FragmentLibraryJsonContext.Default.Fragment);
@@ -98,7 +105,9 @@ namespace Website.Services
             {
                 _logger.LogInformation("Fetching fragment types");
 
-                var response = await _httpClient.GetAsync($"{ApiEndpoint}/types");
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"{ApiEndpoint}/types");
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, ListTtl);
+                using var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
                 var types = await response.Content.ReadFromJsonAsync(FragmentLibraryJsonContext.Default.IEnumerableFragmentType);
@@ -128,7 +137,9 @@ namespace Website.Services
                     url += $"&typeTag={Uri.EscapeDataString(typeTag)}";
                 }
 
-                var response = await _httpClient.GetAsync(url);
+                using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, SearchTtl);
+                using var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
                 var fragments = await response.Content.ReadFromJsonAsync(FragmentLibraryJsonContext.Default.IEnumerableFragment);
@@ -168,7 +179,9 @@ namespace Website.Services
             {
                 _logger.LogInformation("Fetching fragments by type '{TypeTag}'", typeTag);
 
-                var response = await _httpClient.GetAsync($"{ApiEndpoint}/by-type/{Uri.EscapeDataString(typeTag)}");
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"{ApiEndpoint}/by-type/{Uri.EscapeDataString(typeTag)}");
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, ListTtl);
+                using var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
                 var fragments = await response.Content.ReadFromJsonAsync(FragmentLibraryJsonContext.Default.IEnumerableFragment);

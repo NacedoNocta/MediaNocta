@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using SharedLibrary;
 using SharedLibrary.Interfaces;
 
@@ -19,6 +20,7 @@ public class ActivityController : ControllerBase
 
     [HttpGet(Name = "recent")]
     [Route("recent")]
+    [OutputCache(PolicyName = "ActivityRecent")]
     public async Task<IEnumerable<Activity>> GetRecent()
     {
         return await _activityRepository.GetRecentActivitiesAsync(9);
@@ -26,6 +28,7 @@ public class ActivityController : ControllerBase
 
     [HttpGet(Name = "pinned")]
     [Route("pinned")]
+    [OutputCache(PolicyName = "ActivityPinned")]
     public async Task<IEnumerable<Activity>> GetPinned()
     {
         return await _activityRepository.GetPinnedActivitiesAsync(2);
@@ -33,9 +36,9 @@ public class ActivityController : ControllerBase
 
     [HttpGet(Name = "random")]
     [Route("simpleBlogs")]
+    [OutputCache(PolicyName = "ActivityRandom")]
     public async Task<IEnumerable<Activity>> GetRandom()
     {
         return await _activityRepository.GetRandomActivitiesAsync(1);
     }
 }
-

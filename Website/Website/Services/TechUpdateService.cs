@@ -8,6 +8,9 @@ namespace Website.Services
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<TechUpdateService> _logger;
+        private static readonly TimeSpan ListTtl = TimeSpan.FromDays(1);
+        private static readonly TimeSpan ActivityTtl = TimeSpan.FromHours(1);
+        private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
 
         public TechUpdateService(HttpClient httpClient, ILogger<TechUpdateService> logger)
         {
@@ -19,14 +22,13 @@ namespace Website.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"/api/tech-updates?page={page}&pageSize={pageSize}");
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/tech-updates?page={page}&pageSize={pageSize}");
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, ListTtl);
+                using var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                
+
                 var content = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<List<TechUpdate>>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }) ?? new List<TechUpdate>();
+                return JsonSerializer.Deserialize<List<TechUpdate>>(content, JsonOpts) ?? new List<TechUpdate>();
             }
             catch (Exception ex)
             {
@@ -39,14 +41,13 @@ namespace Website.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"/api/tech-updates?projectId={projectId}&page={page}&pageSize={pageSize}");
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/tech-updates?projectId={projectId}&page={page}&pageSize={pageSize}");
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, ListTtl);
+                using var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                
+
                 var content = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<List<TechUpdate>>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }) ?? new List<TechUpdate>();
+                return JsonSerializer.Deserialize<List<TechUpdate>>(content, JsonOpts) ?? new List<TechUpdate>();
             }
             catch (Exception ex)
             {
@@ -59,9 +60,11 @@ namespace Website.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync("/api/tech-updates/count");
+                using var request = new HttpRequestMessage(HttpMethod.Get, "/api/tech-updates/count");
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, ListTtl);
+                using var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                
+
                 var content = await response.Content.ReadAsStringAsync();
                 return uint.Parse(content);
             }
@@ -76,9 +79,11 @@ namespace Website.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"/api/tech-updates/count?projectId={projectId}");
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/tech-updates/count?projectId={projectId}");
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, ListTtl);
+                using var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                
+
                 var content = await response.Content.ReadAsStringAsync();
                 return uint.Parse(content);
             }
@@ -93,14 +98,13 @@ namespace Website.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"/api/tech-updates/{id}");
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/tech-updates/{id}");
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, ListTtl);
+                using var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                
+
                 var content = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<TechUpdate>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                return JsonSerializer.Deserialize<TechUpdate>(content, JsonOpts);
             }
             catch (Exception ex)
             {
@@ -113,14 +117,13 @@ namespace Website.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync("/api/tech-projects/last-activity");
+                using var request = new HttpRequestMessage(HttpMethod.Get, "/api/tech-projects/last-activity");
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, ActivityTtl);
+                using var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
-                
+
                 var content = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<Dictionary<string, DateTime?>>(content, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }) ?? new Dictionary<string, DateTime?>();
+                return JsonSerializer.Deserialize<Dictionary<string, DateTime?>>(content, JsonOpts) ?? new Dictionary<string, DateTime?>();
             }
             catch (Exception ex)
             {

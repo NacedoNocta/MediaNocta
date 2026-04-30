@@ -1,7 +1,9 @@
-﻿using BlogApi.Interfaces;
+using BlogApi.Interfaces;
 using BlogLibrary;
 using BlogLibrary.Interfaces;
+using CacheLibrary;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace BlogApi.Controllers;
 
@@ -11,14 +13,17 @@ public class BlogController : ControllerBase
 {
     private readonly ILogger<BlogController> _logger;
     private readonly IBlogService _blogService;
+    private readonly IOutputCacheStore _cacheStore;
 
-    public BlogController(ILogger<BlogController> logger, IBlogService blogService)
+    public BlogController(ILogger<BlogController> logger, IBlogService blogService, IOutputCacheStore cacheStore)
     {
         _logger = logger;
         _blogService = blogService;
+        _cacheStore = cacheStore;
     }
 
     [HttpGet("SimpleBlogs", Name = "GetBlogPosts")]
+    [OutputCache(PolicyName = "BlogList")]
     public async Task<ActionResult<IEnumerable<IBlog>>> GetBlogPosts([FromQuery] uint page = 1, [FromQuery] uint pageSize = 10)
     {
         try
@@ -34,6 +39,7 @@ public class BlogController : ControllerBase
     }
 
     [HttpGet("SimpleBlogs/count", Name = "GetBlogPostCount")]
+    [OutputCache(PolicyName = "BlogCount")]
     public async Task<ActionResult<uint>> GetBlogPostCount()
     {
         try
@@ -49,6 +55,7 @@ public class BlogController : ControllerBase
     }
 
     [HttpGet("SimpleBlogs/{id:guid}", Name = "GetBlogPostById")]
+    [OutputCache(PolicyName = "BlogDetail")]
     public async Task<ActionResult<IBlog>> GetBlogPostById(Guid id)
     {
         try
@@ -71,7 +78,7 @@ public class BlogController : ControllerBase
     }
 
     [HttpPost("SimpleBlogs", Name = "CreateBlogPost")]
-    public async Task<ActionResult<IBlog>> CreateBlogPost([FromBody] Blog blog)
+    public async Task<ActionResult<IBlog>> CreateBlogPost([FromBody] Blog blog, CancellationToken ct)
     {
         try
         {
@@ -81,6 +88,7 @@ public class BlogController : ControllerBase
             }
 
             var createdPost = await _blogService.CreateBlogPostAsync(blog);
+            await EvictAllAsync(ct);
             return CreatedAtRoute("GetBlogPostById", new { id = createdPost.Id }, createdPost);
         }
         catch (Exception ex)
@@ -91,7 +99,7 @@ public class BlogController : ControllerBase
     }
 
     [HttpPut("SimpleBlogs/{id:guid}", Name = "UpdateBlogPost")]
-    public async Task<ActionResult<IBlog>> UpdateBlogPost(Guid id, [FromBody] Blog blog)
+    public async Task<ActionResult<IBlog>> UpdateBlogPost(Guid id, [FromBody] Blog blog, CancellationToken ct)
     {
         try
         {
@@ -113,6 +121,7 @@ public class BlogController : ControllerBase
                 return NotFound($"Blog post with ID {id} not found");
             }
 
+            await EvictAllAsync(ct);
             return Ok(updatedPost);
         }
         catch (Exception ex)
@@ -123,7 +132,7 @@ public class BlogController : ControllerBase
     }
 
     [HttpDelete("SimpleBlogs/{id:guid}", Name = "DeleteBlogPost")]
-    public async Task<ActionResult> DeleteBlogPost(Guid id)
+    public async Task<ActionResult> DeleteBlogPost(Guid id, CancellationToken ct)
     {
         try
         {
@@ -135,6 +144,7 @@ public class BlogController : ControllerBase
                 return NotFound($"Blog post with ID {id} not found");
             }
 
+            await EvictAllAsync(ct);
             return NoContent();
         }
         catch (Exception ex)
@@ -142,5 +152,18 @@ public class BlogController : ControllerBase
             _logger.LogError(ex, "Error deleting blog post with ID {Id}", id);
             return StatusCode(500, "An error occurred while deleting the blog post");
         }
+    }
+
+    // OutputCache.Tag() takes literal strings only, so per-id detail tags aren't possible
+    // without a custom IOutputCachePolicy. Sledgehammer eviction is acceptable here:
+    // 1-day TTLs bound the over-eviction cost, and writes are infrequent.
+    private async Task EvictAllAsync(CancellationToken ct)
+    {
+        await _cacheStore.EvictByTagAsync(CacheTags.BlogApi.List, ct);
+        await _cacheStore.EvictByTagAsync(CacheTags.BlogApi.Count, ct);
+        await _cacheStore.EvictByTagAsync(CacheTags.BlogApi.DetailAll, ct);
+        CacheTelemetry.RecordEviction(CacheNamespaces.Main, CacheProducers.BlogApi, "blog-list");
+        CacheTelemetry.RecordEviction(CacheNamespaces.Main, CacheProducers.BlogApi, "blog-count");
+        CacheTelemetry.RecordEviction(CacheNamespaces.Main, CacheProducers.BlogApi, "blog-detail");
     }
 }

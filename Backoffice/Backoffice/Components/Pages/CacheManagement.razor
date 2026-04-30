@@ -1,0 +1,216 @@
+@page "/cache"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "backoffice-admin")]
+@using CacheLibrary
+@using Backoffice.Services
+@inject ICacheAdminService CacheAdmin
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<PageTitle>Cache Management - Media Nocta Backoffice</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5">Cache Management</h1>
+            <p class="text-muted">Inspect and evict entries in the distributed Redis cache.</p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-outline-secondary" @onclick="RefreshAsync" disabled="@_loading">
+                <i class="bi bi-arrow-clockwise me-2"></i>@(_loading ? "Refreshing..." : "Refresh")
+            </button>
+        </div>
+    </div>
+
+    @if (_errorMessage is not null)
+    {
+        <div class="alert alert-danger" role="alert">@_errorMessage</div>
+    }
+
+    @if (_groups is null)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status"></div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col">
+                <div class="card mb-4">
+                    <div class="card-header"><strong>Cache groups</strong></div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Namespace</th>
+                                    <th>Producer</th>
+                                    <th class="text-end">Entries</th>
+                                    <th>Oldest</th>
+                                    <th>Newest</th>
+                                    <th>TTL remaining (min/max)</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var g in _groups.Groups.OrderBy(g => g.Namespace).ThenBy(g => g.Producer))
+                                {
+                                    <tr>
+                                        <td>@g.Namespace</td>
+                                        <td>@g.Producer</td>
+                                        <td class="text-end">@g.EntryCount</td>
+                                        <td>@(g.OldestWrittenAtUtc?.ToString("u") ?? "—")</td>
+                                        <td>@(g.NewestWrittenAtUtc?.ToString("u") ?? "—")</td>
+                                        <td>@FormatTtlRange(g.ShortestTtlRemainingSeconds, g.LongestTtlRemainingSeconds)</td>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-outline-secondary me-1" @onclick="() => LoadEntriesAsync(g.Namespace, g.Producer)" disabled="@(g.EntryCount == 0)">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" @onclick="() => EvictGroupAsync(g.Namespace, g.Producer)" disabled="@(g.EntryCount == 0)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (_entries is not null)
+        {
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>Entries: @_entriesNamespace / @_entriesProducer</strong>
+                    <span class="text-muted small">@_entries.TotalCount total</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Route</th>
+                                <th>Variance</th>
+                                <th>Written (UTC)</th>
+                                <th class="text-end">TTL remaining</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var e in _entries.Entries)
+                            {
+                                <tr>
+                                    <td><code>@e.Route</code></td>
+                                    <td><small class="text-muted">@e.VarianceLabel</small></td>
+                                    <td>@e.WrittenAtUtc.ToString("u")</td>
+                                    <td class="text-end">@FormatSeconds(e.TtlRemainingSeconds)</td>
+                                    <td class="text-end">
+                                        <button class="btn btn-sm btn-outline-danger" @onclick="() => EvictEntryAsync(e.KeyBase64)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+        <div class="card border-danger mb-4">
+            <div class="card-header bg-danger text-white"><strong>Danger zone</strong></div>
+            <div class="card-body">
+                <p>Flush every entry in the distributed cache. The next visitor on every cached route will trigger a cold fetch.</p>
+                <button class="btn btn-danger" @onclick="FlushAllAsync">Flush entire cache</button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private CacheGroupsResponse? _groups;
+    private CacheEntriesResponse? _entries;
+    private string? _entriesNamespace;
+    private string? _entriesProducer;
+    private bool _loading;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync() => await RefreshAsync();
+
+    private async Task RefreshAsync()
+    {
+        _loading = true;
+        _errorMessage = null;
+        var result = await CacheAdmin.GetGroupsAsync();
+        if (result is null)
+        {
+            _errorMessage = "Failed to load cache groups. See logs.";
+        }
+        else
+        {
+            _groups = result;
+            if (_entriesNamespace is not null && _entriesProducer is not null)
+            {
+                await LoadEntriesAsync(_entriesNamespace, _entriesProducer);
+            }
+        }
+        _loading = false;
+    }
+
+    private async Task LoadEntriesAsync(string @namespace, string producer)
+    {
+        _entriesNamespace = @namespace;
+        _entriesProducer = producer;
+        _entries = await CacheAdmin.GetEntriesAsync(@namespace, producer, null, 1, 100);
+        if (_entries is null)
+        {
+            _errorMessage = $"Failed to load entries for {@namespace}/{producer}.";
+        }
+    }
+
+    private async Task EvictEntryAsync(string keyBase64)
+    {
+        if (!await Confirm($"Evict this single cache entry?")) return;
+        var ok = await CacheAdmin.EvictEntryAsync(keyBase64);
+        if (!ok)
+        {
+            _errorMessage = "Eviction failed (entry may have already expired).";
+        }
+        await RefreshAsync();
+    }
+
+    private async Task EvictGroupAsync(string @namespace, string producer)
+    {
+        if (!await Confirm($"Evict every entry in {@namespace}/{producer}?")) return;
+        var count = await CacheAdmin.EvictGroupAsync(@namespace, producer);
+        await RefreshAsync();
+        await JS.InvokeVoidAsync("alert", $"Evicted {count} entries from {@namespace}/{producer}.");
+    }
+
+    private async Task FlushAllAsync()
+    {
+        if (!await Confirm("Flush every entry in the entire cache? This cannot be undone.")) return;
+        var phrase = await JS.InvokeAsync<string>("prompt", "Type FLUSH to confirm.");
+        if (!string.Equals(phrase, "FLUSH", StringComparison.Ordinal)) return;
+        var count = await CacheAdmin.FlushAllAsync();
+        await RefreshAsync();
+        await JS.InvokeVoidAsync("alert", $"Flushed {count} entries.");
+    }
+
+    private async Task<bool> Confirm(string message) => await JS.InvokeAsync<bool>("confirm", message);
+
+    private static string FormatSeconds(long? seconds)
+    {
+        if (seconds is null) return "—";
+        var ts = TimeSpan.FromSeconds(seconds.Value);
+        return ts.TotalHours >= 1 ? $"{ts.TotalHours:F1}h" : ts.TotalMinutes >= 1 ? $"{ts.TotalMinutes:F0}m" : $"{ts.TotalSeconds:F0}s";
+    }
+
+    private static string FormatTtlRange(long? min, long? max)
+    {
+        if (min is null && max is null) return "—";
+        if (min == max) return FormatSeconds(min);
+        return $"{FormatSeconds(min)} – {FormatSeconds(max)}";
+    }
+}

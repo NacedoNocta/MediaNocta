@@ -11,6 +11,7 @@
         <ProjectReference Include="..\Backoffice.Client\Backoffice.Client.csproj"/>
         <ProjectReference Include="..\..\AuthLibrary\AuthLibrary.csproj" />
         <ProjectReference Include="..\..\BlogLibrary\BlogLibrary.csproj" />
+        <ProjectReference Include="..\..\CacheLibrary\CacheLibrary.csproj" />
         <ProjectReference Include="..\..\DatabaseManager\DatabaseManager.csproj" />
         <ProjectReference Include="..\..\TechLibrary\TechLibrary.csproj" />
         <ProjectReference Include="..\..\FragmentLibrary\FragmentLibrary.csproj" />

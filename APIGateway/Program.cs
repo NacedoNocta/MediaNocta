@@ -1,9 +1,41 @@
+using CacheLibrary;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
     .AddServiceDiscoveryDestinationResolver();
+
+// Redis-backed gateway-edge output cache.
+// Per-cluster policies tag and TTL responses; route configuration in appsettings.json
+// attaches them to safe-method routes only (FR-C2). Write routes (AdminPolicy-gated)
+// have no cache policy assigned and therefore bypass output caching entirely (FR-C3).
+// The base BypassHeaderPolicy honours X-Skip-Cache on every cached request (FR-D6).
+builder.AddRedisOutputCache("cache", configureOptions: CacheRedisDefaults.ApplyFailFast);
+builder.Services.AddCacheBypass(CacheNamespaces.Main, CacheProducers.Gateway);
+builder.Services.AddOutputCache(options =>
+{
+    options.AddBasePolicy(b => b.AddPolicy<BypassHeaderPolicy>());
+
+    var defaultTtl = TimeSpan.FromDays(1);
+    options.AddPolicy("GatewayBlogRead", b => b
+        .Tag(CacheTags.For(CacheNamespaces.Main, CacheProducers.Gateway, "blog"))
+        .SetVaryByQuery("page", "pageSize")
+        .Expire(defaultTtl));
+    options.AddPolicy("GatewayActivityRead", b => b
+        .Tag(CacheTags.For(CacheNamespaces.Main, CacheProducers.Gateway, "activity"))
+        .Expire(defaultTtl));
+    options.AddPolicy("GatewayFragmentRead", b => b
+        .Tag(CacheTags.For(CacheNamespaces.Main, CacheProducers.Gateway, "fragment"))
+        .SetVaryByQuery("page", "pageSize", "query", "typeTag")
+        .Expire(defaultTtl));
+    options.AddPolicy("GatewayTechRead", b => b
+        .Tag(CacheTags.For(CacheNamespaces.Main, CacheProducers.Gateway, "tech"))
+        .SetVaryByQuery("projectId", "page", "pageSize")
+        .Expire(defaultTtl));
+});
+builder.Services.AddCacheLibrary();
 
 builder.Services.AddAuthentication()
     .AddKeycloakJwtBearer("keycloak", realm: "medianocta", options =>
@@ -90,6 +122,8 @@ app.UseCors();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseOutputCache();
 
 app.MapReverseProxy();
 

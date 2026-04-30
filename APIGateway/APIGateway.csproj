@@ -17,10 +17,12 @@
       <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.5.0" />
       <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
       <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.2.2-preview.1.26207.2" />
+      <PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" Version="13.2.2" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\medianocta.ServiceDefaults\medianocta.ServiceDefaults.csproj" />
+      <ProjectReference Include="..\CacheLibrary\CacheLibrary.csproj" />
     </ItemGroup>
 
 </Project>

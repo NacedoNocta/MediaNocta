@@ -1,4 +1,4 @@
-﻿using BlogLibrary;
+using BlogLibrary;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -18,6 +18,8 @@ namespace Website.Services
         private readonly HttpClient _httpClient;
         private readonly ILogger<BlogService> _logger;
         private const string ApiEndpoint = "SimpleBlogs";
+        private static readonly TimeSpan ListTtl = TimeSpan.FromDays(1);
+        private static readonly TimeSpan DetailTtl = TimeSpan.FromDays(1);
 
         public BlogService(HttpClient httpClient, ILogger<BlogService> logger)
         {
@@ -31,7 +33,9 @@ namespace Website.Services
             {
                 _logger.LogInformation("Fetching blog posts for page {Page} with page size {PageSize}", page, pageSize);
 
-                var response = await _httpClient.GetAsync($"{ApiEndpoint}?page={page}&pageSize={pageSize}");
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"{ApiEndpoint}?page={page}&pageSize={pageSize}");
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, ListTtl);
+                using var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
                 var posts = await response.Content.ReadFromJsonAsync(BlogLibraryJsonContext.Default.ListBlog);
@@ -55,8 +59,10 @@ namespace Website.Services
             {
                 _logger.LogInformation("Fetching total blog post count");
 
-                var response = await _httpClient.GetAsync($"{ApiEndpoint}/count");
-                
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"{ApiEndpoint}/count");
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, ListTtl);
+                using var response = await _httpClient.SendAsync(request);
+
                 response.EnsureSuccessStatusCode();
 
                 var count = await response.Content.ReadFromJsonAsync<uint>();
@@ -80,7 +86,9 @@ namespace Website.Services
             {
                 _logger.LogInformation("Fetching blog post with ID {Id}", id);
 
-                var response = await _httpClient.GetAsync($"{ApiEndpoint}/{id}");
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"{ApiEndpoint}/{id}");
+                request.Options.Set(WebsiteCachingHandler.CacheableTtl, DetailTtl);
+                using var response = await _httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
                 var post = await response.Content.ReadFromJsonAsync(BlogLibraryJsonContext.Default.Blog);

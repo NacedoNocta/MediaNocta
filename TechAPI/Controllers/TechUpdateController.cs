@@ -1,6 +1,7 @@
 ﻿using TechAPI.Interfaces;
 using TechLibrary.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace TechAPI.Controllers
 {
@@ -19,6 +20,7 @@ namespace TechAPI.Controllers
 
         [Route("tech-updates")]
         [HttpGet(Name = "GetTechUpdates")]
+        [OutputCache(PolicyName = "TechUpdates")]
         public async Task<ActionResult<IEnumerable<ITechUpdate>>> GetTechUpdates(
             [FromQuery] string? projectId = null, 
             [FromQuery] uint page = 1, 
@@ -48,6 +50,7 @@ namespace TechAPI.Controllers
 
         [Route("tech-updates/count")]
         [HttpGet(Name = "GetTechUpdatesCount")]
+        [OutputCache(PolicyName = "TechUpdatesCount")]
         public async Task<ActionResult<uint>> GetTechUpdatesCount([FromQuery] string? projectId = null)
         {
             try
@@ -74,6 +77,7 @@ namespace TechAPI.Controllers
 
         [Route("tech-updates/{id:guid}")]
         [HttpGet(Name = "GetTechUpdateById")]
+        [OutputCache(PolicyName = "TechUpdateDetail")]
         public async Task<ActionResult<ITechUpdate>> GetTechUpdateById(Guid id)
         {
             try
@@ -97,6 +101,7 @@ namespace TechAPI.Controllers
 
         [Route("tech-projects/last-activity")]
         [HttpGet(Name = "GetLastActivityDates")]
+        [OutputCache(PolicyName = "TechProjectActivity")]
         public async Task<ActionResult<Dictionary<string, DateTime?>>> GetLastActivityDates()
         {
             try

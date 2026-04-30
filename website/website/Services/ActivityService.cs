@@ -1,4 +1,4 @@
-﻿using SharedLibrary;
+using SharedLibrary;
 using SharedLibrary.Interfaces;
 using Website.Utils;
 
@@ -6,6 +6,7 @@ namespace Website.Services
 {
     public class ActivityService
     {
+        private static readonly TimeSpan ListTtl = TimeSpan.FromDays(1);
         HttpClient httpClient;
         public ActivityService(HttpClient httpClient)
         {
@@ -14,7 +15,9 @@ namespace Website.Services
         public async Task<List<IActivity>> GetRecent()
         {
             List<IActivity>? recent = null;
-            var response = await httpClient.GetAsync("recent");
+            using var request = new HttpRequestMessage(HttpMethod.Get, "recent");
+            request.Options.Set(WebsiteCachingHandler.CacheableTtl, ListTtl);
+            using var response = await httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 recent = await ActivityJsonReader.ReadActivitiesAsync(response.Content);
@@ -25,7 +28,9 @@ namespace Website.Services
         public async Task<List<IActivity>> GetPinned()
         {
             List<IActivity>? pinned = null;
-            var response = await httpClient.GetAsync("pinned");
+            using var request = new HttpRequestMessage(HttpMethod.Get, "pinned");
+            request.Options.Set(WebsiteCachingHandler.CacheableTtl, ListTtl);
+            using var response = await httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 pinned = await ActivityJsonReader.ReadActivitiesAsync(response.Content);
