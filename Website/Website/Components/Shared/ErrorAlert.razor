@@ -1,0 +1,25 @@
+@namespace Website.Components.Shared
+
+<div class="alert alert-@Variant @Class" role="alert">
+    @if (!string.IsNullOrWhiteSpace(Title))
+    {
+        <h4 class="alert-heading"><i class="bi bi-exclamation-triangle me-2"></i>@Title</h4>
+    }
+    <p class="mb-0">@Message</p>
+    @if (OnRetry.HasDelegate)
+    {
+        <hr />
+        <button class="btn btn-outline-@Variant btn-sm" @onclick="OnRetry">
+            <i class="bi bi-arrow-clockwise me-2"></i>@(RetryLabel ?? "Retry")
+        </button>
+    }
+</div>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+    [Parameter, EditorRequired] public string Message { get; set; } = string.Empty;
+    [Parameter] public string Variant { get; set; } = "danger";
+    [Parameter] public string? RetryLabel { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public EventCallback OnRetry { get; set; }
+}

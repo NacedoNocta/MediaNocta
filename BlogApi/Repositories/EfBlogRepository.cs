@@ -2,6 +2,7 @@ using BlogApi.Interfaces;
 using BlogLibrary;
 using BlogLibrary.Interfaces;
 using DatabaseManager;
+using DatabaseManager.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogAPI.Repositories;
@@ -122,13 +123,30 @@ public class EfBlogRepository : IBlogRepository
         try
         {
             var blogEntity = blog as Blog ?? throw new ArgumentException("Blog must be of type Blog", nameof(blog));
-            
+
             var existingBlog = await _context.Blogs
                 .Include(b => b.Tags)
+                .Include(b => b.Author)
                 .FirstOrDefaultAsync(b => b.Id == blogEntity.Id);
 
             if (existingBlog == null)
                 return null;
+
+            // Update author if changed
+            if (existingBlog.Author.Id != blogEntity.Author.Id)
+            {
+                var existingAuthor = await _context.Authors.FindAsync(blogEntity.Author.Id);
+                if (existingAuthor != null)
+                {
+                    existingBlog.Author = existingAuthor;
+                }
+                else
+                {
+                    // If the author doesn't exist, add it
+                    _context.Authors.Add(blogEntity.Author);
+                    existingBlog.Author = blogEntity.Author;
+                }
+            }
 
             // Update blog properties
             existingBlog.Title = blogEntity.Title;
@@ -136,6 +154,17 @@ public class EfBlogRepository : IBlogRepository
             existingBlog.Content = blogEntity.Content;
             existingBlog.ImageUrl = blogEntity.ImageUrl;
             existingBlog.Links = blogEntity.Links;
+            existingBlog.State = blogEntity.State;
+            existingBlog.Slug = blogEntity.Slug;
+            existingBlog.Featured = blogEntity.Featured;
+            existingBlog.ContentType = blogEntity.ContentType;
+            existingBlog.UpdatedAt = DateTime.UtcNow;
+
+            // Update PublishedAt if state changed to Published
+            if (blogEntity.State == BlogState.Published && existingBlog.PublishedAt == null)
+            {
+                existingBlog.PublishedAt = DateTime.UtcNow;
+            }
 
             // Update tags
             existingBlog.Tags.Clear();

@@ -1,0 +1,207 @@
+@page "/blog"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "backoffice-admin")]
+@using BlogLibrary
+@using Backoffice.Services
+@inject IBlogManagementService BlogService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Blog Management - Media Nocta Backoffice</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5">Blog Posts</h1>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" @onclick="CreateNew">
+                <i class="bi bi-plus-circle me-2"></i>Create New Blog Post
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>Status</th>
+                                    <th>Created Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (blogPosts == null)
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else if (!blogPosts.Any())
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-muted">
+                                            No blog posts found. Create your first blog post to get started.
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var post in blogPosts)
+                                    {
+                                        <tr>
+                                            <td>@post.Id.ToString().Substring(0, 8)</td>
+                                            <td>@post.Title.English</td>
+                                            <td>@post.Author.Name</td>
+                                            <td>
+                                                <span class="badge bg-@GetStatusBadgeColor(post.State.ToString())">
+                                                    @post.State
+                                                </span>
+                                            </td>
+                                            <td>@((post.PublishedAt ?? post.CreatedAt).ToShortDateString())</td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <button class="btn btn-outline-primary" @onclick="() => Edit(post.Id)">
+                                                        <i class="bi bi-pencil-fill"></i> Edit
+                                                    </button>
+                                                    <button class="btn btn-outline-danger" @onclick="() => Delete(post.Id)">
+                                                        <i class="bi bi-trash-fill"></i> Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+@if (showDeleteModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this blog post?</p>
+                    @if (postToDelete != null)
+                    {
+                        <div class="alert alert-warning">
+                            <strong>Title:</strong> @postToDelete.Title.English
+                        </div>
+                    }
+                    <p class="text-danger fw-bold">This action cannot be undone!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CancelDelete" disabled="@isDeleting">Cancel</button>
+                    <button type="button" class="btn btn-danger" @onclick="ConfirmDelete" disabled="@isDeleting">
+                        @if (isDeleting)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            <text>Deleting...</text>
+                        }
+                        else
+                        {
+                            <i class="bi bi-trash-fill me-2"></i>
+                            <text>Delete</text>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<BlogLibrary.Blog>? blogPosts;
+    private bool showDeleteModal = false;
+    private BlogLibrary.Blog? postToDelete = null;
+    private bool isDeleting = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBlogs();
+    }
+
+    private async Task LoadBlogs()
+    {
+        blogPosts = await BlogService.GetAllBlogsAsync(1, 100);
+    }
+
+    private void CreateNew()
+    {
+        Navigation.NavigateTo("/blog/create");
+    }
+
+    private void Edit(Guid id)
+    {
+        Navigation.NavigateTo($"/blog/edit/{id}");
+    }
+
+    private void Delete(Guid id)
+    {
+        postToDelete = blogPosts?.FirstOrDefault(p => p.Id == id);
+        showDeleteModal = true;
+    }
+
+    private void CancelDelete()
+    {
+        showDeleteModal = false;
+        postToDelete = null;
+        isDeleting = false;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (postToDelete == null) return;
+
+        isDeleting = true;
+
+        try
+        {
+            var success = await BlogService.DeleteBlogAsync(postToDelete.Id);
+            if (success)
+            {
+                await LoadBlogs();
+                showDeleteModal = false;
+                postToDelete = null;
+            }
+        }
+        finally
+        {
+            isDeleting = false;
+        }
+    }
+
+    private string GetStatusBadgeColor(string status)
+    {
+        return status.ToLower() switch
+        {
+            "published" => "success",
+            "draft" => "secondary",
+            "private" => "warning",
+            _ => "info"
+        };
+    }
+}

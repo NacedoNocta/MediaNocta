@@ -1,0 +1,133 @@
+@page "/learn"
+@inject IStringLocalizer<Localization> Localizer
+
+<PageTitle>@Localizer["Page.LearnAndAct"]</PageTitle>
+
+<div class="row">
+    <div class="col-12">
+        <div class="mb-5 text-center">
+            <h1 class="display-4 text-@(TextKeys.learnThemeColor)">@Localizer["Page.LearnAndAct"]</h1>
+            <p class="lead text-body-tertiary">@Localizer["Page.LearnDescription"]</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+
+                <!-- Coming Soon Notice -->
+                <div class="alert alert-@(TextKeys.learnThemeColor) mb-4" role="alert">
+                    <h4 class="alert-heading">
+                        <i class="bi bi-hammer me-2"></i>@Localizer["Learn.UnderConstruction"]
+                    </h4>
+                    <p class="mb-0">@Localizer["Learn.UnderConstructionDescription"]</p>
+                </div>
+
+                <!-- Book Section -->
+                <div class="card border-@(TextKeys.learnThemeColor) mb-4">
+                    <div class="card-header bg-@(TextKeys.learnThemeColor) bg-opacity-10">
+                        <h3 class="mb-0">
+                            <i class="bi bi-book me-2"></i>@Localizer["Learn.Book.Title"]
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@Localizer["Learn.Book.Description"]</p>
+                        <ul class="list-unstyled ms-3">
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-right-circle me-2 text-@(TextKeys.learnThemeColor)"></i>
+                                @Localizer["Learn.Book.Topic1"]
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-right-circle me-2 text-@(TextKeys.learnThemeColor)"></i>
+                                @Localizer["Learn.Book.Topic2"]
+                            </li>
+                            <li>
+                                <i class="bi bi-arrow-right-circle me-2 text-@(TextKeys.learnThemeColor)"></i>
+                                @Localizer["Learn.Book.Topic3"]
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Courses Section -->
+                <div class="card border-@(TextKeys.learnThemeColor) mb-4">
+                    <div class="card-header bg-@(TextKeys.learnThemeColor) bg-opacity-10">
+                        <h3 class="mb-0">
+                            <i class="bi bi-mortarboard me-2"></i>@Localizer["Learn.Courses.Title"]
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@Localizer["Learn.Courses.Description"]</p>
+                        <ul class="list-unstyled ms-3">
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-right-circle me-2 text-@(TextKeys.learnThemeColor)"></i>
+                                @Localizer["Learn.Courses.Topic1"]
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-arrow-right-circle me-2 text-@(TextKeys.learnThemeColor)"></i>
+                                @Localizer["Learn.Courses.Topic2"]
+                            </li>
+                            <li>
+                                <i class="bi bi-arrow-right-circle me-2 text-@(TextKeys.learnThemeColor)"></i>
+                                @Localizer["Learn.Courses.Topic3"]
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Challenges Section -->
+                <div class="card border-@(TextKeys.learnThemeColor) mb-4">
+                    <div class="card-header bg-@(TextKeys.learnThemeColor) bg-opacity-10">
+                        <h3 class="mb-0">
+                            <i class="bi bi-trophy me-2"></i>@Localizer["Learn.Challenges.Title"]
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@Localizer["Learn.Challenges.Description"]</p>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="card h-100 border-secondary">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="bi bi-graph-up me-2"></i>@Localizer["Learn.Challenges.Kaggle"]
+                                        </h5>
+                                        <p class="card-text small text-body-secondary">@Localizer["Learn.Challenges.KaggleDescription"]</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 border-secondary">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="bi bi-controller me-2"></i>@Localizer["Learn.Challenges.Gamejams"]
+                                        </h5>
+                                        <p class="card-text small text-body-secondary">@Localizer["Learn.Challenges.GamejamsDescription"]</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 border-secondary">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="bi bi-flag me-2"></i>@Localizer["Learn.Challenges.CTF"]
+                                        </h5>
+                                        <p class="card-text small text-body-secondary">@Localizer["Learn.Challenges.CTFDescription"]</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 border-secondary">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="bi bi-lightbulb me-2"></i>@Localizer["Learn.Challenges.Custom"]
+                                        </h5>
+                                        <p class="card-text small text-body-secondary">@Localizer["Learn.Challenges.CustomDescription"]</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

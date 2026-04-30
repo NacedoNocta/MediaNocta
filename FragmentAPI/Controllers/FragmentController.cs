@@ -1,6 +1,7 @@
 using FragmentLibrary;
 using Microsoft.AspNetCore.Mvc;
 using DatabaseManager;
+using DatabaseManager.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace FragmentAPI.Controllers;
@@ -217,6 +218,146 @@ public class FragmentController : ControllerBase
         {
             _logger.LogError(ex, "Error retrieving fragments for type '{TypeTag}'", typeTag);
             return new List<Fragment>();
+        }
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Fragment>> CreateFragment([FromBody] Fragment fragment)
+    {
+        try
+        {
+            if (fragment == null)
+            {
+                _logger.LogWarning("Attempted to create a null fragment");
+                return BadRequest("Fragment cannot be null");
+            }
+
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(fragment.Title?.English))
+            {
+                _logger.LogWarning("Attempted to create fragment without a title");
+                return BadRequest("Fragment title is required");
+            }
+
+            // Ensure the fragment has a new ID
+            var newFragment = new Fragment
+            {
+                Title = fragment.Title,
+                Summary = fragment.Summary,
+                Content = fragment.Content,
+                ImageUrl = fragment.ImageUrl,
+                Links = fragment.Links ?? new List<string>(),
+                Featured = fragment.Featured,
+                TypeTag = fragment.TypeTag,
+                AttachmentUrl = fragment.AttachmentUrl,
+                AttachmentType = fragment.AttachmentType,
+                VibeCount = fragment.VibeCount,
+                IsPublic = fragment.IsPublic,
+                IsDeleted = false,
+                Meta = fragment.Meta,
+                Tags = fragment.Tags,
+                LastVibeDate = fragment.LastVibeDate
+            };
+
+            _context.Fragments.Add(newFragment);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Created new fragment with ID {FragmentId}: {Title}",
+                newFragment.Id, newFragment.Title?.GetText());
+
+            return CreatedAtAction(nameof(GetFragment), new { id = newFragment.Id }, newFragment);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating fragment");
+            return StatusCode(500, "An error occurred while creating the fragment");
+        }
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Fragment>> UpdateFragment(Guid id, [FromBody] Fragment fragment)
+    {
+        try
+        {
+            if (fragment == null)
+            {
+                _logger.LogWarning("Attempted to update fragment {FragmentId} with null data", id);
+                return BadRequest("Fragment cannot be null");
+            }
+
+            var existingFragment = await _context.Fragments
+                .FirstOrDefaultAsync(f => f.Id == id);
+
+            if (existingFragment == null)
+            {
+                _logger.LogWarning("Fragment with ID {FragmentId} not found for update", id);
+                return NotFound($"Fragment with ID {id} not found");
+            }
+
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(fragment.Title?.English))
+            {
+                _logger.LogWarning("Attempted to update fragment {FragmentId} without a title", id);
+                return BadRequest("Fragment title is required");
+            }
+
+            // Update all fields
+            existingFragment.Title = fragment.Title;
+            existingFragment.Summary = fragment.Summary;
+            existingFragment.Content = fragment.Content;
+            existingFragment.ImageUrl = fragment.ImageUrl;
+            existingFragment.Links = fragment.Links ?? new List<string>();
+            existingFragment.Featured = fragment.Featured;
+            existingFragment.TypeTag = fragment.TypeTag;
+            existingFragment.AttachmentUrl = fragment.AttachmentUrl;
+            existingFragment.AttachmentType = fragment.AttachmentType;
+            existingFragment.VibeCount = fragment.VibeCount;
+            existingFragment.IsPublic = fragment.IsPublic;
+            existingFragment.IsDeleted = fragment.IsDeleted;
+            existingFragment.Meta = fragment.Meta;
+            existingFragment.Tags = fragment.Tags;
+            existingFragment.LastVibeDate = fragment.LastVibeDate;
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Updated fragment {FragmentId}: {Title}",
+                id, existingFragment.Title?.GetText());
+
+            return Ok(existingFragment);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating fragment {FragmentId}", id);
+            return StatusCode(500, "An error occurred while updating the fragment");
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteFragment(Guid id)
+    {
+        try
+        {
+            var fragment = await _context.Fragments
+                .FirstOrDefaultAsync(f => f.Id == id);
+
+            if (fragment == null)
+            {
+                _logger.LogWarning("Fragment with ID {FragmentId} not found for deletion", id);
+                return NotFound($"Fragment with ID {id} not found");
+            }
+
+            _context.Fragments.Remove(fragment);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Deleted fragment {FragmentId}: {Title}",
+                id, fragment.Title?.GetText());
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting fragment {FragmentId}", id);
+            return StatusCode(500, "An error occurred while deleting the fragment");
         }
     }
 }

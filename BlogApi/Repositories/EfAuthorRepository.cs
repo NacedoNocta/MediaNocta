@@ -2,6 +2,7 @@ using BlogApi.Interfaces;
 using BlogLibrary;
 using BlogLibrary.Interfaces;
 using DatabaseManager;
+using DatabaseManager.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogAPI.Repositories;
@@ -76,6 +77,11 @@ public class EfAuthorRepository : IAuthorRepository
             existingAuthor.Name = authorEntity.Name;
             existingAuthor.Biography = authorEntity.Biography;
             existingAuthor.ImageUrl = authorEntity.ImageUrl;
+            existingAuthor.Email = authorEntity.Email;
+            existingAuthor.Website = authorEntity.Website;
+            existingAuthor.Twitter = authorEntity.Twitter;
+            existingAuthor.LinkedIn = authorEntity.LinkedIn;
+            existingAuthor.GitHub = authorEntity.GitHub;
 
             await _context.SaveChangesAsync();
             return existingAuthor;

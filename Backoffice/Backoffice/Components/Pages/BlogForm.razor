@@ -1,0 +1,316 @@
+@page "/blog/create"
+@page "/blog/edit/{id:guid}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "backoffice-admin")]
+@using BlogLibrary
+@using BlogLibrary.Interfaces
+@using Backoffice.Services
+@using SharedLibrary
+@inject IBlogManagementService BlogService
+@inject IAuthorManagementService AuthorService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>@(IsEditMode ? "Edit Blog Post" : "Create Blog Post") - Media Nocta Backoffice</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5">@(IsEditMode ? "Edit Blog Post" : "Create New Blog Post")</h1>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-secondary" @onclick="Cancel">
+                <i class="bi bi-x-circle me-2"></i>Cancel
+            </button>
+            <button class="btn btn-primary" @onclick="Save" disabled="@isSaving">
+                <i class="bi bi-save me-2"></i>@(isSaving ? "Saving..." : "Save")
+            </button>
+        </div>
+    </div>
+
+    @if (errorMessage != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @errorMessage
+            <button type="button" class="btn-close" @onclick="() => errorMessage = null"></button>
+        </div>
+    }
+
+    @if (blog == null && IsEditMode)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (blog != null)
+    {
+        <div class="row g-4">
+            <!-- English Side -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-flag me-2"></i>English Content</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Title *</label>
+                            <input type="text" class="form-control" @bind="blog.Title.English" placeholder="Enter English title" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Summary *</label>
+                            <textarea class="form-control" rows="3" @bind="blog.Summary.English" placeholder="Enter English summary" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Content *</label>
+                            <textarea class="form-control" rows="15" @bind="blog.Content.English" placeholder="Enter English content (Markdown supported)" required></textarea>
+                            <small class="form-text text-muted">Markdown formatting is supported</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- French Side -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-flag me-2"></i>French Content</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Titre *</label>
+                            <input type="text" class="form-control" @bind="blog.Title.French" placeholder="Entrez le titre en français" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Résumé *</label>
+                            <textarea class="form-control" rows="3" @bind="blog.Summary.French" placeholder="Entrez le résumé en français" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Contenu *</label>
+                            <textarea class="form-control" rows="15" @bind="blog.Content.French" placeholder="Entrez le contenu en français (Markdown supporté)" required></textarea>
+                            <small class="form-text text-muted">Le formatage Markdown est supporté</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Common Fields -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="bi bi-gear me-2"></i>General Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Author *</label>
+                                <select class="form-select" @bind="selectedAuthorId" required>
+                                    <option value="">-- Select an author --</option>
+                                    @if (availableAuthors != null)
+                                    {
+                                        @foreach (var author in availableAuthors)
+                                        {
+                                            <option value="@author.Id">@author.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Status</label>
+                                <select class="form-select" @bind="blog.State">
+                                    <option value="@BlogState.Draft">Draft</option>
+                                    <option value="@BlogState.Private">Private</option>
+                                    <option value="@BlogState.Published">Published</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Image URL</label>
+                                <input type="url" class="form-control" @bind="blog.ImageUrl" placeholder="https://example.com/image.jpg" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Slug</label>
+                                <input type="text" class="form-control" @bind="blog.Slug" placeholder="blog-post-slug" />
+                                <small class="form-text text-muted">Leave empty to auto-generate from title</small>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" @bind="blog.Featured" id="featuredCheck">
+                                    <label class="form-check-label" for="featuredCheck">
+                                        Featured Post
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid? Id { get; set; }
+
+    private BlogLibrary.Blog? blog;
+    private List<BlogLibrary.Author>? availableAuthors;
+    private string selectedAuthorId = string.Empty;
+    private bool isSaving = false;
+    private string? errorMessage = null;
+
+    private bool IsEditMode => Id.HasValue && Id.Value != Guid.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAuthors();
+
+        if (IsEditMode && Id.HasValue)
+        {
+            await LoadBlog(Id.Value);
+        }
+        else
+        {
+            InitializeNewBlog();
+        }
+    }
+
+    private async Task LoadAuthors()
+    {
+        try
+        {
+            availableAuthors = await AuthorService.GetAllAuthorsAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading authors: {ex.Message}";
+        }
+    }
+
+    private void InitializeNewBlog()
+    {
+        blog = new BlogLibrary.Blog
+        {
+            Title = new LocalizedText(),
+            Summary = new LocalizedText(),
+            Content = new LocalizedText(),
+            Author = new Author("", (LocalizedText?)null),
+            State = BlogState.Draft,
+            ContentType = ContentType.Markdown
+        };
+        selectedAuthorId = string.Empty;
+    }
+
+    private async Task LoadBlog(Guid id)
+    {
+        try
+        {
+            blog = await BlogService.GetBlogByIdAsync(id);
+            if (blog == null)
+            {
+                errorMessage = $"Blog post with ID {id} not found";
+                return;
+            }
+            selectedAuthorId = blog.Author.Id.ToString();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading blog post: {ex.Message}";
+        }
+    }
+
+    private async Task Save()
+    {
+        if (blog == null) return;
+
+        if (!ValidateBlog())
+        {
+            errorMessage = "Please fill in all required fields (Title, Summary, Content, and Author in both languages)";
+            return;
+        }
+
+        isSaving = true;
+        errorMessage = null;
+
+        try
+        {
+            // Update author from selected ID
+            if (string.IsNullOrEmpty(selectedAuthorId) || !Guid.TryParse(selectedAuthorId, out var authorGuid))
+            {
+                errorMessage = "Please select a valid author";
+                isSaving = false;
+                return;
+            }
+
+            var selectedAuthor = availableAuthors?.FirstOrDefault(a => a.Id == authorGuid);
+            if (selectedAuthor == null)
+            {
+                errorMessage = "Selected author not found";
+                isSaving = false;
+                return;
+            }
+
+            blog.Author = selectedAuthor;
+
+            if (IsEditMode && Id.HasValue)
+            {
+                var success = await BlogService.UpdateBlogAsync(Id.Value, blog);
+                if (success)
+                {
+                    Navigation.NavigateTo("/blog");
+                }
+                else
+                {
+                    errorMessage = "Failed to update blog post";
+                }
+            }
+            else
+            {
+                var created = await BlogService.CreateBlogAsync(blog);
+                if (created != null)
+                {
+                    Navigation.NavigateTo("/blog");
+                }
+                else
+                {
+                    errorMessage = "Failed to create blog post";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error saving blog post: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private bool ValidateBlog()
+    {
+        if (blog == null) return false;
+
+        return !string.IsNullOrWhiteSpace(blog.Title.English) &&
+               !string.IsNullOrWhiteSpace(blog.Title.French) &&
+               !string.IsNullOrWhiteSpace(blog.Summary.English) &&
+               !string.IsNullOrWhiteSpace(blog.Summary.French) &&
+               !string.IsNullOrWhiteSpace(blog.Content.English) &&
+               !string.IsNullOrWhiteSpace(blog.Content.French) &&
+               !string.IsNullOrWhiteSpace(selectedAuthorId);
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/blog");
+    }
+}

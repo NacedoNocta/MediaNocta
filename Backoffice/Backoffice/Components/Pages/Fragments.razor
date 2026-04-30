@@ -1,0 +1,212 @@
+@page "/fragments"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "backoffice-admin")]
+@using FragmentLibrary
+@using Backoffice.Services
+@inject IFragmentManagementService FragmentService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Fragment Management - Media Nocta Backoffice</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5">Fragments</h1>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" @onclick="CreateNew">
+                <i class="bi bi-plus-circle me-2"></i>Create New Fragment
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Public</th>
+                                    <th>Vibes</th>
+                                    <th>Created Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (fragments == null)
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else if (!fragments.Any())
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4 text-muted">
+                                            No fragments found. Create your first fragment to get started.
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var fragment in fragments)
+                                    {
+                                        <tr class="@(fragment.IsDeleted ? "table-secondary" : "")">
+                                            <td>@fragment.Id.ToString().Substring(0, 8)</td>
+                                            <td>@fragment.Title.English</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(fragment.TypeTag))
+                                                {
+                                                    <span class="badge bg-info">@fragment.TypeTag</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (fragment.IsPublic)
+                                                {
+                                                    <span class="badge bg-success">Public</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">Private</span>
+                                                }
+                                            </td>
+                                            <td>@fragment.VibeCount</td>
+                                            <td>@fragment.CreatedAt.ToShortDateString()</td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <button class="btn btn-outline-primary" @onclick="() => Edit(fragment.Id)">
+                                                        <i class="bi bi-pencil-fill"></i> Edit
+                                                    </button>
+                                                    <button class="btn btn-outline-danger" @onclick="() => Delete(fragment.Id)">
+                                                        <i class="bi bi-trash-fill"></i> Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+@if (showDeleteModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this fragment?</p>
+                    @if (fragmentToDelete != null)
+                    {
+                        <div class="alert alert-warning">
+                            <strong>Title:</strong> @fragmentToDelete.Title.English
+                        </div>
+                    }
+                    <p class="text-danger fw-bold">This action cannot be undone!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CancelDelete" disabled="@isDeleting">Cancel</button>
+                    <button type="button" class="btn btn-danger" @onclick="ConfirmDelete" disabled="@isDeleting">
+                        @if (isDeleting)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            <text>Deleting...</text>
+                        }
+                        else
+                        {
+                            <i class="bi bi-trash-fill me-2"></i>
+                            <text>Delete</text>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Fragment>? fragments;
+    private bool showDeleteModal = false;
+    private Fragment? fragmentToDelete = null;
+    private bool isDeleting = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFragments();
+    }
+
+    private async Task LoadFragments()
+    {
+        fragments = await FragmentService.GetAllFragmentsAsync(1, 100);
+    }
+
+    private void CreateNew()
+    {
+        Navigation.NavigateTo("/fragments/create");
+    }
+
+    private void Edit(Guid id)
+    {
+        Navigation.NavigateTo($"/fragments/edit/{id}");
+    }
+
+    private void Delete(Guid id)
+    {
+        fragmentToDelete = fragments?.FirstOrDefault(f => f.Id == id);
+        showDeleteModal = true;
+    }
+
+    private void CancelDelete()
+    {
+        showDeleteModal = false;
+        fragmentToDelete = null;
+        isDeleting = false;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (fragmentToDelete == null) return;
+
+        isDeleting = true;
+
+        try
+        {
+            var success = await FragmentService.DeleteFragmentAsync(fragmentToDelete.Id);
+            if (success)
+            {
+                await LoadFragments();
+                showDeleteModal = false;
+                fragmentToDelete = null;
+            }
+        }
+        finally
+        {
+            isDeleting = false;
+        }
+    }
+}

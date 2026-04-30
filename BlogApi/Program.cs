@@ -3,6 +3,7 @@ using BlogApi.Services;
 using BlogLibrary.Interfaces;
 using BlogAPI.Repositories;
 using DatabaseManager;
+using DatabaseManager.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,7 @@ builder.Services.AddScoped<IBlogRepository, EfBlogRepository>();
 builder.Services.AddScoped<IAuthorRepository, EfAuthorRepository>();
 builder.Services.AddScoped<ITagRepository, EfTagRepository>();
 builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

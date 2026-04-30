@@ -284,6 +284,12 @@
   <data name="Page.TechProjectsDescription" xml:space="preserve">
     <value>Explore technical projects and development updates.</value>
   </data>
+  <data name="Page.LearnAndAct" xml:space="preserve">
+    <value>Learn &amp; Act</value>
+  </data>
+  <data name="Page.LearnDescription" xml:space="preserve">
+    <value>Educational resources, courses, and practical challenges to enhance your skills.</value>
+  </data>
 
   <!-- Blog -->
   <data name="Blog.By" xml:space="preserve">
@@ -369,5 +375,256 @@
   <!-- General -->
   <data name="General.PinnedArticles" xml:space="preserve">
     <value>Pinned articles</value>
+  </data>
+
+  <!-- Authorization Errors -->
+  <data name="Error.Unauthorized.Title" xml:space="preserve">
+    <value>Access Denied</value>
+  </data>
+  <data name="Error.Unauthorized.Message" xml:space="preserve">
+    <value>You need to be authenticated to access this page.</value>
+  </data>
+  <data name="Error.Unauthorized.Help" xml:space="preserve">
+    <value>If you believe this is an error, please contact support.</value>
+  </data>
+  
+  <!-- Navigation -->
+  <data name="Navigation.Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+
+  <!-- Resume -->
+  <data name="Resume.Name" xml:space="preserve">
+    <value>Nacedo SAMPER</value>
+  </data>
+  <data name="Resume.Company" xml:space="preserve">
+    <value>Media Nocta</value>
+  </data>
+  <data name="Resume.Age" xml:space="preserve">
+    <value>24 yo</value>
+  </data>
+  <data name="Resume.Title" xml:space="preserve">
+    <value>IT Engineer</value>
+  </data>
+  <data name="Resume.Subtitle" xml:space="preserve">
+    <value>Software Designer | Developer</value>
+  </data>
+  <data name="Resume.Email" xml:space="preserve">
+    <value>nacedo@medianocta.com</value>
+  </data>
+  <data name="Resume.Phone" xml:space="preserve">
+    <value>06 21 34 10 64</value>
+  </data>
+  <data name="Resume.Address" xml:space="preserve">
+    <value>13 Esplanade de l'Europe, 34000 Montpellier</value>
+  </data>
+  <data name="Resume.Website" xml:space="preserve">
+    <value>https://medianocta.com/</value>
+  </data>
+  <data name="Resume.PhotoAlt" xml:space="preserve">
+    <value>That's me!</value>
+  </data>
+  <data name="Resume.InFewWords" xml:space="preserve">
+    <value>In a few words...</value>
+  </data>
+  <data name="Resume.Description" xml:space="preserve">
+    <value>Passionate about sciences and the arts, and an explorer at heart, I am constantly seeking new knowledge, and I make it a point of honour to demonstrate expertise in all my work. I am versatile in my skills, meticulous and open-minded in my approach to problems, and demonstrate initiative and humility in my work. I am not feared of challenges or unknown domains, and I am in a constant search of improvement, both personnal and professional. </value>
+  </data>
+  <data name="Resume.Degrees" xml:space="preserve">
+    <value>Degrees</value>
+  </data>
+  <data name="Resume.EISI" xml:space="preserve">
+    <value>Expert in Computer Science and Info. Systems </value>
+  </data>
+  <data name="Resume.EISILevel" xml:space="preserve">
+    <value>equiv. RNCP+7</value>
+  </data>
+  <data name="Resume.CDA" xml:space="preserve">
+    <value>Bachelor Software Designer-Developer</value>
+  </data>
+  <data name="Resume.CDALevel" xml:space="preserve">
+    <value>equival. RNCP+6</value>
+  </data>
+  <data name="Resume.BTS" xml:space="preserve">
+    <value>BTS SIO Option DEV</value>
+  </data>
+  <data name="Resume.BTSLevel" xml:space="preserve">
+    <value>eqv. RNCP+5</value>
+  </data>
+  <data name="Resume.Bac" xml:space="preserve">
+    <value>Scientific Baccalaureate (HS), Math. major, Biology track</value>
+  </data>
+  <data name="Resume.BacLevel" xml:space="preserve">
+    <value>With Honors</value>
+  </data>
+  <data name="Resume.PET" xml:space="preserve">
+    <value>Cambridge PET</value>
+  </data>
+  <data name="Resume.PETLevel" xml:space="preserve">
+    <value>equival English B2</value>
+  </data>
+  <data name="Resume.Skills" xml:space="preserve">
+    <value>Skills</value>
+  </data>
+  <data name="Resume.Development" xml:space="preserve">
+    <value>Development</value>
+  </data>
+  <data name="Resume.DevelopmentSkills" xml:space="preserve">
+    <value>Python (Django, Flask), C# (.NET Frmwk), PHP (Laravel, Symfony), HTML/CSS/JS (Bootstrap), MySQL, PostgreSQL</value>
+  </data>
+  <data name="Resume.Design" xml:space="preserve">
+    <value>Design</value>
+  </data>
+  <data name="Resume.DesignSkills" xml:space="preserve">
+    <value>UML, Merise, Algorithmics, Technical and functional specifications</value>
+  </data>
+  <data name="Resume.ProjectManagement" xml:space="preserve">
+    <value>Project / Team Management</value>
+  </data>
+  <data name="Resume.ProjectManagementSkills" xml:space="preserve">
+    <value>Agile Methods, PMBOK (Non-PMI)</value>
+  </data>
+  <data name="Resume.SoftSkills" xml:space="preserve">
+    <value>Soft-skills</value>
+  </data>
+  <data name="Resume.SoftSkillsList" xml:space="preserve">
+    <value>Problem solving, Tech watch</value>
+  </data>
+  <data name="Resume.Experience" xml:space="preserve">
+    <value>Experience</value>
+  </data>
+  <data name="Resume.FullstackDeveloper" xml:space="preserve">
+    <value>• Fullstack Developer (3y)</value>
+  </data>
+  <data name="Resume.Peoplespheres" xml:space="preserve">
+    <value>Peoplespheres SAS (HRIS)</value>
+  </data>
+  <data name="Resume.PeoplespheresDate" xml:space="preserve">
+    <value> | 2021 - 2024 (Apprenticeship)</value>
+  </data>
+  <data name="Resume.PeoplespheresDescription" xml:space="preserve">
+    <value>Development of back-office tools to automate internal processes: Creation of several softwares, from needs specification to deployment, and their consolidation into a microservice-based web application.</value>
+  </data>
+  <data name="Resume.PeoplespheresStack" xml:space="preserve">
+    <value>Technical stack: Python Django, PHP Laravel, HTML/CSS/JS + Bootstrap, PostgreSQL, Docker, UML, Wireframes (UX mockups), Working in Agile</value>
+  </data>
+  <data name="Resume.ETLDeveloper" xml:space="preserve">
+    <value>• ETL Developer (4 months)</value>
+  </data>
+  <data name="Resume.WEDA" xml:space="preserve">
+    <value>WEDA SAS (medical softwares)</value>
+  </data>
+  <data name="Resume.WEDADate" xml:space="preserve">
+    <value> | May 2020 - August 2020 (internship)</value>
+  </data>
+  <data name="Resume.WEDADescription" xml:space="preserve">
+    <value>Data recovery: Importing medical data from new clients into the software, using a customized ETL. Development/adaptation of ETL modules according to the client file.</value>
+  </data>
+  <data name="Resume.WEDAStack" xml:space="preserve">
+    <value>Technical stack: C# .NET Framework, MySQL, Working in Agile organization</value>
+  </data>
+  <data name="Resume.Education" xml:space="preserve">
+    <value>Education</value>
+  </data>
+  <data name="Resume.EPSI" xml:space="preserve">
+    <value>Professional School of Computer Sciences (EPSI)</value>
+  </data>
+  <data name="Resume.EPSIDate" xml:space="preserve">
+    <value>Montpellier | 2019 - 2024, 5 years</value>
+  </data>
+  <data name="Resume.Workshop2022" xml:space="preserve">
+    <value>• Workshop 2022: Conceptualization and development of an AI designed to improve well-being at work through decision support.</value>
+  </data>
+  <data name="Resume.Workshop2022Role" xml:space="preserve">
+    <value>Project Manager // Lead Technical Designer.</value>
+  </data>
+  <data name="Resume.Workshop2022Result" xml:space="preserve">
+    <value>1st place, national </value>
+  </data>
+  <data name="Resume.Workshop2020" xml:space="preserve">
+    <value>• Workshop 2020: Conceptualization, development and building of a prototype for ecological, connected device.</value>
+  </data>
+  <data name="Resume.Workshop2020Role" xml:space="preserve">
+    <value>Project Manager // Lead Technical Designer.</value>
+  </data>
+  <data name="Resume.Workshop2020Result" xml:space="preserve">
+    <value>1st place, national</value>
+  </data>
+
+  <!-- Learn & Act -->
+  <data name="Learn.UnderConstruction" xml:space="preserve">
+    <value>Under Construction</value>
+  </data>
+  <data name="Learn.UnderConstructionDescription" xml:space="preserve">
+    <value>This section is currently being developed. Content will be added progressively as it becomes available.</value>
+  </data>
+  <data name="Learn.StayTuned" xml:space="preserve">
+    <value>Stay tuned for upcoming educational content and practical challenges!</value>
+  </data>
+
+  <!-- Learn Book -->
+  <data name="Learn.Book.Title" xml:space="preserve">
+    <value>Programming Book</value>
+  </data>
+  <data name="Learn.Book.Description" xml:space="preserve">
+    <value>I am currently writing a comprehensive book about programming, with a particular focus on software architecture and high-level design principles.</value>
+  </data>
+  <data name="Learn.Book.Topic1" xml:space="preserve">
+    <value>Software architecture patterns and best practices</value>
+  </data>
+  <data name="Learn.Book.Topic2" xml:space="preserve">
+    <value>High-level system design and scalability</value>
+  </data>
+  <data name="Learn.Book.Topic3" xml:space="preserve">
+    <value>Real-world architectural decisions and trade-offs</value>
+  </data>
+
+  <!-- Learn Courses -->
+  <data name="Learn.Courses.Title" xml:space="preserve">
+    <value>Online Courses</value>
+  </data>
+  <data name="Learn.Courses.Description" xml:space="preserve">
+    <value>I am developing a series of online courses covering various aspects of programming and software development.</value>
+  </data>
+  <data name="Learn.Courses.Topic1" xml:space="preserve">
+    <value>Software architecture fundamentals</value>
+  </data>
+  <data name="Learn.Courses.Topic2" xml:space="preserve">
+    <value>Design patterns and code organization</value>
+  </data>
+  <data name="Learn.Courses.Topic3" xml:space="preserve">
+    <value>Building scalable and maintainable systems</value>
+  </data>
+
+  <!-- Learn Challenges -->
+  <data name="Learn.Challenges.Title" xml:space="preserve">
+    <value>Practical Challenges</value>
+  </data>
+  <data name="Learn.Challenges.Description" xml:space="preserve">
+    <value>Learn through example through step-by-step explaination of online challenges. Compare with your own solution !</value>
+  </data>
+  <data name="Learn.Challenges.Kaggle" xml:space="preserve">
+    <value>Kaggle Competitions</value>
+  </data>
+  <data name="Learn.Challenges.KaggleDescription" xml:space="preserve">
+    <value>Data science and machine learning challenges</value>
+  </data>
+  <data name="Learn.Challenges.Gamejams" xml:space="preserve">
+    <value>Game Jams</value>
+  </data>
+  <data name="Learn.Challenges.GamejamsDescription" xml:space="preserve">
+    <value>Public game development competitions and creative coding</value>
+  </data>
+  <data name="Learn.Challenges.CTF" xml:space="preserve">
+    <value>Capture The Flag</value>
+  </data>
+  <data name="Learn.Challenges.CTFDescription" xml:space="preserve">
+    <value>Cybersecurity challenges and vulnerability assessments</value>
+  </data>
+  <data name="Learn.Challenges.Custom" xml:space="preserve">
+    <value>Custom Challenges</value>
+  </data>
+  <data name="Learn.Challenges.CustomDescription" xml:space="preserve">
+    <value>Unique programming challenges designed to test specific skills</value>
   </data>
 </root>

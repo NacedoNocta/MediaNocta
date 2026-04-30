@@ -1,0 +1,41 @@
+﻿@page "/"
+@attribute [StreamRendering(true)]
+@using SharedLibrary.Interfaces
+@inject ActivityService ActivityService
+@inject IStringLocalizer<Localization> Localizer
+
+<PageTitle>Media Nocta</PageTitle>
+
+
+<div class="mb-4 text-center">
+    <h1 class="display-4">@Localizer["Home.RecentActivities"]</h1>
+</div>
+<div class="row row-cols-lg-3 row-cols-1 row-cols-md-2 g-4 mt-3">
+    @if (recents is null)
+    {
+        <div class="col-12">
+            <LoadingSpinner Label="@Localizer["Common.Loading"]" />
+        </div>
+    }
+    else
+    {
+        @foreach (var activity in recents)
+        {
+            <HomeActivityCard activity="@activity" />
+        }
+    }
+
+</div>
+<div class="d-flex justify-content-center mt-3">
+    <a href="/activities" class="btn btn-lg btn-outline-primary mb-3">@Localizer["Common.SeeMore"]</a>
+</div>
+
+@code {
+    private List<IActivity>? recents;
+
+    protected override async Task OnInitializedAsync()
+    {
+        recents = await ActivityService.GetRecent();
+    }
+
+}

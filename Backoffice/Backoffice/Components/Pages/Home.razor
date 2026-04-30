@@ -1,0 +1,48 @@
+﻿@page "/"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "backoffice-admin")]
+
+<PageTitle>Dashboard - Media Nocta Backoffice</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-4">Media Nocta Backoffice</h1>
+            <p class="lead">Manage your blog posts, tech updates, and content fragments</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <i class="bi bi-file-text-fill fs-1 text-primary mb-3"></i>
+                    <h5 class="card-title">Blog Posts</h5>
+                    <p class="card-text text-muted">Manage your blog articles and publications</p>
+                    <a href="/blog" class="btn btn-primary">View Blogs</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <i class="bi bi-laptop-fill fs-1 text-success mb-3"></i>
+                    <h5 class="card-title">Tech Updates</h5>
+                    <p class="card-text text-muted">Manage technology news and updates</p>
+                    <a href="/tech" class="btn btn-success">View Tech</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <i class="bi bi-puzzle-fill fs-1 text-warning mb-3"></i>
+                    <h5 class="card-title">Fragments</h5>
+                    <p class="card-text text-muted">Manage content fragments and snippets</p>
+                    <a href="/fragments" class="btn btn-warning">View Fragments</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

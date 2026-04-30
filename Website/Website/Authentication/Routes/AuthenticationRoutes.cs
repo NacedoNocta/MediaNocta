@@ -7,7 +7,6 @@ public static class AuthenticationRoutes
     public const string LoginPath = "/Account/Login";
     public const string LogoutPath = "/Account/Logout";
     public const string AuthStatusPath = "/auth/status";
-    public const string DebugTokenPath = "/debug/token";
     
     public static void MapAuthenticationEndpoints(this WebApplication app)
     {
@@ -37,6 +36,17 @@ public static class AuthenticationRoutes
         // Logout endpoint
         app.MapGet(LogoutPath, async (HttpContext context) =>
         {
+            // Delete local session if exists
+            if (context.User.Identity?.IsAuthenticated == true)
+            {
+                var accountIdClaim = context.User.FindFirst("account_id")?.Value;
+                if (!string.IsNullOrEmpty(accountIdClaim) && Guid.TryParse(accountIdClaim, out var accountId))
+                {
+                    var sessionService = context.RequestServices.GetRequiredService<Website.Authentication.Services.SessionManagementService>();
+                    await sessionService.DeleteSessionByAccountIdAsync(accountId);
+                }
+            }
+
             await context.SignOutAsync("Cookies");
             await context.SignOutAsync("OpenIdConnect", new AuthenticationProperties
             {
@@ -45,33 +55,6 @@ public static class AuthenticationRoutes
         })
         .WithName("Logout")
         .WithDisplayName("User Logout");
-
-        // Debug endpoint to check authentication state and tokens
-        app.MapGet(DebugTokenPath, async (HttpContext context) =>
-        {
-            if (context.User.Identity?.IsAuthenticated == true)
-            {
-                var accessToken = await context.GetTokenAsync("access_token");
-                var idToken = await context.GetTokenAsync("id_token");
-                
-                return Results.Json(new
-                {
-                    IsAuthenticated = true,
-                    UserName = context.User.Identity.Name,
-                    Claims = context.User.Claims.Select(c => new { c.Type, c.Value }).ToList(),
-                    HasAccessToken = !string.IsNullOrEmpty(accessToken),
-                    HasIdToken = !string.IsNullOrEmpty(idToken),
-                    AccessTokenPreview = !string.IsNullOrEmpty(accessToken) 
-                        ? accessToken.Substring(0, Math.Min(100, accessToken.Length)) + "..." 
-                        : null
-                });
-            }
-            
-            return Results.Json(new { IsAuthenticated = false });
-        })
-        .RequireAuthorization()
-        .WithName("DebugToken")
-        .WithDisplayName("Debug Authentication Token");
 
         // Authentication status endpoint
         app.MapGet(AuthStatusPath, (HttpContext context) =>

@@ -1,0 +1,20 @@
+@namespace Website.Components.Shared
+
+<div class="text-center py-5 @Class">
+    @if (!string.IsNullOrWhiteSpace(Icon))
+    {
+        <i class="bi @Icon display-4 text-body-tertiary mb-3"></i>
+    }
+    @if (!string.IsNullOrWhiteSpace(Title))
+    {
+        <h3 class="h4">@Title</h3>
+    }
+    <p class="text-body-secondary mb-0">@Message</p>
+</div>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+    [Parameter, EditorRequired] public string Message { get; set; } = string.Empty;
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public string? Class { get; set; }
+}

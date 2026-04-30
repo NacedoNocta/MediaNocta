@@ -1,0 +1,19 @@
+@namespace Website.Layout
+@inherits LayoutComponentBase
+
+<header>
+    <NavMenu />
+</header>
+
+<Breadcrumb />
+
+<div class="mb-4 main-content">
+    <div class="row justify-content-evenly">
+        <div class="col-8 pt-3">
+            @Body
+        </div>
+
+        <SideNavBar />
+    </div>
+</div>
+<Footer></Footer>

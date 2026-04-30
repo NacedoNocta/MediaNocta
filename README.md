@@ -40,8 +40,8 @@ actually be necessary.
 Additionally, though this was not a direct goal of the project, I use this opportunity
 to train myself to use C# and .NET technologies such as Aspire or Blazor, as well as AI coding assistants.
 
-The solution uses .NET 9.0 and implements modern patterns like API
-gateways and distributed services.
+The solution uses .NET 10.0 and implements modern patterns like API
+gateways, distributed services, and OAuth/OIDC authentication.
 
 ## Company Philosophy & Identity
 
@@ -88,24 +88,50 @@ This serves as the user-facing website for the Media Nocta platform.
 It should mainly serve the following sections : 
 * A general purpose personal blog 
 * A "fragments" section for experimental creative content
-* A section that hosts others projects, such as games
-* A learning section 
-* A section that describe me and the company
-* Other functionnality-related sections (legal mentions, logins etc)
+* A section that hosts other projects, such as games
+* A "Learn & Act" section
+* A section that describes me and the company (including a resume page)
+* Account/authentication pages (login, profile, access denied) backed by an external OIDC provider (Keycloak)
+* Other functionality-related sections (legal mentions, etc.)
 
-Despite being a fully-fledged Blazor MVC application, business logic should be handled
+The project is organized using a feature-folder convention: cross-cutting
+primitives live in `Components/Shared/`, layouts in `Layout/`, and each
+domain area (Main, Blog, Fragment, Tech, AboutMe, Authentication, Account)
+under `Features/{X}/{Pages,Components}`. The companion `Website.Client`
+project mirrors this structure for any future WebAssembly-rendered components.
+
+Despite being a fully-fledged Blazor application, business logic should be handled
 by dedicated components and accessed through APIs, in a "microservice" fashion.
 
 *Sometimes eponymously referred in code as "media nocta"*
 
-### **SharedLibrairy**
+### **Backoffice & Backoffice.Client**
+
+**Type:** Blazor Application (Admin)
+
+**Description:** A separate Blazor administration application providing
+CRUD interfaces for managing platform content (blogs, authors, fragments,
+tech projects). Access is restricted to administrators via the same
+OIDC authentication stack as the main website. This fulfills the
+"backoffice" role previously implied for managing DatabaseManager-style
+operations and editorial content.
+
+### **SharedLibrary**
 
 **Type:** Class Library
 
 **Description:** Contains common functionality shared across multiple
-projects in the solution.
+projects in the solution (base activity model, localized text keys, etc.).
 
-### **BlogLibrairy**
+### **AuthLibrary**
+
+**Type:** Class Library
+
+**Description:** Contains the authentication and authorization domain models
+shared across services — local accounts, social accounts, roles, sessions —
+along with the EF Core configurations used by the dedicated `AuthDbContext`.
+
+### **BlogLibrary**
 
 **Type:** Class Library
 
@@ -118,8 +144,9 @@ Blog and Author entity definitions and related functionality.
 **Type:** ASP.NET Core Web API
 
 **Description:** A REST API service for blog management functionality. 
-Contains controllers for blog operations including a `SimpleBlogController` 
-that provides endpoints for retrieving blog posts with author information and images.
+Contains controllers for blog and author operations, providing endpoints
+for listing, retrieving, and (via the Backoffice) creating/updating
+blog posts and their authors.
 
 ### **ActivityAPI**
 
@@ -132,17 +159,16 @@ An "activity" is a broad term that refer to blog posts, fragments, tech news, et
 It is mainly used in "general" areas of the website "ie : main page". 
 Read-only operations if possible.
 
-### **Gateway**
+### **FragmentAPI**
 
-**Type:** API Gateway Service
+**Type:** ASP.NET Core Web API
 
-**Description:**  Implements an API gateway pattern using
-YARP (Yet Another Reverse Proxy) to route requests between different
-microservices in the Media Nocta ecosystem.
-Regroups functionnality that should be common to all APIs, such as caching 
-or authentification,if and when appropriate.
+**Description:** A REST API service dedicated to fragment content
+(short-form creative/technical pieces). Provides retrieval, search and
+type-filtering endpoints, plus authenticated write operations consumed
+by the Backoffice.
 
-### **FragmentsLibrairy**
+### **FragmentLibrary**
 
 **Type:** Class Library
 
@@ -150,25 +176,58 @@ or authentification,if and when appropriate.
 fragment-related domain models and functionality for experimental creative content features. 
 Fragments are short-form creative or technical content pieces that serve as a digital sketchbook.
 
+### **TechAPI**
+
+**Type:** ASP.NET Core Web API
+
+**Description:** A REST API service exposing the tech-projects domain —
+project descriptors, tech updates, and related metadata used by the
+Tech section of the website.
+
+### **TechLibrary**
+
+**Type:** Class Library
+
+**Description:** Domain library for the tech-projects area. Contains
+the `ProjectInfo` descriptor and tech-update models shared between
+TechAPI and the Website.
+
+### **APIGateway**
+
+**Type:** API Gateway Service
+
+**Description:** Implements an API gateway pattern using
+YARP (Yet Another Reverse Proxy) to route requests between different
+microservices in the Media Nocta ecosystem.
+Regroups functionality that should be common to all APIs, such as caching 
+or authentication, if and when appropriate.
+
+### **YarpConfigLibrary**
+
+**Type:** Class Library
+
+**Description:** Configuration library for YARP (Yet Another Reverse Proxy) 
+settings, supporting the APIGateway functionality.
+
 ### **DatabaseManager**
 
 **Type:** Utility/Worker Project
 
 **Description:** Handles database operations and management 
-tasks for the Media Nocta platform. 
-Should perform migration operation on the database and various other "one shot"
-type of operations.
+tasks for the Media Nocta platform. Runs as an Aspire-orchestrated
+worker that applies EF Core migrations for both the application database
+(`AppDbContext`) and the authentication database (`AuthDbContext`) before
+the rest of the services start. Also hosts coordinated one-shot
+migration workers (including a Backoffice-specific auth migration).
 
-Ideally, this type of workers would be started and managed 
-through a "backoffice" type of application.
+### **DatabaseSeeder**
 
-### **YARPConfigLibrairy**
+**Type:** Utility/Worker Project
 
-**Type:** Class Library
-
-**Description:** Configuration library for YARP (Yet Another Reverse Proxy) 
-settings, supporting the Gateway functionality.
-
+**Description:** Companion worker to DatabaseManager responsible for
+populating the database with seed data after migrations have completed.
+Useful for development environments and bootstrapping the platform with
+representative content.
 
 ### **medianocta.AppHost & medianocta.ServiceDefaults**
 
@@ -176,4 +235,7 @@ settings, supporting the Gateway functionality.
 
 **Description:** .NET Aspire orchestration projects 
 for managing the distributed application architecture and service defaults.
+The AppHost wires up the dependency chain (Database → APIs → Gateway →
+Website/Backoffice) and the shared ServiceDefaults provide common
+telemetry, health checks, and resilience configuration to every service.
 

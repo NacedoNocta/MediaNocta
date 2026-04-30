@@ -8,8 +8,8 @@
         public const string fragmentThemeColor = "success";
         public const string techTypeKey = "Tech";
         public const string techThemeColor = "light";
-        public const string artTypeKey = "Art";
-        public const string artThemeColor = "info";
+        public const string learnTypeKey = "Learn";
+        public const string learnThemeColor = "warning";
 
     }
 }

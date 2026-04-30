@@ -1,0 +1,333 @@
+@page "/fragments/create"
+@page "/fragments/edit/{id:guid}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "backoffice-admin")]
+@using FragmentLibrary
+@using Backoffice.Services
+@using SharedLibrary
+@inject IFragmentManagementService FragmentService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>@(IsEditMode ? "Edit Fragment" : "Create Fragment") - Media Nocta Backoffice</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-5">@(IsEditMode ? "Edit Fragment" : "Create New Fragment")</h1>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-secondary" @onclick="Cancel">
+                <i class="bi bi-x-circle me-2"></i>Cancel
+            </button>
+            <button class="btn btn-primary" @onclick="Save" disabled="@isSaving">
+                <i class="bi bi-save me-2"></i>@(isSaving ? "Saving..." : "Save")
+            </button>
+        </div>
+    </div>
+
+    @if (errorMessage != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @errorMessage
+            <button type="button" class="btn-close" @onclick="() => errorMessage = null"></button>
+        </div>
+    }
+
+    @if (fragment == null && IsEditMode)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (fragment != null)
+    {
+        <div class="row g-4">
+            <!-- English Side -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-flag me-2"></i>English Content</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Title *</label>
+                            <input type="text" class="form-control" @bind="fragment.Title.English" placeholder="Enter English title" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Summary *</label>
+                            <textarea class="form-control" rows="3" @bind="fragment.Summary.English" placeholder="Enter English summary" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Content *</label>
+                            <textarea class="form-control" rows="15" @bind="fragment.Content.English" placeholder="Enter English content (Markdown supported)" required></textarea>
+                            <small class="form-text text-muted">Markdown formatting is supported</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- French Side -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-flag me-2"></i>French Content</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Titre *</label>
+                            <input type="text" class="form-control" @bind="fragment.Title.French" placeholder="Entrez le titre en fran�ais" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">R�sum� *</label>
+                            <textarea class="form-control" rows="3" @bind="fragment.Summary.French" placeholder="Entrez le r�sum� en fran�ais" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Contenu *</label>
+                            <textarea class="form-control" rows="15" @bind="fragment.Content.French" placeholder="Entrez le contenu en fran�ais (Markdown support�)" required></textarea>
+                            <small class="form-text text-muted">Le formatage Markdown est support�</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Common Fields -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="bi bi-gear me-2"></i>General Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Type Tag</label>
+                                <select class="form-select" @bind="fragment.TypeTag">
+                                    <option value="">-- Select a type --</option>
+                                    @if (fragmentTypes != null)
+                                    {
+                                        @foreach (var type in fragmentTypes)
+                                        {
+                                            <option value="@type.Name">@type.Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Image URL</label>
+                                <input type="url" class="form-control" @bind="fragment.ImageUrl" placeholder="https://example.com/image.jpg" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Attachment URL</label>
+                                <input type="url" class="form-control" @bind="fragment.AttachmentUrl" placeholder="https://example.com/file.pdf" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Attachment Type</label>
+                                <input type="text" class="form-control" @bind="fragment.AttachmentType" placeholder="e.g., pdf, video, audio" />
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label fw-bold">Tags (comma-separated)</label>
+                                <input type="text" class="form-control" @bind="tagsInput" placeholder="tag1, tag2, tag3" />
+                                <small class="form-text text-muted">Separate tags with commas</small>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" @bind="fragment.IsPublic" id="publicCheck">
+                                    <label class="form-check-label" for="publicCheck">
+                                        Public (visible to everyone)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" @bind="fragment.Featured" id="featuredCheck">
+                                    <label class="form-check-label" for="featuredCheck">
+                                        Featured Fragment
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" @bind="fragment.IsDeleted" id="deletedCheck">
+                                    <label class="form-check-label" for="deletedCheck">
+                                        Mark as Deleted (soft delete)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid? Id { get; set; }
+
+    private Fragment? fragment;
+    private List<FragmentType>? fragmentTypes;
+    private string tagsInput = string.Empty;
+    private bool isSaving = false;
+    private string? errorMessage = null;
+
+    private bool IsEditMode => Id.HasValue && Id.Value != Guid.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFragmentTypes();
+
+        if (IsEditMode && Id.HasValue)
+        {
+            await LoadFragment(Id.Value);
+        }
+        else
+        {
+            InitializeNewFragment();
+        }
+    }
+
+    private async Task LoadFragmentTypes()
+    {
+        try
+        {
+            fragmentTypes = await FragmentService.GetFragmentTypesAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading fragment types: {ex.Message}";
+        }
+    }
+
+    private void InitializeNewFragment()
+    {
+        fragment = new Fragment
+        {
+            Title = new LocalizedText(),
+            Summary = new LocalizedText(),
+            Content = new LocalizedText(),
+            IsPublic = true,
+            IsDeleted = false,
+            VibeCount = 0,
+            Featured = false
+        };
+        tagsInput = string.Empty;
+    }
+
+    private async Task LoadFragment(Guid id)
+    {
+        try
+        {
+            fragment = await FragmentService.GetFragmentByIdAsync(id);
+            if (fragment == null)
+            {
+                errorMessage = $"Fragment with ID {id} not found";
+                return;
+            }
+
+            // Load tags into input field
+            if (fragment.Tags != null && fragment.Tags.Any())
+            {
+                tagsInput = string.Join(", ", fragment.Tags);
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading fragment: {ex.Message}";
+        }
+    }
+
+    private async Task Save()
+    {
+        if (fragment == null) return;
+
+        if (!ValidateFragment())
+        {
+            errorMessage = "Please fill in all required fields (Title, Summary, and Content in both languages)";
+            return;
+        }
+
+        isSaving = true;
+        errorMessage = null;
+
+        try
+        {
+            // Parse tags from input
+            if (!string.IsNullOrWhiteSpace(tagsInput))
+            {
+                fragment.Tags = tagsInput.Split(',')
+                    .Select(t => t.Trim())
+                    .Where(t => !string.IsNullOrWhiteSpace(t))
+                    .ToList();
+            }
+            else
+            {
+                fragment.Tags = new List<string>();
+            }
+
+            if (IsEditMode && Id.HasValue)
+            {
+                var success = await FragmentService.UpdateFragmentAsync(Id.Value, fragment);
+                if (success)
+                {
+                    Navigation.NavigateTo("/fragments");
+                }
+                else
+                {
+                    errorMessage = "Failed to update fragment";
+                }
+            }
+            else
+            {
+                var created = await FragmentService.CreateFragmentAsync(fragment);
+                if (created != null)
+                {
+                    Navigation.NavigateTo("/fragments");
+                }
+                else
+                {
+                    errorMessage = "Failed to create fragment";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error saving fragment: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private bool ValidateFragment()
+    {
+        if (fragment == null) return false;
+
+        return !string.IsNullOrWhiteSpace(fragment.Title.English) &&
+               !string.IsNullOrWhiteSpace(fragment.Title.French) &&
+               !string.IsNullOrWhiteSpace(fragment.Summary.English) &&
+               !string.IsNullOrWhiteSpace(fragment.Summary.French) &&
+               !string.IsNullOrWhiteSpace(fragment.Content.English) &&
+               !string.IsNullOrWhiteSpace(fragment.Content.French);
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/fragments");
+    }
+}
